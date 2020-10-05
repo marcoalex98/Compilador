@@ -22,25 +22,25 @@ public class TablaSimbolosMySQL extends javax.swing.JFrame {
         try {
             System.out.println("<MySQL> Prueba de conexion a MySQL");
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329", "root", "root");
-            System.out.println("<MySQL> Conexion exitosa");
+            con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329?verifyServerCertificate=false&useSSL=true", "root", "root");
+            System.out.println("<TablaSimbolosMySQL> Conexion exitosa");
 
             Statement estado = con.createStatement();
             rs = estado.executeQuery(query);
 
         } catch (SQLException e) {
-            System.err.println("<MySQL> Error de MySQL");
+            System.err.println("<TablaSimbolosMySQL> Error de MySQL");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
-            System.err.println("<MySQL> Error detectado: " + e.getMessage());
+            System.err.println("<TablaSimbolosMySQL> Error detectado: " + e.getMessage());
         }
         return rs;
     }
 
     void llenarTabla() {
         DefaultTableModel modelo = (DefaultTableModel)jTable1.getModel();
-        ResultSet rs = ejecutarQuery("SELECT * FROM tablasimbolos");
+        ResultSet rs = ejecutarQuery("SELECT * FROM tablasimbolos?verifyServerCertificate=false&useSSL=true");
         try {
             while (rs.next()) {
                 modelo.addRow(new Object[]{rs.getString("id"),rs.getString("tipo"),rs.getString("clase"),
@@ -68,7 +68,6 @@ public class TablaSimbolosMySQL extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setUndecorated(true);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
