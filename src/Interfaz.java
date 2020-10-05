@@ -37,23 +37,6 @@ public class Interfaz extends javax.swing.JFrame {
     PrintStream out;
     boolean areaDeclaracion = true;
     boolean banderaAux = false;
-    public static final String fondoNegro = "\u001B[40m";
-    public static final String fondoRojo = "\u001B[41m";
-    public static final String fondoVerde = "\u001B[42m";
-    public static final String fondoAmarillo = "\u001B[43m";
-    public static final String fondoAzul = "\u001B[44m";
-    public static final String fondoMorado = "\u001B[45m";
-    public static final String fondoCyan = "\u001B[46m";
-    public static final String fondoBlanco = "\u001B[47m";
-    public static final String letraNegra = "\u001B[30m";
-    public static final String letraRoja = "\u001B[31m";
-    public static final String letraVerde = "\u001B[32m";
-    public static final String letraAmarilla = "\u001B[33m";
-    public static final String letraAzul = "\u001B[34m";
-    public static final String letraMorada = "\u001B[35m";
-    public static final String letraCyan = "\u001B[36m";
-    public static final String letraBlanca = "\u001B[37m";
-    public static final String ANSI_RESET = "\u001B[0m";
     public static GenerarExcelLexico generarExcelLexico = new GenerarExcelLexico();
     public static GenerarExcelSintaxis generarExcelSintaxis = new GenerarExcelSintaxis();
     int[] contadoresLexico = new int[21];
@@ -3131,21 +3114,21 @@ public class Interfaz extends javax.swing.JFrame {
             if (linea[i] != ' ') {
                 //--------BINARIO----------
                 if (i + 2 < linea.length) {
-                    // System.out.println(letraAmarilla + fondoMorado + "I+2" + ANSI_RESET);
+                    // System.out.println( +  + "I+2" + );
 
                     if (linea[i] == '0') {
-                        //   System.out.println(letraAmarilla + fondoMorado + "I==0" + ANSI_RESET);
+                        //   System.out.println( +  + "I==0" + );
 
                         if (linea[i + 1] == 'b') {
-                            //     System.out.println(letraAmarilla + fondoMorado + "I+1==b" + ANSI_RESET);
+                            //     System.out.println( +  + "I+1==b" + );
                             if (linea[i + 2] == '0' || linea[i + 2] == '1') {
-                                //       System.out.println(letraAmarilla + fondoMorado + "BINARIO" + ANSI_RESET);
+                                //       System.out.println( +  + "BINARIO" + );
                                 lexema += "0b";
                                 bin = 2;
                                 boolean binario = true;
                                 int j = i + 2;
                                 while (binario) {
-                                    //         System.out.println(letraAmarilla + fondoMorado + "Vuelta binario ciclo" + ANSI_RESET);
+                                    //         System.out.println( +  + "Vuelta binario ciclo" + );
 
                                     if (linea[j] == '0' || linea[j] == '1') {
                                         bin++;
@@ -4408,7 +4391,7 @@ public class Interfaz extends javax.swing.JFrame {
         if (ambito >= ambitoMayor) {
             ambitoMayor = ambito;
         }
-        System.out.println(fondoAzul + letraMorada + "<AUMENTAR AMBITO> Se ha aumentado el ambito" + ANSI_RESET);
+        System.out.println("<AUMENTAR AMBITO> Se ha aumentado el ambito" );
         ambitoActualDisponible++;
     }
 
@@ -4420,8 +4403,8 @@ public class Interfaz extends javax.swing.JFrame {
     boolean variableDeclarada(String id) {
         boolean existencia = false;
         int estadoInt = 0;
-        System.out.println(fondoRojo + letraMorada + "Valor ID: " + id + ANSI_RESET);
-        System.out.println(fondoRojo + letraMorada + "Valor ambito: " + ambitoVariable + ANSI_RESET);
+        System.out.println("Valor ID: " + id);
+        System.out.println("Valor ambito: " + ambitoVariable);
         try {
             System.out.println("<MySQL:agregarVariable> Prueba de conexion a MySQL");
             Class.forName("com.mysql.jdbc.Driver");
@@ -4480,13 +4463,13 @@ public class Interfaz extends javax.swing.JFrame {
             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println(fondoRojo + letraMorada + "VALOR DE ESTADO INT: " + estadoInt + ANSI_RESET);
+        System.out.println("VALOR DE ESTADO INT: " + estadoInt);
         if (estadoInt >= 1) {
             existencia = true;
-            System.out.println(fondoRojo + letraMorada + "VARIABLE DUPLICADA" + ANSI_RESET);
+            System.out.println("VARIABLE DUPLICADA");
         } else {
             existencia = false;
-            System.out.println(fondoRojo + letraMorada + "VARIABLE NO DUPLICADA" + ANSI_RESET);
+            System.out.println("VARIABLE NO DUPLICADA");
         }
 
         return existencia;
@@ -4494,7 +4477,7 @@ public class Interfaz extends javax.swing.JFrame {
 
     void agregarVariable() {
         valorVariable = valorVariable.replace("'", "\"");
-        System.out.println(fondoCyan + letraAzul + "----Agregar Variable----" + ANSI_RESET);
+        System.out.println("----Agregar Variable----");
         try {
             System.out.println("<MySQL:agregarVariable> Prueba de conexion a MySQL");
             Class.forName("com.mysql.jdbc.Driver");
@@ -4805,7 +4788,7 @@ public class Interfaz extends javax.swing.JFrame {
                 bandera814 = false;
                 break;
             case "Diccionario":
-                System.out.println(fondoRojo + "InsertarDiccionario");
+                System.out.println("InsertarDiccionario");
                 aumentarAmbito();
                 ambitoCreado = ambito + "";
                 query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado) VALUES("
@@ -4872,7 +4855,7 @@ public class Interfaz extends javax.swing.JFrame {
             claseVariable = "None";
             tipoVariable = "par";
         }
-        System.out.println(fondoCyan + letraAzul + "---- Fin Agregar Variable----" + ANSI_RESET);
+        System.out.println( "---- Fin Agregar Variable----");
     }
 
     String tipoConstante(int token) {
@@ -4954,15 +4937,15 @@ public class Interfaz extends javax.swing.JFrame {
         int auxiliarTipoVariable = 0;
         String auxiliarDato = "";
         while (pilaSintaxis.empty() == false && oper.listaVacia() == false) {
-            System.out.println(letraAmarilla + "<AMBITO:sintaxis> Nombre variable: " + nombreVariable + ANSI_RESET);
-            System.out.println(letraAmarilla + "<AMBITO:sintaxis> Tipo variable: " + claseVariable + ANSI_RESET);
-            System.out.println(letraAmarilla + "<AMBITO:sintaxis> Clase variable: " + tipoVariable + ANSI_RESET);
-            System.out.println(letraAmarilla + "<AMBITO:sintaxis> Rango 1: " + rango1 + ANSI_RESET);
-            System.out.println(letraAmarilla + "<AMBITO:sintaxis> Rango 2: " + rango2 + ANSI_RESET);
-            System.out.println(letraAmarilla + "<AMBITO:sintaxis> Avance: " + avance + ANSI_RESET);
-            System.out.println(letraAmarilla + "<AMBITO:sintaxis> Ambito: " + ambito + ANSI_RESET);
-            System.out.println(letraAmarilla + "<AMBITO:sintaxis> Ambito Creado: " + ambitoCreado + ANSI_RESET);
-            System.out.println(letraAmarilla + "<AMBITO:sintaxis> Cima de pila: " + pilaSintaxis.peek() + ANSI_RESET);
+            System.out.println("<AMBITO:sintaxis> Nombre variable: " + nombreVariable);
+            System.out.println("<AMBITO:sintaxis> Tipo variable: " + claseVariable);
+            System.out.println("<AMBITO:sintaxis> Clase variable: " + tipoVariable);
+            System.out.println("<AMBITO:sintaxis> Rango 1: " + rango1);
+            System.out.println("<AMBITO:sintaxis> Rango 2: " + rango2);
+            System.out.println("<AMBITO:sintaxis> Avance: " + avance);
+            System.out.println("<AMBITO:sintaxis> Ambito: " + ambito);
+            System.out.println("<AMBITO:sintaxis> Ambito Creado: " + ambitoCreado);
+            System.out.println("<AMBITO:sintaxis> Cima de pila: " + pilaSintaxis.peek());
 
             if (pilaSintaxis.peek() == 8152) {
                 pilaSintaxis.pop();
@@ -4981,30 +4964,30 @@ public class Interfaz extends javax.swing.JFrame {
             if (pilaSintaxis.peek() == 8202) {
                 pilaSintaxis.pop();
                 if (banderaConjunto) {
-                    System.out.println(fondoRojo + "<AMBITO:sintaxis> Bandera Agregar Conjunto" + ANSI_RESET);
+                    System.out.println("<AMBITO:sintaxis> Bandera Agregar Conjunto");
                     agregarConjunto = true;
                 } else if (banderaDiccionario) {
-                    System.out.println(fondoRojo + "<AMBITO:sintaxis> Bandera Agregar Diccionario" + ANSI_RESET);
+                    System.out.println("<AMBITO:sintaxis> Bandera Agregar Diccionario");
                     agregarDiccionario = true;
                 }
             }
 
             if (nombreVariable != "" && claseVariable != "" && valorVariable != "" && banderaConstante) {
-                System.out.println(fondoAmarillo + "<AMBITO:sintaxis> Agregar Variable Constante" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Constante");
                 agregarVariable();
             } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && banderaFuncion) {
-                System.out.println(fondoAmarillo + "<AMBITO:sintaxis> Agregar Variable Funcion" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Funcion");
                 agregarVariable();
             } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && banderaParametro) {
-                System.out.println(fondoAmarillo + "<AMBITO:sintaxis> Agregar Variable Parametro" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Parametro");
                 agregarVariable();
             } else if (nombreVariable != "" && claseVariable != "" && rango1 != "" && rango2 != ""
                     && avance != "" && banderaRango) {
-                System.out.println(fondoAmarillo + "<AMBITO:sintaxis> Agregar Variable Rango" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Rango");
                 agregarVariable();
             } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
                     && tarrVariable != "" && (banderaListaMultiple || banderaListaNormal) && agregarLista) {
-                System.out.println(fondoAmarillo + "<AMBITO:sintaxis> Agregar Variable Lista" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Lista");
                 agregarVariable();
                 primeraVezTipoLista = true;
                 auxiliarTipoVariable = 0;
@@ -5013,15 +4996,15 @@ public class Interfaz extends javax.swing.JFrame {
                 banderaListaNormal = false;
             } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
                     && tarrVariable != "" && banderaTupla && agregarTupla) {
-                System.out.println(fondoAmarillo + "<AMBITO:sintaxis> Agregar Variable Tupla" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Tupla");
                 agregarVariable();
             } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
                     && tarrVariable != "" && banderaConjunto && agregarConjunto) {
-                System.out.println(fondoAmarillo + "<AMBITO:sintaxis> Agregar Variable Conjunto" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Conjunto");
                 agregarVariable();
             } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
                     && tarrVariable != "" && banderaDiccionario && agregarDiccionario) {
-                System.out.println(fondoAmarillo + "<AMBITO:sintaxis> Agregar Variable Diccionario" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Diccionario");
                 agregarVariable();
             }
 
@@ -5031,12 +5014,12 @@ public class Interfaz extends javax.swing.JFrame {
 
             switch (pilaSintaxis.peek()) {
                 case 801:
-                    System.out.println(fondoRojo + "AREA DE DECLARACION HA SIDO DESACTIVADA" + ANSI_RESET);
+                    System.out.println("AREA DE DECLARACION HA SIDO DESACTIVADA");
                     areaDeclaracion = false;
                     pilaSintaxis.pop();
                     break;
                 case 802:
-                    System.out.println(fondoRojo + "AREA DE DECLARACION HA SIDO ACTIVADA" + ANSI_RESET);
+                    System.out.println("AREA DE DECLARACION HA SIDO ACTIVADA");
                     areaDeclaracion = true;
                     pilaSintaxis.pop();
                     break;
@@ -5063,12 +5046,12 @@ public class Interfaz extends javax.swing.JFrame {
 
             if (pilaSintaxis.peek() >= 805 && pilaSintaxis.peek() <= 814 && !bandera814) {
                 banderaConstante = true;
-                System.out.println(letraAzul + "<AMBITO:sintaxis>  Entro a if de 805 y 814 | 800:" + pilaSintaxis.peek() + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis>  Entro a if de 805 y 814 | 800:" + pilaSintaxis.peek());
                 tipo800(pilaSintaxis.peek());
                 pilaSintaxis.pop();
             } else if (pilaSintaxis.peek() > 814 && pilaSintaxis.peek() <= 821) {
                 bandera814 = true;
-                System.out.println(letraAzul + "<AMBITO:sintaxis>  Entro a if de 815 y 821 | 800:" + pilaSintaxis.peek() + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis>  Entro a if de 815 y 821 | 800:" + pilaSintaxis.peek());
                 tipo800(pilaSintaxis.peek());
                 if (claseVariable.equals("Lista")) {
                     banderaListaNormal = true;
@@ -5076,22 +5059,22 @@ public class Interfaz extends javax.swing.JFrame {
                     ambitoVariable = ambito + "";
                 } else if (claseVariable.equals("Rango")) {
                     banderaRango = true;
-                    System.out.println(fondoRojo + "<AMBITO:sintaxis> Bandera Rango" + ANSI_RESET);
+                    System.out.println("<AMBITO:sintaxis> Bandera Rango");
                 } else if (claseVariable.equals("Tupla")) {
                     banderaTupla = true;
                     tipoVariable = "struct";
-                    System.out.println(fondoRojo + "<AMBITO:sintaxis> Bandera Tupla" + ANSI_RESET);
+                    System.out.println("<AMBITO:sintaxis> Bandera Tupla");
                     ambitoVariable = ambito + "";
                 } else if (claseVariable.equals("Conjunto") && !banderaDiccionario) {
                     banderaConjunto = true;
                     tipoVariable = "struct";
-                    System.out.println(fondoRojo + "<AMBITO:sintaxis> Bandera Conjunto" + ANSI_RESET);
+                    System.out.println("<AMBITO:sintaxis> Bandera Conjunto");
                     ambitoVariable = ambito + "";
                 } else if (claseVariable.equals("Diccionario")) {
                     banderaDiccionario = true;
                     banderaConjunto = false;
                     tipoVariable = "struct";
-                    System.out.println(fondoRojo + "<AMBITO:sintaxis> Bandera Diccionario" + ANSI_RESET);
+                    System.out.println("<AMBITO:sintaxis> Bandera Diccionario");
                     ambitoVariable = ambito + "";
                 }
                 pilaSintaxis.pop();
@@ -5113,7 +5096,7 @@ public class Interfaz extends javax.swing.JFrame {
                 } else if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
                         || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81
                         || pilaSintaxis.peek() == -82 && llaveDiccionario) {
-                    System.out.println(fondoCyan + letraAzul + "AGREGAR DICCIONARIO" + ANSI_RESET);
+                    System.out.println("AGREGAR DICCIONARIO");
                     diccionario[contadorDiccionario] = new Diccionario(tipoConstante(pilaSintaxis.peek()),
                             "datoDic", ambito + "", auxiliarDato, contadorDiccionario + "", oper.mostrarLexemaPrimero(), nombreVariable);
                     contadorDiccionario++;
@@ -5213,12 +5196,12 @@ public class Interfaz extends javax.swing.JFrame {
 
                 if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
                         || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82) {
-                    System.out.println(letraMorada + "Tipo de constante: " + tipoConstante(pilaSintaxis.peek()) + ANSI_RESET);
-                    System.out.println(letraMorada + "Ambito: " + (ambito + 1) + ANSI_RESET);
-                    System.out.println(letraMorada + "NoPos | contadorElementosLista: " + contadorElementosLista + ANSI_RESET);
-                    System.out.println(letraMorada + "ListaPertenece: " + nombreVariable + ANSI_RESET);
+                    System.out.println("Tipo de constante: " + tipoConstante(pilaSintaxis.peek()));
+                    System.out.println("Ambito: " + (ambito + 1));
+                    System.out.println("NoPos | contadorElementosLista: " + contadorElementosLista);
+                    System.out.println("ListaPertenece: " + nombreVariable);
 
-                    System.out.println(fondoRojo + letraMorada + "AGREGAR ELEMENTO LISTA");
+                    System.out.println("AGREGAR ELEMENTO LISTA");
                     listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
                             (ambito + 1) + "", contadorElementosLista + "", nombreVariable);
                     contadorElementosLista++;
@@ -5231,15 +5214,15 @@ public class Interfaz extends javax.swing.JFrame {
             //////////////////////////////RANGO/////////////////////////////////
             if (banderaRango && (pilaSintaxis.peek() == -7 || pilaSintaxis.peek() == -10 || pilaSintaxis.peek() == -11
                     || pilaSintaxis.peek() == -12) && rango1 == "") {
-                System.out.println(fondoRojo + "<AMBITO:sintaxis> Agregar Rango 1" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Rango 1");
                 rango1 = oper.mostrarLexemaPrimero();
             } else if (banderaRango && (pilaSintaxis.peek() == -7 || pilaSintaxis.peek() == -10 || pilaSintaxis.peek() == -11
                     || pilaSintaxis.peek() == -12) && !rango1.equals("") && rango2.equals("")) {
-                System.out.println(fondoRojo + "<AMBITO:sintaxis> Agregar Rango 2" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Rango 2");
                 rango2 = oper.mostrarLexemaPrimero();
             } else if (banderaRango && (pilaSintaxis.peek() == -7 || pilaSintaxis.peek() == -10 || pilaSintaxis.peek() == -11
                     || pilaSintaxis.peek() == -12) && !rango1.equals("") && !rango2.equals("") && avance.equals("")) {
-                System.out.println(fondoRojo + "<AMBITO:sintaxis> Agregar Avance" + ANSI_RESET);
+                System.out.println("<AMBITO:sintaxis> Agregar Avance");
                 avance = oper.mostrarLexemaPrimero();
             }
             //////////////////////////////FIN DE RANGO//////////////////////////
@@ -5264,7 +5247,7 @@ public class Interfaz extends javax.swing.JFrame {
 //                pilaSintaxis.pop();
 //            }
 
-            System.out.println(fondoNegro + letraMorada + "--------------<INICIO DE CICLO SINTAXIS VUELTA " + cont + ">--------------" + ANSI_RESET);
+            System.out.println("--------------<INICIO DE CICLO SINTAXIS VUELTA " + cont + ">--------------");
             System.out.println("<SINTAXIS> Cima de la pila: " + pilaSintaxis.peek());
             System.out.println("<SINTAXIS> Lexema de primero: " + oper.mostrarLexemaPrimero());
 
@@ -5309,10 +5292,10 @@ public class Interfaz extends javax.swing.JFrame {
                     pilaSintaxis.push(producciones[lugar][i]);
                 }
             } else if (produccion == 369) {
-                System.out.println(letraAzul + "<SINTAXIS> EPSILON DETECTADO" + ANSI_RESET);
+                System.out.println("<SINTAXIS> EPSILON DETECTADO");
                 pilaSintaxis.pop();
             } else if (produccion > 599) {
-                System.out.println(letraRoja + fondoAmarillo + "<SINTAXIS ERROR> " + produccion + ANSI_RESET);
+                System.out.println("<SINTAXIS ERROR> " + produccion);
                 errores[nR] = new Error(produccion, "Error de sintaxis", produccion + "", cont, "Sintaxis");
                 actualizarTablaError(errores);
                 aumentarArregloError();
@@ -5333,14 +5316,14 @@ public class Interfaz extends javax.swing.JFrame {
                         }
                         if (pilaSintaxis.peek() == -6) {
                             nombreVariable = oper.mostrarLexemaPrimero();
-//                            System.out.println(letraAzul + "<AMBITO:sintaxis> ID Detectado" + ANSI_RESET);
-//                            System.out.println(letraAzul + "<AMBITO:sintaxis> Nombre variable: " + nombreVariable + ANSI_RESET);
-//                            System.out.println(letraAzul + "<AMBITO:sintaxis> Tipo variable: " + claseVariable + ANSI_RESET);
-//                            System.out.println(letraAzul + "<AMBITO:sintaxis> Clase variable: " + tipoVariable + ANSI_RESET);
+//                            System.out.println( + "<AMBITO:sintaxis> ID Detectado" + );
+//                            System.out.println( + "<AMBITO:sintaxis> Nombre variable: " + nombreVariable + );
+//                            System.out.println( + "<AMBITO:sintaxis> Tipo variable: " + claseVariable + );
+//                            System.out.println( + "<AMBITO:sintaxis> Clase variable: " + tipoVariable + );
 
                         }
 //                        if (tipoVariable != "" && nombreVariable != "") {
-//                            System.out.println(letraAzul + "<AMBITO:sintaxis> IF agregar variable" + ANSI_RESET);
+//                            System.out.println( + "<AMBITO:sintaxis> IF agregar variable" + );
 //                            agregarVariable();
 //                        }
                         oper.eliminarInicio();
@@ -5369,14 +5352,14 @@ public class Interfaz extends javax.swing.JFrame {
                 }
 
             }
-            System.out.println(fondoNegro + letraMorada + "--------------<FIN DE CICLO SINTAXIS>--------------" + ANSI_RESET);
+            System.out.println("--------------<FIN DE CICLO SINTAXIS>--------------");
             System.out.println("");
             cont++;
 
         }
         System.out.println("---------- FIN SINTAXIS DE LA MUERTE----------");
         if (ambito == 0) {
-            System.out.println(letraVerde + "<AMBITO> Ambito 0");
+            System.out.println("<AMBITO> Ambito 0");
         } else {
             errores[nR] = new Error(2000, "ERROR DE AMBITO", "Ambito Final: " + ambito + "", -1, "Ambito");
             actualizarTablaError(errores);
