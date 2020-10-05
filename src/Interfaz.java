@@ -1328,7 +1328,8 @@ public class Interfaz extends javax.swing.JFrame {
                         aux2 = aux;
                         texto = aux;
                         jTextArea1.append("\n" + texto);
-                        System.out.println("{" + texto + "},");
+                        addToLog("{" + texto + "},");
+                        //System.out.println("{" + texto + "},");
                     }
                     leer.close();
                 }
@@ -1346,7 +1347,8 @@ public class Interfaz extends javax.swing.JFrame {
         contadorVariablesArreglo = 0;
         String query = "DELETE FROM tablasimbolos";
         try {
-            System.out.println("<MySQL> Prueba de conexion a MySQL");
+            addToLog("<MySQL> Prueba de conexion a MySQL");
+//            System.out.println("<MySQL> Prueba de conexion a MySQL");
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329", "root", "root");
             st = con.createStatement();
@@ -1375,24 +1377,30 @@ public class Interfaz extends javax.swing.JFrame {
         limpiarTablas();
         String texto = jTextArea1.getText();
         String[] lineasHoja = texto.split("\n");
-        System.out.println("Texto original:\n" + texto);
-        System.out.println("Texto modificado:\n");
+//        System.out.println("Texto original:\n" + texto);
+        addToLog("Texto original:\n" + texto);
+//        System.out.println("Texto modificado:\n");
+        addToLog("Texto modificado:\n");
         for (int i = 0; i < lineasHoja.length; i++) {
-            System.out.println("Linea " + i + ": " + lineasHoja[i]);
+//            System.out.println("Linea " + i + ": " + lineasHoja[i]);
+            addToLog("Linea " + i + ": " + lineasHoja[i]);
             addToLog(lineasHoja[i]);
         }
         lineas = lineasHoja.length;
-        System.out.println("Lineas del documento: " + lineas);
+        addToLog("Lineas del documento: " + lineas);
+//        System.out.println("Lineas del documento: " + lineas);
         contadoresLinea = new int[lineas][21];
         establecerConexion();
         for (int i = 0; i < lineasHoja.length; i++) {//Lineas del textarea
             lineaActual++;
             int pos = 0;
             char c[] = new char[lineasHoja[i].length()];//Arreglo de char para la linea i
-            System.out.println("Largo de arreglo de la linea [" + i + "]: " + c.length);
+//            System.out.println("Largo de arreglo de la linea [" + i + "]: " + c.length);
+            addToLog("Largo de arreglo de la linea [" + i + "]: " + c.length);
             for (int j = 0; j < c.length; j++) {//Convertir la lina a un arreglo de caracter por caracter
                 c[j] = lineasHoja[i].charAt(j);
-                System.out.println("j: " + j + ", contenido: " + c[j]);
+//                System.out.println("j: " + j + ", contenido: " + c[j]);
+                addToLog("j: " + j + ", contenido: " + c[j]);
             }
             try {
                 lineaAuxiliar = "";
@@ -1407,14 +1415,18 @@ public class Interfaz extends javax.swing.JFrame {
                 System.err.println("Excepcion: " + e.getMessage());
             }
         }
-        System.out.println("Sintaxis");
+//        System.out.println("Inicio de Sintaxis");
+        addToLog("Inicio de Sintaxis");
         sintaxis();
-        System.out.println("Fin sintaxis");
+        addToLog("Fin de sintaxis");
+//        System.out.println("Fin de sintaxis");
     }//GEN-LAST:event_btnCompilarActionPerformed
 
     void contadoresSintaxis(int produccion) {
-        System.out.println("---Contadores Sintaxis---");
-        System.out.println("Produccion: " + produccion);
+        addToLog("---Contadores Sintaxis---");
+        addToLog("Produccion: " + produccion);
+//        System.out.println("---Contadores Sintaxis---");
+//        System.out.println("Produccion: " + produccion);
 
         switch (produccion) {
             case 200://Program
@@ -1658,18 +1670,17 @@ public class Interfaz extends javax.swing.JFrame {
                     contadoresLinea[tokens[i].getLinea() - 1][20]++;
                     break;
                 default:
-                    System.err.println("Ha llegado un contador no valido: " + tokens[i].getEstado());
+                    addToLog("Ha llegado un contador no valido: " + tokens[i].getEstado());
+//                    System.err.println("Ha llegado un contador no valido: " + tokens[i].getEstado());
             }
         }
         for (int i = 0; i < errores.length - 1; i++) {
-            System.out.println("For: " + i);
-            contadoresLinea[errores[i].getLinea() - 1][0]++;
+            contadoresLinea[errores[i].getLinea()][0]++;
         }
 
     }
 
     public void contadorDiagrama(int i) {
-        System.out.println("SE AUMENTO EL CONTADOR DE " + i);
         switch (i) {
             case 1://Program
                 conDia[0]++;
@@ -1736,6 +1747,10 @@ public class Interfaz extends javax.swing.JFrame {
                 break;
 
         }
+    }
+    
+    private void addToLog(String logText) {
+        log += logText + "\n";
     }
 
     void contadoresLexico(int estado) {
@@ -1911,12 +1926,13 @@ public class Interfaz extends javax.swing.JFrame {
                 contadoresLinea[lineaActual - 1][20]++;
                 break;
             default:
-                System.err.println("Ha llegado un contador no valido");
+                addToLog("Ha llegado un contador no valido");
+//                System.err.println("Ha llegado un contador no valido");
         }
     }
 
     int filaSintactico(int produccion) {
-        System.out.println("<FILA SINTACTICO> Valor de produccion: " + produccion);
+//        System.out.println("<FILA SINTACTICO> Valor de produccion: " + produccion);
         int fil;
         switch (produccion) {
             case 0:
@@ -2364,7 +2380,7 @@ public class Interfaz extends javax.swing.JFrame {
     }
 
     int columnaSintactico(int token) {
-        System.out.println("<COLUMNA SINTACTICO> Valor de token: " + token);
+//        System.out.println("<COLUMNA SINTACTICO> Valor de token: " + token);
         int col;
         switch (token) {
             case -1:
@@ -2660,7 +2676,7 @@ public class Interfaz extends javax.swing.JFrame {
 
     void insertarProgram() {
         for (int i = 0; i < producciones[0].length; i++) {
-            System.out.println(producciones[0][i]);
+//            System.out.println(producciones[0][i]);
             pilaSintaxis.push(producciones[0][i]);
         }
 
@@ -2671,12 +2687,12 @@ public class Interfaz extends javax.swing.JFrame {
     }
 
     private void btnXlsxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXlsxActionPerformed
-        System.out.println("Tamaño de nT: " + nT);
+//        System.out.println("Tamaño de nT: " + nT);
         Token auxToken[] = new Token[nT];
         for (int i = 0; i < auxToken.length; i++) {
             auxToken[i] = tokens[i];
         }
-        System.out.println("Tamaño de nR: " + nR);
+//        System.out.println("Tamaño de nR: " + nR);
         Error auxError[] = new Error[nR];
         for (int i = 0; i < auxError.length; i++) {
             auxError[i] = errores[i];
@@ -2687,7 +2703,7 @@ public class Interfaz extends javax.swing.JFrame {
         for (int i = 0; i < auxToken.length; i++) {
             contadoresLexico(auxToken[i].getEstado());
         }
-        System.out.println("Tamaño de nR");
+//        System.out.println("Tamaño de nR");
 //        System.out.println("Error meco: "+auxError[0].getEstado());
         contadoresLinea();
         System.out.println("GENERADOR DEL EXCEL------");
@@ -2745,7 +2761,6 @@ public class Interfaz extends javax.swing.JFrame {
             conAmbito[0][18] = "TotalAmbitos";
             int j = 0, sumatoriaTotalVariablesEnAmbito = 0;
             for (int i = 1; i < ambitoMayor + 2; i++) {
-                System.out.println("ESTA PERRA MAMADA DEBE DE ENTRAR");
                 if (j <= ambito) {
                     conAmbito[i][0] = j + "";
                     conAmbito[i][1] = obtenerNumeroBD(j + "", "Decimal", "Tipo") + "";
@@ -2793,12 +2808,14 @@ public class Interfaz extends javax.swing.JFrame {
         int total = 0;
         Connection con = null;
         try {
-            System.out.println("<MySQL:agregarVariable> Prueba de conexion a MySQL");
+//            System.out.println("<MySQL:agregarVariable> Prueba de conexion a MySQL");
+            addToLog("<MySQL:agregarVariable> Prueba de conexion a MySQL");
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329", "root", "root");
             st = con.createStatement();
         } catch (SQLException e) {
-            System.err.println("<MySQL:agregarVariable> Error de MySQL");
+//            System.err.println("<MySQL:agregarVariable> Error de MySQL");
+            addToLog("<MySQL:agregarVariable> Error de MySQL");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2818,7 +2835,8 @@ public class Interfaz extends javax.swing.JFrame {
             st = con.createStatement();
             datos = st.executeQuery(Consulta);
         } catch (Exception e) {
-            System.out.println(e.toString());
+//            System.out.println(e.toString());
+            addToLog(e.toString());
         }
         return datos;
     }
@@ -2901,29 +2919,40 @@ public class Interfaz extends javax.swing.JFrame {
     }
 
     String deslexemizador(String lexemaTokenizado) {//Elimina de la linea actual el lexema tokenizado
-//        System.out.println("[DESLEXEMIZADOR] Lexema entrante: "+lexemaTokenizado);
-//        String lexemaAuxiliar = "";
-//        char[] aux = new char[lineaAuxiliar.length()];
-//
-//        System.out.println("[DESLEXEMIZADOR]Contenido de linea auxiliar: " + lineaAuxiliar);
-//        for (int i = 0; i < aux.length; i++) {
-//            aux[i] = lineaAuxiliar.charAt(i);
-//            System.out.println("[" + i + "]: " + aux[i]);
-//        }
-//
-//        for (int i = 0; i < lineaAuxiliar.length(); i++) {
-//            if (i + 1 > lexemaTokenizado.length()) {
-//                lexemaAuxiliar += aux[i] + "";
-//            }
-//        }
-//        lineaAuxiliar = lexemaAuxiliar;
-//        System.out.println("[DESLEXEMIZADOR] LEXEMA RESULTANTE: " + lexemaAuxiliar);
+//        System.out.println("[DESLEXEMIZADOR] Lexema a eliminar: " + lexemaTokenizado);
+//        System.out.println("[DESLEXEMIZADOR] Linea auxiliar entrante: " + lineaAuxiliar);
+        addToLog("[DESLEXEMIZADOR] Lexema a eliminar: " + lexemaTokenizado);
+        addToLog("[DESLEXEMIZADOR] Linea auxiliar entrante: " + lineaAuxiliar);
         
-        return lineaAuxiliar.replaceAll(lexemaTokenizado, "");
-    }
-    
-    void addToLog(String logText){
-        log += logText + "\n";
+        String lexemaAuxiliar = "";
+        char[] aux = new char[lineaAuxiliar.length()];
+//        System.out.println("[DESLEXEMIZADOR] aux[].length: " + aux.length);
+        for (int i = 0; i < aux.length; i++) {
+            aux[i] = lineaAuxiliar.charAt(i);
+//            System.out.println("[DESLEXEMIZADOR] aux[" + i + "]: " + aux[i]);
+        }
+//        System.out.println("---------------------------------------");
+
+        char[] newAux = new char[lineaAuxiliar.length() - lexemaTokenizado.length()];
+//        System.out.println("[DESLEXEMIZADOR] newAux[].length: " + newAux.length);
+        
+        int banderaEspacio = 0;
+        if(aux[0] == ' ')
+            banderaEspacio = 1;
+        for (int i = lexemaTokenizado.length() + banderaEspacio, j = 0; i < aux.length; i++, j++) {
+            //System.out.println("[DESLEXEMIZADOR FOR] aux["+i+"]: "+aux[i]);
+            newAux[j] = aux[i];
+//            System.out.println("[DESLEXEMIZADOR FOR] newAux[" + j + "]: " + newAux[j]);
+        }
+        for (int i = 0; i < newAux.length; i++) {
+            lexemaAuxiliar += newAux[i] + "";
+        }
+        lineaAuxiliar = lexemaAuxiliar;
+//        System.out.println("[DESLEXEMIZADOR] Linea auxiliar saliente: |" + lineaAuxiliar + "|");
+//        System.out.println("[DESLEXEMIZADOR] Lexema resultante: |" + lexemaAuxiliar + "|");
+        addToLog("[DESLEXEMIZADOR] Linea auxiliar saliente: |" + lineaAuxiliar + "|");
+        addToLog("[DESLEXEMIZADOR] Lexema resultante: |" + lexemaAuxiliar + "|");
+        return lexemaAuxiliar;
     }
 
     int palabraReservada(String lexema, int estado) {
@@ -2931,7 +2960,8 @@ public class Interfaz extends javax.swing.JFrame {
         lexema.toLowerCase();
         lexema = destabulador(lexema);
         char[] c = new char[lexema.length()];
-        System.out.println("Lexema:" + lexema + "|");
+//        System.out.println("[PALABRA RESERVADA] Lexema:" + lexema + "|");
+        addToLog("[PALABRA RESERVADA] Lexema:" + lexema + "|");
         if (lexema.charAt(lexema.length() - 1) == ' ') {
             for (int i = 0; i < lexema.length() - 1; i++) {
                 lexema2 += lexema.charAt(i);
@@ -3074,8 +3104,11 @@ public class Interfaz extends javax.swing.JFrame {
     }
 
     void desmenuzadorCriminalMutilador(String lineaAux) {
-        System.out.println("--------DESMENUZADOR CRIMINAL MUTILADOR--------");
-        System.out.println("[DCM] lineaAux: " + lineaAux);
+        addToLog("--------DESMENUZADOR CRIMINAL MUTILADOR--------");
+        addToLog("[DCM] lineaAux: " + lineaAux);
+//        System.out.println("--------DESMENUZADOR CRIMINAL MUTILADOR--------");
+//        System.out.println("[DCM] lineaAux: " + lineaAux);
+        lineaAux = lineaAuxiliar;
         boolean igual = false, banMas = false, banMenos = false, banderaBinHexOct = false,
                 banderaBin = false, banderaHex = false, primBin = false, pimHex = false;
         int fil = 0, bin = 0, oct = 0, hex = 0;
@@ -3125,6 +3158,7 @@ public class Interfaz extends javax.swing.JFrame {
                                     }
                                 }
                                 // System.out.println("Salio de ciclo");
+
                                 tokens[nT] = new Token(-10, lexema, lineaActual);
                                 oper.insertarUltimo(-10, lexema, lineaActual);
                                 lexema = deslexemizador(lexema);
@@ -3147,8 +3181,8 @@ public class Interfaz extends javax.swing.JFrame {
                 //--------OCTAL----------
                 if (i + 2 < linea.length) {
                     if (linea[i] == '0') {
-                        System.out.println("[OCTAL] Primer if");
-                        System.out.println("[OCTAL] Segundo if");
+//                        System.out.println("[OCTAL] Primer if");
+//                        System.out.println("[OCTAL] Segundo if");
                         if (linea[i + 1] >= '0' && linea[i + 1] <= '7') {
                             //  System.out.println("[OCTAL] Tercer if");
                             lexema += "0";
@@ -3190,7 +3224,7 @@ public class Interfaz extends javax.swing.JFrame {
                                     lexema = "";
                                 }
                             } else {
-                                System.out.println("[OCTAL] Fin de ciclo");
+//                                System.out.println("[OCTAL] Fin de ciclo");
                                 tokens[nT] = new Token(-11, lexema, lineaActual);
                                 oper.insertarUltimo(-11, lexema, lineaActual);
                                 lexema = deslexemizador(lexema);
@@ -3200,10 +3234,10 @@ public class Interfaz extends javax.swing.JFrame {
                                     contadorIdentificadores++;
                                 }
 //                                contadoresLexico(-11);
-                                System.out.println("[OCTAL] Tokenizado");
+//                                System.out.println("[OCTAL] Tokenizado");
                                 i += oct;
                                 oct = 0;
-                                System.out.println("Valor de i:" + i);
+//                                System.out.println("Valor de i:" + i);
                                 lexema = "";
                             }
                         }
@@ -3243,7 +3277,7 @@ public class Interfaz extends javax.swing.JFrame {
 //                            contadoresLexico(-12);
                                 i += hex;
                                 hex = 0;
-                                System.out.println("Valor de i:" + i);
+//                                System.out.println("Valor de i:" + i);
                                 lexema = "";
                             }
                         }
@@ -3264,8 +3298,10 @@ public class Interfaz extends javax.swing.JFrame {
                     colAux = 50;
                 }
                 int columnaElemento = asignarColumna(linea[i]);
-                System.out.println(">>>>dCM: Lexema: " + lexema);
-                System.out.println(">>>>dCM: Columna caracter[" + linea[i] + "]: " + columnaElemento);
+                addToLog(">>>>dCM: Lexema: " + lexema);
+                addToLog(">>>>dCM: Columna caracter[" + linea[i] + "]: " + columnaElemento);
+//                System.out.println(">>>>dCM: Lexema: " + lexema);
+//                System.out.println(">>>>dCM: Columna caracter[" + linea[i] + "]: " + columnaElemento);
                 if (i + 1 < linea.length && linea[i] == '0' && linea[i + 1] == 'b' && banderaBin == false) {
                     fil = 28;
                     colAux = 4;
@@ -3274,10 +3310,11 @@ public class Interfaz extends javax.swing.JFrame {
                     fil = matrizLexico[fil][columnaElemento];
                 }
 
-                System.out.println(">>>>dCM: Fila: " + fil);
+//                System.out.println(">>>>dCM: Fila: " + fil);
+                addToLog(">>>>dCM: Fila: " + fil);
                 if (fil == 31 || fil == 32 || fil == 78 || fil == 79 || fil == 80 || fil == 81) {
                     fil = matrizLexico[fil][50];
-                    System.out.println(">>>>dCM: Fila actualizada caracter[" + linea[i] + "]: " + fil);
+//                    System.out.println(">>>>dCM: Fila actualizada caracter[" + linea[i] + "]: " + fil);
                     if (fil > 0) {
                         fil = matrizLexico[fil][50];
                     }
@@ -3291,6 +3328,7 @@ public class Interfaz extends javax.swing.JFrame {
                         fil = -46;
                     }
                     fil = palabraReservada(lexema, fil);
+
                     tokens[nT] = new Token(fil, lexema, lineaActual);
                     if (fil != -5) {
                         oper.insertarUltimo(fil, lexema, lineaActual);
@@ -3302,7 +3340,8 @@ public class Interfaz extends javax.swing.JFrame {
                     actualizarTablaToken(tokens);
                     aumentarArregloToken();
                     contadoresLexico(fil);
-                    System.out.println("[[[TOKENIZADO]]] en " + fil);
+//                    System.out.println("[[DCM [TOKENIZADO]]] en " + fil);
+                    addToLog("[[DCM [TOKENIZADO]]] en " + fil);
                     fil = 0;
                     lexema = "";
                 } else {
@@ -3369,7 +3408,8 @@ public class Interfaz extends javax.swing.JFrame {
                             }
                             actualizarTablaError(errores);
                             aumentarArregloError();
-                            System.out.println("[[[ERRORIZADO]]] en " + fil);
+//                            System.out.println("[DCM [[ERRORIZADO]]] en " + fil);
+                            addToLog("[DCM [[ERRORIZADO]]] en " + fil);
                             fil = 0;
                             lexema = "";
 
@@ -3388,6 +3428,7 @@ public class Interfaz extends javax.swing.JFrame {
                             }
 
                             fil = palabraReservada(lexema, fil);
+
                             tokens[nT] = new Token(fil, lexema, lineaActual);
                             contadoresLexico(fil);
                             if (fil != -5) {
@@ -3399,7 +3440,8 @@ public class Interfaz extends javax.swing.JFrame {
                             }
                             aumentarArregloToken();
                             lexema = deslexemizador(lexema);
-                            System.out.println("[[[TOKENIZADO]]] en " + fil);
+//                            System.out.println("[[[TOKENIZADO]]] en " + fil);
+                            addToLog("[DCM [[ERRORIZADO]]] en " + fil);
                             fil = 0;
                             lexema = "";
                         }
@@ -3470,7 +3512,8 @@ public class Interfaz extends javax.swing.JFrame {
                                 aumentarArregloError();
                                 fil = 0;
                                 lexema = "";
-                                System.out.println("[[[ERRORIZADO]]]");
+//                                System.out.println("[DCM [[ERRORIZADO]]]");
+                                addToLog("[DCM [[ERRORIZADO]]] en " + fil);
                             } else {
                                 if (lexema == ":") {
                                     fil = -110;
@@ -3485,6 +3528,7 @@ public class Interfaz extends javax.swing.JFrame {
                                     fil = -46;
                                 }
                                 fil = palabraReservada(lexema, fil);
+//                                System.out.println("[[TOKENIZADO MAMALON]]Esto es un nge? " + lexema);
                                 tokens[nT] = new Token(fil, lexema, lineaActual);
                                 contadoresLexico(fil);
                                 if (fil != -5) {
@@ -3496,7 +3540,8 @@ public class Interfaz extends javax.swing.JFrame {
                                     contadorIdentificadores++;
                                 }
                                 aumentarArregloToken();
-                                System.out.println("[[[TOKENIZADO]]] en " + fil);
+//                                System.out.println("[DCM [[TOKENIZADO]]] en " + fil);
+                                addToLog("[DCM [[TOKENIZADO]]] en " + fil);
                                 fil = 0;
                                 lexema = "";
                                 banderaBinHexOct = false;
@@ -3506,7 +3551,8 @@ public class Interfaz extends javax.swing.JFrame {
                 }
             }
         }
-        System.out.println("----- FIN DE DESMENUZADOR CRIMINAL MUTILADOR-----");
+        addToLog("----- FIN DE DESMENUZADOR CRIMINAL MUTILADOR-----");
+//        System.out.println("----- FIN DE DESMENUZADOR CRIMINAL MUTILADOR-----");
     }
 
     String destabulador(String lexema) {
@@ -3545,7 +3591,8 @@ public class Interfaz extends javax.swing.JFrame {
             largoExpresion++;
             lineaHoja += linea[i] + "";
             boolean quebrador = false;
-            System.out.println("--- Caracter: [" + linea[i] + "] ---");
+//            System.out.println("--- Caracter: [" + linea[i] + "] ---");
+            addToLog("[LEXICO]--- Caracter: [" + linea[i] + "] ---");
             int col = asignarColumna(linea[i]);
             char aux = ' ';
             int colAux = 0;
@@ -3554,7 +3601,8 @@ public class Interfaz extends javax.swing.JFrame {
                 colAux = asignarColumna(aux);
             }
 
-            System.out.println("Fila: " + fil + "  /// Columna: " + col);
+//            System.out.println("Fila: " + fil + "  /// Columna: " + col);
+            addToLog("[LEXICO] Fila: " + fil + "  /// Columna: " + col);
             int estado;
             if (fil < 500 && fil > 0) {
                 estado = matrizLexico[fil][col];
@@ -3562,7 +3610,8 @@ public class Interfaz extends javax.swing.JFrame {
                 estado = fil;
             }
 
-            System.out.println("Estado: " + estado);
+//            System.out.println("[LEXICO] Estado: " + estado);
+            addToLog("[LEXICO] Estado: " + estado);
             if (estado < 500 && estado >= 0) {
                 fil = matrizLexico[fil][col];
             } else if (estado >= 500) {
@@ -3574,7 +3623,8 @@ public class Interfaz extends javax.swing.JFrame {
             } else {
                 estadoAux = fil;
             }
-            System.out.println("Estado auxiliar´: " + estadoAux);
+//            System.out.println("[LEXICO] Estado auxiliar´: " + estadoAux);
+            addToLog("[LEXICO] Estado auxiliar´: " + estadoAux);
             if (estado == 7 && multi == false) {
                 multi = true;
                 lineaMultiComentario = lineaActual;
@@ -3593,7 +3643,7 @@ public class Interfaz extends javax.swing.JFrame {
                 }
                 activador2 = 1;
                 if (multiLinea == 3) {
-                    System.out.println("-------Entro a MultiLinea=3");
+//                    System.out.println("-------Entro a MultiLinea=3");
                     estado = -3;
                     multi = false;
                     tokens[nT] = new Token(estado, lexemaMultiple, lineaMultiComentario);
@@ -3613,36 +3663,41 @@ public class Interfaz extends javax.swing.JFrame {
                     fil = 0;
                 }
             } else {//-------------Resto de las expresiones------------
-                System.out.println("Largo de expresion: " + largoExpresion + ", linea.lenght: " + linea.length);
+//                System.out.println("[LEXICO] Largo de expresion: " + largoExpresion + ", linea.lenght: " + linea.length);
+                addToLog("[LEXICO] Largo de expresion: " + largoExpresion + ", linea.lenght: " + linea.length);
                 try {
                     if (largoExpresion == linea.length) {
                         col = 1;
-                        System.out.println("Se agrego un salto de linea");
+//                        System.out.println("Se agrego un salto de linea");
                     }
                 } catch (Exception e) {
 
                 }
-                System.out.println("Estado: " + estado);
+//                System.out.println("[LEXICO] Estado: " + estado);
+                addToLog("[LEXICO] Estado: " + estado);
                 if (linea[i] != ' ' || linea[i] != ' ') {
                     lexema += linea[i];
                 }
                 estado = estadoAux;
-                System.out.println("--Estado: " + estado);
+//                System.out.println("[LEXICO] Estado auxiliar: " + estado);
+                addToLog("[LEXICO] Estado auxiliar: " + estado);
                 if (i + 1 == linea.length) {
                     if (fil > 0 && fil < 500) {
                         estadoAux = matrizLexico[fil][50];
                     }
                     //  System.out.println("Largo de la linea, fil: " + fil + ", col: 50");
-                    System.out.println("Contenido: " + estadoAux);
+//                    System.out.println("[LEXICO] Contenido: " + estadoAux);
                     estado = estadoAux;
-                    System.out.println("--Estado 2: " + estado);
+//                    System.out.println("[LEXICO] Estado auxiliar 2: " + estado);
                 }
                 if (estadoAux >= 500 || estadoError == true) {
                     estadoError = false;
                     contadoresLinea[lineaActual - 1][0]++;
                     //System.err.println("-------------Entro a error------------");
-                    System.out.println("Fila: " + fil + " Columna: " + col + " nE: " + nR);
-                    System.out.println("Contenido del error erroroso: " + estado);
+//                    System.out.println("[LEXICO] Fila: " + fil + " Columna: " + col + " nE: " + nR);
+//                    System.out.println("[LEXICO] Contenido del error erroroso: " + estado);
+                    addToLog("[LEXICO] Fila: " + fil + " Columna: " + col + " nE: " + nR);
+                    addToLog("[LEXICO] Contenido del error erroroso: " + estado);
 
                     switch (estado) {
                         case 500:
@@ -3656,11 +3711,11 @@ public class Interfaz extends javax.swing.JFrame {
                         case 502:
                             contadoresLexico[0]++;
                             errores[nR] = new Error(estado, "Se esperaba un carácter o una \"", lexema, lineaActual, "Lexico");
-                            desmenuzadorCriminalMutilador(lineaAuxiliar);
+                            desmenuzadorCriminalMutilador(lexema);
                             break;
                         case 504:
                             contadoresLexico[0]++;
-                            desmenuzadorCriminalMutilador(lineaAuxiliar);
+                            desmenuzadorCriminalMutilador(lexema);
                             errores[nR] = new Error(estado, "Se esperaba un número del 0 al 9", lexema, lineaActual, "Lexico");
                             break;
                         case 505:
@@ -3670,19 +3725,19 @@ public class Interfaz extends javax.swing.JFrame {
                             break;
                         case 506:
                             contadoresLexico[0]++;
-                            desmenuzadorCriminalMutilador(lineaAuxiliar);
+                            desmenuzadorCriminalMutilador(lexema);
                             break;
                         case 507:
                             contadoresLexico[0]++;
-                            desmenuzadorCriminalMutilador(lineaAuxiliar);
+                            desmenuzadorCriminalMutilador(lexema);
                             break;
                         case 508:
                             contadoresLexico[0]++;
-                            desmenuzadorCriminalMutilador(lineaAuxiliar);
+                            desmenuzadorCriminalMutilador(lexema);
                             break;
                         case 509:
                             contadoresLexico[0]++;
-                            desmenuzadorCriminalMutilador(lineaAuxiliar);
+                            desmenuzadorCriminalMutilador(lexema);
                             break;
                         case 510:
                             contadoresLexico[0]++;
@@ -3702,11 +3757,13 @@ public class Interfaz extends javax.swing.JFrame {
 //                            desmenuzadorCriminalMutilador(lineaAuxiliar);
                             break;
                         case 514:
-                            desmenuzadorCriminalMutilador(lineaAuxiliar);
-//                            System.out.println("lexema antes del error "+lexema);
-//                            desmenuzadorCriminalMutilador(lexema.charAt(0)+"");
-//                            lexema=deslexemizador(lexema.charAt(0)+"");
-//                            System.out.println("lexema despues del error "+lexema);
+                            desmenuzadorCriminalMutilador(lexema);
+//                            System.out.println("[ANALIZADOR ERROR 514] Lexema antes del error " + lexema);
+                            addToLog("[ANALIZADOR ERROR 514] Lexema antes del error " + lexema);
+//                            desmenuzadorCriminalMutilador(lexema.charAt(0) + "");
+                            //lexema=deslexemizador(lexema.charAt(0)+"");
+                            addToLog("[ANALIZADOR ERROR 514] Lexema despues del error " + lexema);
+//                            System.out.println("[ANALIZADOR ERROR 514] Lexema despues del error " + lexema);
                             break;
                         case 515:
                             contadoresLexico[0]++;
@@ -3719,11 +3776,11 @@ public class Interfaz extends javax.swing.JFrame {
                             break;
                         case 517:
                             contadoresLexico[0]++;
-                            desmenuzadorCriminalMutilador(lineaAuxiliar);
+                            desmenuzadorCriminalMutilador(lexema);
                             break;
                         case 518:
                             contadoresLexico[0]++;
-                            desmenuzadorCriminalMutilador(lineaAuxiliar);
+                            desmenuzadorCriminalMutilador(lexema);
                             break;
                         default:
                             contadoresLexico[0]++;
@@ -3741,11 +3798,13 @@ public class Interfaz extends javax.swing.JFrame {
                     fil = 0;
                     col = 0;
                 } else if (estadoAux < 0) {
-                    System.out.println("Nt antes de ingresar a arreglo: " + nT);
-                    System.out.println("Exito");
-                    System.out.println("Fila: " + fil + " Columna: " + col + " nT: " + nT);
+//                    System.out.println("Nt antes de ingresar a arreglo: " + nT);
+//                    System.out.println("Exito");
+//                    System.out.println("Fila: " + fil + " Columna: " + col + " nT: " + nT);
+                    addToLog("[ANALIZADOR] Fila: " + fil + " Columna: " + col + " nT: " + nT);
                     estado = palabraReservada(lexema, estado);
-                    System.out.println("[ANALIZADOR] Estado despues de palabra reservada: "+estado);
+//                    System.out.println("[ANALIZADOR] Estado despues de palabra reservada: " + estado);
+                    addToLog("[ANALIZADOR] Estado despues de palabra reservada: " + estado);
                     if (lexema.equals(":")) {
                         estado = -110;
                     }
@@ -3756,23 +3815,29 @@ public class Interfaz extends javax.swing.JFrame {
                         estado = -46;
                     }
                     tokens[nT] = new Token(estado, lexema, lineaActual);
+
+//                    System.out.println("[[ANALIZADOR - TOKENIZADO]]");
+                    addToLog("[[ANALIZADOR - TOKENIZADO]]");
                     if (estado != -5) {
                         oper.insertarUltimo(estado, lexema, lineaActual);
                     }
-                    lexema = deslexemizador(lexema);
+                    //lexema = deslexemizador(lexema);
                     if (estado == -6) {
                         contadorIdentificadores++;
                     }
 //                    contadoresLexico(estado);
-                    System.out.println("Si paso");
                     for (int w = 0; w < tokens.length; w++) {
-                        System.out.println("----------Tokens----------");
-                        System.out.println("Estado del token [" + w + "]: " + tokens[w].getEstado());
-                        System.out.println("Lexema del token [" + w + "]: " + tokens[w].getLexema());
-                        System.out.println("--------------------------");
+                        addToLog("----------Tokens----------");
+                        addToLog("Estado del token [" + w + "]: " + tokens[w].getEstado());
+                        addToLog("Lexema del token [" + w + "]: " + tokens[w].getLexema());
+                        addToLog("--------------------------");
+//                        System.out.println("----------Tokens----------");
+//                        System.out.println("Estado del token [" + w + "]: " + tokens[w].getEstado());
+//                        System.out.println("Lexema del token [" + w + "]: " + tokens[w].getLexema());
+//                        System.out.println("--------------------------");
                     }
+                    lexema = deslexemizador(lexema);
                     lexema = "";
-
                     actualizarTablaToken(tokens);
                     aumentarArregloToken();
 
@@ -3781,9 +3846,10 @@ public class Interfaz extends javax.swing.JFrame {
                 }
             }
             col = 0;//Se necesita para comenzar el recorrido desde la primera columna
-            System.out.println("");
+//            System.out.println("");
         }
-        System.out.println("---Termino el analizador de lexico---");
+        addToLog("---Termino el analizador de lexico---");
+//        System.out.println("---Termino el analizador de lexico---");
 //        System.out.println(oper.mostrarPrimero());
 
     }
@@ -4368,7 +4434,8 @@ public class Interfaz extends javax.swing.JFrame {
         if (ambito >= ambitoMayor) {
             ambitoMayor = ambito;
         }
-        System.out.println(fondoAzul + letraMorada + "<AUMENTAR AMBITO> Se ha aumentado el ambito" + ANSI_RESET);
+//        System.out.println("<AUMENTAR AMBITO> Se ha aumentado el ambito");
+        addToLog("<AUMENTAR AMBITO> Se ha aumentado el ambito");
         ambitoActualDisponible++;
     }
 
@@ -4380,10 +4447,13 @@ public class Interfaz extends javax.swing.JFrame {
     boolean variableDeclarada(String id) {
         boolean existencia = false;
         int estadoInt = 0;
-        System.out.println(fondoRojo + letraMorada + "Valor ID: " + id + ANSI_RESET);
-        System.out.println(fondoRojo + letraMorada + "Valor ambito: " + ambitoVariable + ANSI_RESET);
+        addToLog("[VARIABLE DECLARADA] Valor ID: " + id);
+        addToLog("[VARIABLE DECLARADA] Valor ambito: " + ambitoVariable);
+//        System.out.println("Valor ID: " + id);
+//        System.out.println("Valor ambito: " + ambitoVariable);
         try {
-            System.out.println("<MySQL:agregarVariable> Prueba de conexion a MySQL");
+//            System.out.println("<MySQL:agregarVariable> Prueba de conexion a MySQL");
+            addToLog("<MySQL:agregarVariable> Prueba de conexion a MySQL");
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329", "root", "root");
             st = con.createStatement();
@@ -4403,13 +4473,16 @@ public class Interfaz extends javax.swing.JFrame {
             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println(fondoRojo + letraMorada + "VALOR DE ESTADO INT: " + estadoInt + ANSI_RESET);
+//        System.out.println("[VARIABLE DECLARADA] VALOR DE ESTADO INT: " + estadoInt);
+        addToLog("[VARIABLE DECLARADA] VALOR DE ESTADO INT: " + estadoInt);
         if (estadoInt == 1) {
             existencia = true;
-            System.out.println(fondoRojo + letraMorada + "VARIABLE EXITENTE" + ANSI_RESET);
+//            System.out.println("[VARIABLE DECLARADA] VARIABLE EXISTENTE");
+            addToLog("[VARIABLE DECLARADA] VARIABLE EXISTENTE");
         } else {
             existencia = false;
-            System.out.println(fondoRojo + letraMorada + "VARIABLE NO EXISTENTE" + ANSI_RESET);
+//            System.out.println("[VARIABLE DECLARADA] VARIABLE NO EXISTENTE");
+            addToLog("[VARIABLE DECLARADA] VARIABLE NO EXISTENTE");
         }
         return existencia;
     }
@@ -4418,7 +4491,8 @@ public class Interfaz extends javax.swing.JFrame {
         boolean existencia = false;
         int estadoInt = 0;
         try {
-            System.out.println("<MySQL:agregarVariable> Prueba de conexion a MySQL");
+//            System.out.println("[VARIABLE DECLARADA] <MySQL:agregarVariable> Prueba de conexion a MySQL");
+            addToLog("[VARIABLE DECLARADA] <MySQL:agregarVariable> Prueba de conexion a MySQL");
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329", "root", "root");
             st = con.createStatement();
@@ -4438,22 +4512,27 @@ public class Interfaz extends javax.swing.JFrame {
             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println(fondoRojo + letraMorada + "VALOR DE ESTADO INT: " + estadoInt + ANSI_RESET);
+        System.out.println("[VARIABLE DECLARADA] VALOR DE ESTADO INT: " + estadoInt);
+        addToLog("[VARIABLE DECLARADA] VALOR DE ESTADO INT: " + estadoInt);
         if (estadoInt >= 1) {
             existencia = true;
-            System.out.println(fondoRojo + letraMorada + "VARIABLE DUPLICADA" + ANSI_RESET);
+            System.out.println("[VARIABLE DECLARADA] VARIABLE DUPLICADA");
+            addToLog("[VARIABLE DECLARADA] VARIABLE DUPLICADA");
         } else {
             existencia = false;
-            System.out.println(fondoRojo + letraMorada + "VARIABLE NO DUPLICADA" + ANSI_RESET);
+            System.out.println("[VARIABLE DECLARADA] VARIABLE NO DUPLICADA");
+            addToLog("[VARIABLE DECLARADA] VARIABLE NO DUPLICADA");
         }
 
         return existencia;
     }
 
     void agregarVariable() {
-        System.out.println(fondoCyan + letraAzul + "----Agregar Variable----" + ANSI_RESET);
+//        System.out.println("---------Agregar Variable----------");
+        addToLog("---------Agregar Variable----------");
         try {
-            System.out.println("<MySQL:agregarVariable> Prueba de conexion a MySQL");
+//            System.out.println("<MySQL:agregarVariable> Prueba de conexion a MySQL");
+            addToLog("<MySQL:agregarVariable> Prueba de conexion a MySQL");
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329", "root", "root");
             st = con.createStatement();
@@ -4462,10 +4541,16 @@ public class Interfaz extends javax.swing.JFrame {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println(fondoRojo + letraVerde + "<AMBITO:agregarVariable> " + "Variable: " + nombreVariable
+        addToLog("<AMBITO:agregarVariable> " + "Variable: " + nombreVariable
+                
                 + ", Tipo: " + claseVariable
                 + ", Ambito: " + ambito
-                + ", Clase: " + tipoVariable + ANSI_RESET);
+                + ", Clase: " + tipoVariable);
+//        System.out.println("<AMBITO:agregarVariable> " + "Variable: " + nombreVariable
+//                
+//                + ", Tipo: " + claseVariable
+//                + ", Ambito: " + ambito
+//                + ", Clase: " + tipoVariable);
         String query;
 
         boolean variableDuplicada = variableDuplicada(nombreVariable);
@@ -4482,7 +4567,7 @@ public class Interfaz extends javax.swing.JFrame {
             case "Booleana":
                 if (areaDeclaracion && !variableDuplicada) {
                     tipoVariable = "var";
-                    ambitoVariable = ambito + "";
+                    ambitoVariable = ambito + "";                      
                     query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,valor) VALUES("
                             + "'" + nombreVariable + "',"
                             + "'" + claseVariable + "',"
@@ -4578,7 +4663,7 @@ public class Interfaz extends javax.swing.JFrame {
                     banderaTupla = false;
                     agregarTupla = false;
                     bandera814 = false;
-                    System.out.println("contadorTupla: " + contadorTupla);
+//                    System.out.println("contadorTupla: " + contadorTupla);
                     for (int i = 0; i < contadorTupla; i++) {
                         tuplaArreglo[i].setAmb(ambito + "");
                         String tipoE = tuplaArreglo[i].getTipo();
@@ -4650,7 +4735,7 @@ public class Interfaz extends javax.swing.JFrame {
                     agregarLista = false;
                     bandera814 = false;
                     tamVariablesGuardadasArr++;
-                    System.out.println("contadorElemenosLista: " + contadorElementosLista);
+//                    System.out.println("contadorElemenosLista: " + contadorElementosLista);
                     for (int i = 0; i < contadorElementosLista; i++) {
                         listaArreglo[i].setAmb(ambito + "");
                         String tipoE = listaArreglo[i].getTipo();
@@ -4725,7 +4810,7 @@ public class Interfaz extends javax.swing.JFrame {
                     Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                System.out.println("contadorConjunto: " + contadorConjunto);
+//                System.out.println("contadorConjunto: " + contadorConjunto);
                 for (int i = 0; i < contadorConjunto; i++) {
                     conjunto[i].setAmb(ambito + "");
                     String tipoE = conjunto[i].getTipo();
@@ -4761,7 +4846,7 @@ public class Interfaz extends javax.swing.JFrame {
                 bandera814 = false;
                 break;
             case "Diccionario":
-                System.out.println(fondoRojo + "InsertarDiccionario");
+//                System.out.println(fondoRojo + "InsertarDiccionario");
                 aumentarAmbito();
                 ambitoCreado = ambito + "";
                 query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado) VALUES("
@@ -4777,7 +4862,7 @@ public class Interfaz extends javax.swing.JFrame {
                     Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                System.out.println("contadorDiccionario: " + contadorDiccionario);
+//                System.out.println("contadorDiccionario: " + contadorDiccionario);
                 for (int i = 0; i < contadorDiccionario; i++) {
                     diccionario[i].setAmb(ambito + "");
                     String tipoE = diccionario[i].getTipo();
@@ -4828,7 +4913,8 @@ public class Interfaz extends javax.swing.JFrame {
             claseVariable = "None";
             tipoVariable = "par";
         }
-        System.out.println(fondoCyan + letraAzul + "---- Fin Agregar Variable----" + ANSI_RESET);
+//        System.out.println("---------Fin Agregar Variable---------");
+        addToLog("---------Fin Agregar Variable---------");
     }
 
     String tipoConstante(int token) {
@@ -5343,25 +5429,38 @@ public class Interfaz extends javax.swing.JFrame {
     }
 
     void imprimirArregloTablaSimbolos() {
-        System.out.println("-----Tabla de Simbolos-----");
+        addToLog("------------------------------------Tabla de Simbolos------------------------------------");
+        //System.out.println("------------------------------------Tabla de Simbolos------------------------------------");
         try {
             for (int i = 0; i < tamVariablesGuardadasArr; i++) {
-                System.out.println("<ArregloSimbolosAmbito> ID:" + tablaSimbolos[i].getId());
-                System.out.println("<ArregloSimbolosAmbito> Tipo:" + tablaSimbolos[i].getTipo());
-                System.out.println("<ArregloSimbolosAmbito> Clase:" + tablaSimbolos[i].getClase());
-                System.out.println("<ArregloSimbolosAmbito> Ambito:" + tablaSimbolos[i].getAmb());
-                System.out.println("<ArregloSimbolosAmbito> Tamano Arr:" + tablaSimbolos[i].getTarr());
-                System.out.println("<ArregloSimbolosAmbito> Ambito Creado:" + tablaSimbolos[i].getAmbCreado());
-                System.out.println("<ArregloSimbolosAmbito> Numero de Posicion:" + tablaSimbolos[i].getNoPos());
-                System.out.println("<ArregloSimbolosAmbito> Valor:" + tablaSimbolos[i].getValor());
-                System.out.println("<ArregloSimbolosAmbito> Rango:" + tablaSimbolos[i].getRango());
-                System.out.println("<ArregloSimbolosAmbito> Avance:" + tablaSimbolos[i].getAvance());
-                System.out.println("");
+                addToLog("<ArregloSimbolosAmbito> ID:" + tablaSimbolos[i].getId());
+                addToLog("<ArregloSimbolosAmbito> Tipo:" + tablaSimbolos[i].getTipo());
+                addToLog("<ArregloSimbolosAmbito> Clase:" + tablaSimbolos[i].getClase());
+                addToLog("<ArregloSimbolosAmbito> Ambito:" + tablaSimbolos[i].getAmb());
+                addToLog("<ArregloSimbolosAmbito> Tamano Arr:" + tablaSimbolos[i].getTarr());
+                addToLog("<ArregloSimbolosAmbito> Ambito Creado:" + tablaSimbolos[i].getAmbCreado());
+                addToLog("<ArregloSimbolosAmbito> Numero de Posicion:" + tablaSimbolos[i].getNoPos());
+                addToLog("<ArregloSimbolosAmbito> Valor:" + tablaSimbolos[i].getValor());
+                addToLog("<ArregloSimbolosAmbito> Rango:" + tablaSimbolos[i].getRango());
+                addToLog("<ArregloSimbolosAmbito> Avance:" + tablaSimbolos[i].getAvance());
+                addToLog("");
+//                System.out.println("<ArregloSimbolosAmbito> ID:" + tablaSimbolos[i].getId());
+//                System.out.println("<ArregloSimbolosAmbito> Tipo:" + tablaSimbolos[i].getTipo());
+//                System.out.println("<ArregloSimbolosAmbito> Clase:" + tablaSimbolos[i].getClase());
+//                System.out.println("<ArregloSimbolosAmbito> Ambito:" + tablaSimbolos[i].getAmb());
+//                System.out.println("<ArregloSimbolosAmbito> Tamano Arr:" + tablaSimbolos[i].getTarr());
+//                System.out.println("<ArregloSimbolosAmbito> Ambito Creado:" + tablaSimbolos[i].getAmbCreado());
+//                System.out.println("<ArregloSimbolosAmbito> Numero de Posicion:" + tablaSimbolos[i].getNoPos());
+//                System.out.println("<ArregloSimbolosAmbito> Valor:" + tablaSimbolos[i].getValor());
+//                System.out.println("<ArregloSimbolosAmbito> Rango:" + tablaSimbolos[i].getRango());
+//                System.out.println("<ArregloSimbolosAmbito> Avance:" + tablaSimbolos[i].getAvance());
+//                System.out.println("");
             }
         } catch (Exception e) {
-
+             addToLog("<ArregloSimbolosAmbito> [ERROR]" + e);
         }
-        System.out.println("-----Fin Tabla de Simbolos-----");
+        addToLog("------------------------------------Fin Tabla de Simbolos------------------------------------");
+//        System.out.println("------------------------------------Fin Tabla de Simbolos------------------------------------");
     }
 
     void establecerConexion() {
@@ -5433,6 +5532,582 @@ public class Interfaz extends javax.swing.JFrame {
         tablaTokens = new javax.swing.JTable();
         tablaTokens.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][]{
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
+                    {null, null, null},
                     {null, null, null},
                     {null, null, null},
                     {null, null, null},
