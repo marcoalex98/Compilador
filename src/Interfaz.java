@@ -34,6 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author marco
  */
 public class Interfaz extends javax.swing.JFrame {
+
     PrintStream out;
     boolean areaDeclaracion = true;
     boolean banderaAux = false;
@@ -83,6 +84,7 @@ public class Interfaz extends javax.swing.JFrame {
     boolean estadoError = false, banderaParametro = false,
             banderaArreglo = false, banderaTupla = false, banderaListaMultiple = false,
             banderaRango = false, banderaListaNormal = false, agregarLista = false,
+            banderaFor = false,
             agregarTupla = false, agregarConjunto, agregarDiccionario = false;
     String rango1 = "", rango2 = "", avance = "";
     int tamArr = 0, tamVariablesGuardadasArr = 0, contadorConjunto = 0, contadorDiccionario = 0;
@@ -194,7 +196,7 @@ public class Interfaz extends javax.swing.JFrame {
         {-13, 252, 232, -53, -75},//81
         {253, -53, -86},//82
         {254, 255, 250, -110, 232, -68},//83
-        {-87, 255, 250, -110, 232, -116, 232, -67},//84
+        {-87, 255, 250, -110, 232, -116, 232, -67, 8403},//84
         {-88, 255, 250, -110, 232, -79},//85
         {-59},//86
         {-61},//87
@@ -1316,30 +1318,7 @@ public class Interfaz extends javax.swing.JFrame {
         System.exit(0);  // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
-       File f = createFileToLog();
-        try{
-            FileOutputStream fos = new FileOutputStream(f);
-            out = new PrintStream(fos);
-            System.setOut(out);
-        }catch(Exception e){
-            
-        }
-        
-        contadorVariablesArreglo = 0;
-        String query = "DELETE FROM tablasimbolos";
-        try {
-            System.out.println("<MySQL> Prueba de conexion a MySQL");
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329?verifyServerCertificate=false&useSSL=true", "root", "root");
-            st = con.createStatement();
-            st.executeUpdate(query);
-             
-        } catch (SQLException e) {
-            System.err.println("<MySQL> Error de MySQL");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    void limpiarVariables() {
         nT = 0;
         nR = 0;
         tamArr = 0;
@@ -1356,6 +1335,45 @@ public class Interfaz extends javax.swing.JFrame {
         tamVariablesGuardadasArr = 0;
         conDia = new int[21];
         oper = new OperToken();
+        estadoError = false;
+        banderaParametro = false;
+        banderaArreglo = false;
+        banderaTupla = false;
+        banderaListaMultiple = false;
+        banderaRango = false;
+        banderaListaNormal = false;
+        agregarLista = false;
+        banderaFor = false;
+        agregarTupla = false;
+        agregarConjunto = false;
+        agregarDiccionario = false;
+    }
+
+    private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
+        File f = createFileToLog();
+        try {
+            FileOutputStream fos = new FileOutputStream(f);
+            out = new PrintStream(fos);
+            System.setOut(out);
+        } catch (Exception e) {
+
+        }
+
+        contadorVariablesArreglo = 0;
+        String query = "DELETE FROM tablasimbolos";
+        try {
+            System.out.println("<MySQL> Prueba de conexion a MySQL");
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329?verifyServerCertificate=false&useSSL=true", "root", "root");
+            st = con.createStatement();
+            st.executeUpdate(query);
+
+        } catch (SQLException e) {
+            System.err.println("<MySQL> Error de MySQL");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        limpiarVariables();
         limpiarTablas();
         String texto = jTextArea1.getText();
         String[] lineasHoja = texto.split("\n");
@@ -1392,16 +1410,16 @@ public class Interfaz extends javax.swing.JFrame {
             }
         }
         System.out.println("Sintaxis");
-        try{
+        try {
             actualizarTablaToken(tokens);
             actualizarTablaError(errores);
-        }catch(Exception e){
-            
+        } catch (Exception e) {
+
         }
-        
+
         sintaxis();
         System.out.println("Fin sintaxis");
-        
+
         if (!f.exists()) {
             try {
                 f.createNewFile();
@@ -1415,7 +1433,7 @@ public class Interfaz extends javax.swing.JFrame {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        
+
     }//GEN-LAST:event_btnCompilarActionPerformed
 
     void contadoresSintaxis(int produccion) {
@@ -2802,7 +2820,7 @@ public class Interfaz extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329?verifyServerCertificate=false&useSSL=true", "root", "root");
             st = con.createStatement();
-             
+
         } catch (SQLException e) {
             System.err.println("<MySQL:agregarVariable> Error de MySQL");
         } catch (ClassNotFoundException ex) {
@@ -2823,16 +2841,18 @@ public class Interfaz extends javax.swing.JFrame {
             con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329?verifyServerCertificate=false&useSSL=true", "root", "root");
             st = con.createStatement();
             datos = st.executeQuery(Consulta);
-             
+
         } catch (Exception e) {
             System.out.println(e.toString());
         }
         return datos;
     }
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         TablaSimbolosMySQL ts = new TablaSimbolosMySQL();
         ts.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
+
     int asignarColumna(char c) {
         int col = 0;
         boolean igual = false;
@@ -4391,7 +4411,7 @@ public class Interfaz extends javax.swing.JFrame {
         if (ambito >= ambitoMayor) {
             ambitoMayor = ambito;
         }
-        System.out.println("<AUMENTAR AMBITO> Se ha aumentado el ambito" );
+        System.out.println("<AUMENTAR AMBITO> Se ha aumentado el ambito");
         ambitoActualDisponible++;
     }
 
@@ -4410,7 +4430,7 @@ public class Interfaz extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329?verifyServerCertificate=false&useSSL=true", "root", "root");
             st = con.createStatement();
-             
+
         } catch (SQLException e) {
             System.err.println("<MySQL:agregarVariable> Error de MySQL");
         } catch (ClassNotFoundException ex) {
@@ -4446,7 +4466,7 @@ public class Interfaz extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329?verifyServerCertificate=false&useSSL=true", "root", "root");
             st = con.createStatement();
-             
+
         } catch (SQLException e) {
             System.err.println("<MySQL:agregarVariable> Error de MySQL");
         } catch (ClassNotFoundException ex) {
@@ -4483,7 +4503,7 @@ public class Interfaz extends javax.swing.JFrame {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329?verifyServerCertificate=false&useSSL=true", "root", "root");
             st = con.createStatement();
-             
+
         } catch (SQLException e) {
             System.err.println("<MySQL:agregarVariable> Error de MySQL");
         } catch (ClassNotFoundException ex) {
@@ -4629,6 +4649,7 @@ public class Interfaz extends javax.swing.JFrame {
                         query = "UPDATE tablasimbolos SET tamanoArreglo = '" + contadorTupla + "' where id='" + auxiliarNombreVariable + "';";
                         try {
                             st.executeUpdate(query);
+
                         } catch (SQLException ex) {
                             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -4855,7 +4876,7 @@ public class Interfaz extends javax.swing.JFrame {
             claseVariable = "None";
             tipoVariable = "par";
         }
-        System.out.println( "---- Fin Agregar Variable----");
+        System.out.println("---- Fin Agregar Variable----");
     }
 
     String tipoConstante(int token) {
@@ -4971,6 +4992,10 @@ public class Interfaz extends javax.swing.JFrame {
                     agregarDiccionario = true;
                 }
             }
+            if (pilaSintaxis.peek() == 8403) {//For
+                pilaSintaxis.pop();
+                banderaFor = true;
+            }
 
             if (nombreVariable != "" && claseVariable != "" && valorVariable != "" && banderaConstante) {
                 System.out.println("<AMBITO:sintaxis> Agregar Variable Constante");
@@ -5011,6 +5036,24 @@ public class Interfaz extends javax.swing.JFrame {
             if (pilaSintaxis.peek() == -6) {
                 auxiliarID = oper.mostrarLexemaPrimero();
             }
+            
+            if(banderaFor){
+                if(pilaSintaxis.peek() == -6){
+                    System.out.println("simonfor6");
+                    System.out.println("nombreVariable: "+auxiliarID);
+                    System.out.println("oper.primero: "+oper.mostrarLexemaPrimero());
+                    nombreVariable = auxiliarID;
+                }
+                if(pilaSintaxis.peek() == -7){
+                    aumentarAmbito();
+                    System.out.println("simonfor7");
+                    valorVariable = oper.mostrarLexemaPrimero();
+                    claseVariable = "Decimal";
+                    banderaConstante = true;
+                    banderaFor = false;
+                }
+            }
+            
 
             switch (pilaSintaxis.peek()) {
                 case 801:
@@ -5416,7 +5459,7 @@ public class Interfaz extends javax.swing.JFrame {
 //    }
     void actualizarTablaToken(Token[] tok
     ) {
-        for (int i = 0; i < tok.length-1; i++) {
+        for (int i = 0; i < tok.length - 1; i++) {
             tablaTokens.setValueAt(tok[i].getEstado(), i, 0);
             tablaTokens.setValueAt(tok[i].getLexema(), i, 1);
             tablaTokens.setValueAt(tok[i].getLinea(), i, 2);
@@ -6487,8 +6530,8 @@ public class Interfaz extends javax.swing.JFrame {
         ));
         jScrollPane4.setViewportView(tablaErrores);
     }
-    
-    File createFileToLog(){
+
+    File createFileToLog() {
         LocalDateTime localDate = LocalDateTime.now();
         int segundo = localDate.getSecond();
         int minuto = localDate.getMinute();
@@ -6500,7 +6543,7 @@ public class Interfaz extends javax.swing.JFrame {
     }
 
     void logWriter() {
-        
+
     }
 
     /**
