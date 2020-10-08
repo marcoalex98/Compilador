@@ -1,6 +1,11 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jxl.Cell;
@@ -14,6 +19,8 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
 public class GenerarExcelLexico {
+
+    Connection con;
 
     public void generarExcel(Token[] entradaTokens, Error[] entradaErrores, String ruta, int[] contadores,
             int[][] contadoresLinea, int[] contadoresSin, ContadorAmbito[] ambito) {
@@ -128,7 +135,7 @@ public class GenerarExcelLexico {
                 sheet.addCell(new jxl.write.Label(15, 0, "Diccionario", hFormat));
                 sheet.addCell(new jxl.write.Label(16, 0, "Datos de estructuras", hFormat));
                 sheet.addCell(new jxl.write.Label(17, 0, "Total/Ambito", hFormat));
-                
+
                 int filaMaximaAmbito = 0;
                 for (int i = 0; i < ambito.length; i++) {
                     sheet.addCell(new jxl.write.Label(0, i + 1, i + "", hFormat));
@@ -153,8 +160,8 @@ public class GenerarExcelLexico {
                 }
                 filaMaximaAmbito += 2;
                 int totalVariablesAmbito[] = new int[17];
-                
-                for(int i = 0; i < ambito.length; i++){
+
+                for (int i = 0; i < ambito.length; i++) {
                     totalVariablesAmbito[0] += ambito[i].Decimal;
                     totalVariablesAmbito[1] += ambito[i].Binario;
                     totalVariablesAmbito[2] += ambito[i].Octal;
@@ -192,8 +199,49 @@ public class GenerarExcelLexico {
                 sheet.addCell(new jxl.write.Label(15, filaMaximaAmbito, totalVariablesAmbito[14] + "", hFormat));
                 sheet.addCell(new jxl.write.Label(16, filaMaximaAmbito, totalVariablesAmbito[15] + "", hFormat));
                 sheet.addCell(new jxl.write.Label(17, filaMaximaAmbito, totalVariablesAmbito[16] + "", hFormat));
-                
-                
+
+                //Pagina 6 -----------------------------------Ambito------------------------------
+                sheet = woorkbook.createSheet("Tabla de Simbolos", 6);
+                sheet.addCell(new jxl.write.Label(0, 0, "ID", hFormat));
+                sheet.addCell(new jxl.write.Label(1, 0, "Tipo", hFormat));
+                sheet.addCell(new jxl.write.Label(2, 0, "Clase", hFormat));
+                sheet.addCell(new jxl.write.Label(3, 0, "Ambito", hFormat));
+                sheet.addCell(new jxl.write.Label(4, 0, "Tamano Arreglo", hFormat));
+                sheet.addCell(new jxl.write.Label(5, 0, "Ambito Creado", hFormat));
+                sheet.addCell(new jxl.write.Label(6, 0, "NoPos", hFormat));
+                sheet.addCell(new jxl.write.Label(7, 0, "Lista Pertenece", hFormat));
+                sheet.addCell(new jxl.write.Label(8, 0, "Rango", hFormat));
+                sheet.addCell(new jxl.write.Label(9, 0, "Avance", hFormat));
+                sheet.addCell(new jxl.write.Label(10, 0, "Llave", hFormat));
+                sheet.addCell(new jxl.write.Label(11, 0, "Valor", hFormat));
+
+                ResultSet rs = ejecutarQuery("SELECT * FROM tablasimbolos");
+                int fila = 1;
+                try {
+                    while (rs.next()) {
+                        sheet.addCell(new jxl.write.Label(0, fila, rs.getString("id"), hFormat));
+                        sheet.addCell(new jxl.write.Label(1, fila, rs.getString("tipo"), hFormat));
+                        sheet.addCell(new jxl.write.Label(2, fila, rs.getString("clase"), hFormat));
+                        sheet.addCell(new jxl.write.Label(3, fila, rs.getString("ambito"), hFormat));
+                        sheet.addCell(new jxl.write.Label(4, fila, rs.getString("tamanoArreglo"), hFormat));
+                        sheet.addCell(new jxl.write.Label(5, fila, rs.getString("ambitoCreado"), hFormat));
+                        sheet.addCell(new jxl.write.Label(6, fila, rs.getString("noPos"), hFormat));
+                        sheet.addCell(new jxl.write.Label(7, fila, rs.getString("listaPertenece"), hFormat));
+                        sheet.addCell(new jxl.write.Label(8, fila, rs.getString("rango"), hFormat));
+                        sheet.addCell(new jxl.write.Label(9, fila, rs.getString("avance"), hFormat));
+                        sheet.addCell(new jxl.write.Label(10, fila, rs.getString("llave"), hFormat));
+                        sheet.addCell(new jxl.write.Label(11, fila, rs.getString("valor"), hFormat));
+//                        modelo.addRow(new Object[]{rs.getString("id"), rs.getString("tipo"), rs.getString("clase"),
+//                            rs.getString("ambito"), rs.getString("tamanoArreglo"), rs.getString("ambitoCreado"),
+//                            rs.getString("noPos"), rs.getString("listaPertenece"), rs.getString("rango"),
+//                            rs.getString("avance"), rs.getString("llave"), rs.getString("valor")});
+                        fila++;
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(TablaSimbolosMySQL.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println(ex);
+                }
+
                 woorkbook.write();
                 woorkbook.close();
             } catch (WriteException ex) {
@@ -206,5 +254,26 @@ public class GenerarExcelLexico {
         }
 
     }
-    
+
+    public ResultSet ejecutarQuery(String query) {
+        ResultSet rs = null;
+        try {
+            System.out.println("<MySQL> Prueba de conexion a MySQL");
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost/a16130329?verifyServerCertificate=false&useSSL=true", "root", "root");
+            System.out.println("<TablaSimbolosMySQL> Conexion exitosa");
+
+            Statement estado = con.createStatement();
+            rs = estado.executeQuery(query);
+
+        } catch (SQLException e) {
+            System.err.println("<TablaSimbolosMySQL> Error de MySQL");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("<TablaSimbolosMySQL> Error detectado: " + e.getMessage());
+        }
+        return rs;
+    }
+
 }

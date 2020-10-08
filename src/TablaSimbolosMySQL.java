@@ -40,11 +40,8 @@ public class TablaSimbolosMySQL extends javax.swing.JFrame {
 
     void llenarTabla() {
         DefaultTableModel modelo = (DefaultTableModel)jTable1.getModel();
-        
         ResultSet rs = ejecutarQuery("SELECT * FROM tablasimbolos");
-        System.out.println("rs: "+rs);
         try {
-            
             while (rs.next()) {
                 modelo.addRow(new Object[]{rs.getString("id"),rs.getString("tipo"),rs.getString("clase"),
                 rs.getString("ambito"),rs.getString("tamanoArreglo"),rs.getString("ambitoCreado"),
