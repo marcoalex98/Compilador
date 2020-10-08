@@ -1,0 +1,211 @@
+<MySQL> Prueba de conexion a MySQL
+Texto original:
+ddddd
+Texto modificado:
+
+Linea 0: ddddd
+Lineas del documento: 1
+<MySQL> Prueba de conexion a MySQL
+<MySQL> Conexion exitosa
+<MySQL> Resultado de la tabla simbolo
+Largo de arreglo de la linea [0]: 5
+j: 0, contenido: d
+j: 1, contenido: d
+j: 2, contenido: d
+j: 3, contenido: d
+j: 4, contenido: d
+--- Caracter: [d] ---
+Fila: 0  /// Columna: 17
+Estado: 0
+Estado auxiliar´: 15
+Largo de expresion: 1, linea.lenght: 5
+Estado: 0
+--Estado: 15
+
+--- Caracter: [d] ---
+Fila: 15  /// Columna: 17
+Estado: 15
+Estado auxiliar´: 15
+Largo de expresion: 2, linea.lenght: 5
+Estado: 15
+--Estado: 15
+
+--- Caracter: [d] ---
+Fila: 15  /// Columna: 17
+Estado: 15
+Estado auxiliar´: 15
+Largo de expresion: 3, linea.lenght: 5
+Estado: 15
+--Estado: 15
+
+--- Caracter: [d] ---
+Fila: 15  /// Columna: 17
+Estado: 15
+Estado auxiliar´: 15
+Largo de expresion: 4, linea.lenght: 5
+Estado: 15
+--Estado: 15
+
+--- Caracter: [d] ---
+Fila: 15  /// Columna: 17
+Estado: 15
+Estado auxiliar´: 15
+Largo de expresion: 5, linea.lenght: 5
+Se agrego un salto de linea
+Estado: 15
+--Estado: 15
+Contenido: -6
+--Estado 2: -6
+Nt antes de ingresar a arreglo: 0
+Exito
+Fila: 15 Columna: 1 nT: 0
+Lexema:ddddd|
+[ANALIZADOR] Estado despues de palabra reservada: -6
+[[ANALIZADOR - TOKENIZADO]]
+Estaba vacia, se inserto 🙂
+Lexema antes de deslexemizador: ddddd
+[DESLEXEMIZADOR] Lexema a eliminar: ddddd
+[DESLEXEMIZADOR] Linea auxiliar entrante: ddddd
+[DESLEXEMIZADOR] aux[].length: 5
+[DESLEXEMIZADOR] aux[0]: d
+[DESLEXEMIZADOR] aux[1]: d
+[DESLEXEMIZADOR] aux[2]: d
+[DESLEXEMIZADOR] aux[3]: d
+[DESLEXEMIZADOR] aux[4]: d
+---------------------------------------
+[DESLEXEMIZADOR] newAux[].length: 0
+[DESLEXEMIZADOR] Linea auxiliar saliente: ||
+[DESLEXEMIZADOR] Lexema resultante: ||
+Lexema despues de deslexemizador: 
+
+---Termino el analizador de lexico---
+Sintaxis
+<ARREGLO DE AMBITO> Largo de Arreglo: 1
+
+
+
+----------SINTAXIS DE LA MUERTE----------
+<AMBITO:sintaxis> Nombre variable: 
+<AMBITO:sintaxis> Tipo variable: 
+<AMBITO:sintaxis> Clase variable: 
+<AMBITO:sintaxis> Rango 1: 
+<AMBITO:sintaxis> Rango 2: 
+<AMBITO:sintaxis> Avance: 
+<AMBITO:sintaxis> Ambito: 0
+<AMBITO:sintaxis> Ambito Creado: 
+<AMBITO:sintaxis> Cima de pila: 200
+--------------<INICIO DE CICLO SINTAXIS VUELTA 1>--------------
+<SINTAXIS> Cima de la pila: 200
+<SINTAXIS> Lexema de primero: ddddd
+<SINTAXIS> Valor de la fila: 0
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 1
+Valor de la fila: 0
+<SINTAXIS Fila: 0, Columna: 1>   Produccion: 1
+
+Contenido de columnas
+1    1    ---Contadores Sintaxis---
+Produccion: 200
+SE AUMENTO EL CONTADOR DE 1
+<SINTAXIS> Valor de lugar: 1
+<SINTAXIS> Se agrego -48 a la pila
+<SINTAXIS> Se agrego 802 a la pila
+<SINTAXIS> Se agrego 204 a la pila
+<SINTAXIS> Se agrego 250 a la pila
+<SINTAXIS> Se agrego 801 a la pila
+<SINTAXIS> Se agrego -51 a la pila
+<SINTAXIS> Se agrego 201 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+<AMBITO:sintaxis> Nombre variable: 
+<AMBITO:sintaxis> Tipo variable: 
+<AMBITO:sintaxis> Clase variable: 
+<AMBITO:sintaxis> Rango 1: 
+<AMBITO:sintaxis> Rango 2: 
+<AMBITO:sintaxis> Avance: 
+<AMBITO:sintaxis> Ambito: 0
+<AMBITO:sintaxis> Ambito Creado: 
+<AMBITO:sintaxis> Cima de pila: 201
+--------------<INICIO DE CICLO SINTAXIS VUELTA 2>--------------
+<SINTAXIS> Cima de la pila: 201
+<SINTAXIS> Lexema de primero: ddddd
+<SINTAXIS> Valor de la fila: 1
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 1
+Valor de la fila: 1
+<SINTAXIS Fila: 1, Columna: 1>   Produccion: 3
+
+Contenido de columnas
+2    3    ---Contadores Sintaxis---
+Produccion: 201
+SE AUMENTO EL CONTADOR DE 3
+<SINTAXIS> Valor de lugar: 3
+<SINTAXIS> Se agrego 201 a la pila
+<SINTAXIS> Se agrego -45 a la pila
+<SINTAXIS> Se agrego 211 a la pila
+<SINTAXIS> Se agrego -42 a la pila
+<SINTAXIS> Se agrego -6 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+<AMBITO:sintaxis> Nombre variable: 
+<AMBITO:sintaxis> Tipo variable: 
+<AMBITO:sintaxis> Clase variable: 
+<AMBITO:sintaxis> Rango 1: 
+<AMBITO:sintaxis> Rango 2: 
+<AMBITO:sintaxis> Avance: 
+<AMBITO:sintaxis> Ambito: 0
+<AMBITO:sintaxis> Ambito Creado: 
+<AMBITO:sintaxis> Cima de pila: -6
+--------------<INICIO DE CICLO SINTAXIS VUELTA 3>--------------
+<SINTAXIS> Cima de la pila: -6
+<SINTAXIS> Lexema de primero: ddddd
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+<AMBITO:sintaxis> Nombre variable: ddddd
+<AMBITO:sintaxis> Tipo variable: 
+<AMBITO:sintaxis> Clase variable: 
+<AMBITO:sintaxis> Rango 1: 
+<AMBITO:sintaxis> Rango 2: 
+<AMBITO:sintaxis> Avance: 
+<AMBITO:sintaxis> Ambito: 0
+<AMBITO:sintaxis> Ambito Creado: 
+<AMBITO:sintaxis> Cima de pila: -42
+--------------<INICIO DE CICLO SINTAXIS VUELTA 4>--------------
+<SINTAXIS> Cima de la pila: -42
+<SINTAXIS> Lexema de primero: $
+<SINTAXIS ERROR> FUERZA BRUTA
+<SINTAXIS ERROR> FUERZA BRUTA Pila.peek:-42
+<SINTAXIS ERROR> FUERZA BRUTA Oper.mostrarPrimero:-1000
+<SINTAXIS ERROR> FUERZA BRUTA Oper.mostrarLexemaPrimero:$
+---------- FIN SINTAXIS DE LA MUERTE----------
+<AMBITO> Ambito 0
+-----Tabla de Simbolos-----
+-----Fin Tabla de Simbolos-----
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+<MySQL:agregarVariable> Prueba de conexion a MySQL
+Fin sintaxis
+Tamaño de nT: 1
+Tamaño de nR: 1
+Tamaño de nR
+For: 0

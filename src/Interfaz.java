@@ -57,6 +57,7 @@ public class Interfaz extends javax.swing.JFrame {
     NodoToken cola;
     OperToken oper = new OperToken();
     int numTokens = 0;
+    ContadorAmbito contadorAmbitoArr[] = new ContadorAmbito[1];
     boolean fila7 = false, fila8 = false, multi = false, token = false, error = false,
             banPar = false, banCor = false, banLlav = false;
     LeerExcelLexico xlsLexico;
@@ -77,7 +78,7 @@ public class Interfaz extends javax.swing.JFrame {
     Tupla[] tuplaArreglo = new Tupla[400];
     int contadorTupla = 0;
     int arreglodeprueba[] = new int[1];
-    String[][] conAmbito;
+    int[][] contadorAmbito;
     int contadorElementosLista = 0;
     TablaSimbolos tablaSimbolos[] = new TablaSimbolos[300];
     int contadorIdentificadores = 0;
@@ -149,7 +150,7 @@ public class Interfaz extends javax.swing.JFrame {
         {219},//34
         {8162, -13, 220, 232, 816, -53},//35
         {365},//36
-        {-13, 213, -46, 213, -46, 213, -53, -84, 819},//37
+        {-13, 213, 366, -46, 213, 366, -46, 213, 366, -53, -84, 819},//37
         {8202, -48, 902, 222, 221, 211, 820, -51},//38
         {220, 232, -46},//39
         {211, 821, -110},//40
@@ -196,7 +197,7 @@ public class Interfaz extends javax.swing.JFrame {
         {-13, 252, 232, -53, -75},//81
         {253, -53, -86},//82
         {254, 255, 250, -110, 232, -68},//83
-        {-87, 255, 250, -110, 232, -116, 232, -67, 8403},//84
+        {8402, -87, 255, 250, -110, 232, -116, 232, -67, 840},//84
         {-88, 255, 250, -110, 232, -79},//85
         {-59},//86
         {-61},//87
@@ -1319,6 +1320,7 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     void limpiarVariables() {
+        contadorAmbitoArr[0] = new ContadorAmbito();
         nT = 0;
         nR = 0;
         tamArr = 0;
@@ -1687,7 +1689,7 @@ public class Interfaz extends javax.swing.JFrame {
         }
         for (int i = 0; i < errores.length - 1; i++) {
             System.out.println("For: " + i);
-            contadoresLinea[errores[i].getLinea()][0]++;
+            // contadoresLinea[errores[i].getLinea()][0]++;
         }
 
     }
@@ -2706,7 +2708,7 @@ public class Interfaz extends javax.swing.JFrame {
             auxError[i] = errores[i];
         }
 
-        String ruta = "MarcoAlejandro-Marcial-Coronado-LexicoSintaxis.xls";
+        String ruta = "MarcoAlejandro-Marcial-Coronado-LexicoSintaxisAmbito.xls";
 
         for (int i = 0; i < auxToken.length; i++) {
             contadoresLexico(auxToken[i].getEstado());
@@ -2716,82 +2718,42 @@ public class Interfaz extends javax.swing.JFrame {
         contadoresLinea();
         System.out.println("GENERADOR DEL EXCEL------");
         generarExcelLexico.generarExcel(auxToken, auxError, ruta, contadoresLexico, contadoresLinea,
-                conDia, conAmbito);
+                conDia, contadorAmbitoArr);
 
     }//GEN-LAST:event_btnXlsxActionPerformed
     void contadorAmbito() {
         /////////////////////CREACION DE ARREGLOS DE CONTEO DE VARIABLES Y AMBITOS
-        conAmbito = new String[(ambitoMayor + 4)][19];
-        for (int i = 0; i < conAmbito.length; i++) {
-            for (int j = 0; j < conAmbito[i].length; j++) {
-                conAmbito[i][j] = 0 + "";
+        contadorAmbito = new int[(ambitoMayor + 4)][19];
+        for (int i = 0; i < contadorAmbito.length; i++) {
+            for (int j = 0; j < contadorAmbito[i].length; j++) {
+                contadorAmbito[i][j] = 0;
             }
         }
-        conAmbito[ambitoMayor + 2][0] = "-";
-        conAmbito[ambitoMayor + 2][1] = "Tot_Decimal";
-        conAmbito[ambitoMayor + 2][2] = "Tot_Binario";
-        conAmbito[ambitoMayor + 2][3] = "Tot_Octal";
-        conAmbito[ambitoMayor + 2][4] = "Tot_Hexadecimal";
-        conAmbito[ambitoMayor + 2][5] = "Tot_Flotante";
-        conAmbito[ambitoMayor + 2][6] = "Tot_Cadena";
-        conAmbito[ambitoMayor + 2][7] = "Tot_Carácter";
-        conAmbito[ambitoMayor + 2][8] = "Tot_Compleja";
-        conAmbito[ambitoMayor + 2][9] = "Tot_Booleana";
-        conAmbito[ambitoMayor + 2][10] = "Tot_None";
-        conAmbito[ambitoMayor + 2][11] = "Tot_Arreglo";
-        conAmbito[ambitoMayor + 2][12] = "Tot_Tuplas";
-        conAmbito[ambitoMayor + 2][13] = "Tot_Lista";
-        conAmbito[ambitoMayor + 2][14] = "Tot_Registro";
-        conAmbito[ambitoMayor + 2][15] = "Tot_Rango";
-        conAmbito[ambitoMayor + 2][16] = "Tot_Conjuntos";
-        conAmbito[ambitoMayor + 2][17] = "Tot_Diccionarios";
-        conAmbito[ambitoMayor + 2][18] = "TotalGeneral";
 
         try {
-            conAmbito[0][0] = "Ambito";
-            conAmbito[0][1] = "Decimal";
-            conAmbito[0][2] = "Binario";
-            conAmbito[0][3] = "Octal";
-            conAmbito[0][4] = "Hexadecimal";
-            conAmbito[0][5] = "Flotante";
-            conAmbito[0][6] = "Cadena";
-            conAmbito[0][7] = "Carácter";
-            conAmbito[0][8] = "Compleja";
-            conAmbito[0][9] = "Booleana";
-            conAmbito[0][10] = "None";
-            conAmbito[0][11] = "Arreglo";
-            conAmbito[0][12] = "Tuplas";
-            conAmbito[0][13] = "Lista";
-            conAmbito[0][14] = "Registro";
-            conAmbito[0][15] = "Rango";
-            conAmbito[0][16] = "Conjuntos";
-            conAmbito[0][17] = "DicsumatoriaTotalVariablesEnAmbitocionarios";
-            conAmbito[0][18] = "TotalAmbitos";
             int j = 0, sumatoriaTotalVariablesEnAmbito = 0;
-            for (int i = 1; i < ambitoMayor + 2; i++) {
+            for (int i = 1; i < ambitoMayor + 1; i++) {
                 if (j <= ambito) {
-                    conAmbito[i][0] = j + "";
-                    conAmbito[i][1] = obtenerNumeroBD(j + "", "Decimal", "Tipo") + "";
-                    conAmbito[i][2] = obtenerNumeroBD(j + "", "Binario", "Tipo") + "";
-                    conAmbito[i][3] = obtenerNumeroBD(j + "", "Octal", "Tipo") + "";
-                    conAmbito[i][4] = obtenerNumeroBD(j + "", "Hexadecimal", "Tipo") + "";
-                    conAmbito[i][5] = obtenerNumeroBD(j + "", "FLotante", "Tipo") + "";
-                    conAmbito[i][6] = obtenerNumeroBD(j + "", "Cadena", "Tipo") + "";
-                    conAmbito[i][7] = obtenerNumeroBD(j + "", "Caracter", "Tipo") + "";
-                    conAmbito[i][8] = obtenerNumeroBD(j + "", "Compleja", "Tipo") + "";
-                    conAmbito[i][9] = obtenerNumeroBD(j + "", "Booleana", "Tipo") + "";
-                    conAmbito[i][10] = obtenerNumeroBD(j + "", "None", "Tipo") + "";
-                    conAmbito[i][11] = obtenerNumeroBD(j + "", "Arreglo", "Clase") + "";
-                    conAmbito[i][12] = obtenerNumeroBD(j + "", "Tuplas", "Clase") + "";
-                    conAmbito[i][13] = obtenerNumeroBD(j + "", "Lista", "Clase") + "";
-                    conAmbito[i][14] = obtenerNumeroBD(j + "", "Registro", "Clase") + "";
-                    conAmbito[i][15] = obtenerNumeroBD(j + "", "Rango", "Clase") + "";
-                    conAmbito[i][16] = obtenerNumeroBD(j + "", "Conjunto", "Clase") + "";
-                    conAmbito[i][17] = obtenerNumeroBD(j + "", "Diccionario", "Clase") + "";
-                    for (int k = 1; k < conAmbito[i].length; k++) {
-                        sumatoriaTotalVariablesEnAmbito += Integer.parseInt(conAmbito[i][k]);
+                    contadorAmbito[i][0] = j;
+                    contadorAmbito[i][1] = obtenerNumeroBD(j + "", "Decimal", "Tipo");
+                    contadorAmbito[i][2] = obtenerNumeroBD(j + "", "Binario", "Tipo");
+                    contadorAmbito[i][3] = obtenerNumeroBD(j + "", "Octal", "Tipo");
+                    contadorAmbito[i][4] = obtenerNumeroBD(j + "", "Hexadecimal", "Tipo");
+                    contadorAmbito[i][5] = obtenerNumeroBD(j + "", "FLotante", "Tipo");
+                    contadorAmbito[i][6] = obtenerNumeroBD(j + "", "Cadena", "Tipo");
+                    contadorAmbito[i][7] = obtenerNumeroBD(j + "", "Caracter", "Tipo");
+                    contadorAmbito[i][8] = obtenerNumeroBD(j + "", "Compleja", "Tipo");
+                    contadorAmbito[i][9] = obtenerNumeroBD(j + "", "Booleana", "Tipo");
+                    contadorAmbito[i][10] = obtenerNumeroBD(j + "", "None", "Tipo");
+                    contadorAmbito[i][11] = obtenerNumeroBD(j + "", "Arreglo", "Clase");
+                    contadorAmbito[i][12] = obtenerNumeroBD(j + "", "Tuplas", "Clase");
+                    contadorAmbito[i][13] = obtenerNumeroBD(j + "", "Lista", "Clase");
+                    contadorAmbito[i][14] = obtenerNumeroBD(j + "", "Rango", "Clase");
+                    contadorAmbito[i][15] = obtenerNumeroBD(j + "", "Diccionario", "Clase");
+                    for (int k = 1; k < contadorAmbito[i].length; k++) {
+                        sumatoriaTotalVariablesEnAmbito += contadorAmbito[i][k];
                     }
-                    conAmbito[i][18] = (sumatoriaTotalVariablesEnAmbito) + "";
+                    contadorAmbito[i][18] = sumatoriaTotalVariablesEnAmbito;
                     sumatoriaTotalVariablesEnAmbito = 0;
                     j++;
                 }
@@ -2799,9 +2761,9 @@ public class Interfaz extends javax.swing.JFrame {
             int sumatoriaDecimales = 0;
             for (int q = 1; q < 19; q++) {
                 for (int i = 1; i < ambitoMayor + 2; i++) {
-                    sumatoriaDecimales += Integer.parseInt(conAmbito[i][q]);
+                    sumatoriaDecimales += contadorAmbito[i][q];
                     if (i == ambitoMayor + 1) {
-                        conAmbito[ambitoMayor + 3][q] = sumatoriaDecimales + "";
+                        contadorAmbito[ambitoMayor + 3][q] = sumatoriaDecimales;
                         sumatoriaDecimales = 0;
                     }
                 }
@@ -2826,9 +2788,10 @@ public class Interfaz extends javax.swing.JFrame {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ResultSet rs = traer("SELECT * FROM tablasimbolos WHERE Ambito=" + "'" + ambito + "'" + " AND " + tipoOClase + "= '" + campo + "'");
+        ResultSet rs = traer("SELECT COUNT(*) FROM tablasimbolos WHERE Ambito=" + "'" + ambito + "'" + " AND " + tipoOClase + "= '" + campo + "'");
         while (rs.next()) {
-            total++;
+            System.out.println("Simon carnal si cuenta " + rs.getInt("count(*)"));
+            return rs.getInt("count(*)");
         }
         return total;
 
@@ -4411,8 +4374,19 @@ public class Interfaz extends javax.swing.JFrame {
         if (ambito >= ambitoMayor) {
             ambitoMayor = ambito;
         }
+        aumentarArregloAmbito();
         System.out.println("<AUMENTAR AMBITO> Se ha aumentado el ambito");
         ambitoActualDisponible++;
+    }
+
+    void aumentarArregloAmbito() {
+        ContadorAmbito aux[] = contadorAmbitoArr;
+        contadorAmbitoArr = new ContadorAmbito[aux.length + 1];
+        contadorAmbitoArr[aux.length] = new ContadorAmbito();
+        for (int i = 0; i < aux.length; i++) {
+            contadorAmbitoArr[i] = new ContadorAmbito();
+            contadorAmbitoArr[i] = aux[i];
+        }
     }
 
     void reducirAmbito() {
@@ -4495,6 +4469,57 @@ public class Interfaz extends javax.swing.JFrame {
         return existencia;
     }
 
+    void aumentarContadorAmbito() {
+        switch (claseVariable) {
+            case "Decimal":
+                contadorAmbitoArr[ambito].Decimal++;
+                break;
+            case "Binario":
+                contadorAmbitoArr[ambito].Binario++;
+                break;
+            case "Octal":
+                contadorAmbitoArr[ambito].Octal++;
+                break;
+            case "Hexadecimal":
+                contadorAmbitoArr[ambito].Hexadecimal++;
+                break;
+            case "Flotante":
+                contadorAmbitoArr[ambito].Flotante++;
+                break;
+            case "Cadena":
+                contadorAmbitoArr[ambito].Cadena++;
+                break;
+            case "Caracter":
+                contadorAmbitoArr[ambito].Caracter++;
+                break;
+            case "Compleja":
+                contadorAmbitoArr[ambito].Compleja++;
+                break;
+            case "Booleana":
+                contadorAmbitoArr[ambito].Booleana++;
+                break;
+            case "None":
+                contadorAmbitoArr[ambito].None++;
+                break;
+            case "Tupla":
+                contadorAmbitoArr[ambito].Tupla++;
+                break;
+            case "Lista":
+                contadorAmbitoArr[ambito].Lista++;
+                break;
+            case "Rango":
+                contadorAmbitoArr[ambito].Rango++;
+                break;
+            case "Diccionario":
+                contadorAmbitoArr[ambito].Diccionario++;
+                break;
+            case "datoTupla":
+            case "datoLista":
+                contadorAmbitoArr[ambito].DatoEstructura++;
+                break;
+        }
+    }
+
     void agregarVariable() {
         valorVariable = valorVariable.replace("'", "\"");
         System.out.println("----Agregar Variable----");
@@ -4514,7 +4539,6 @@ public class Interfaz extends javax.swing.JFrame {
                 + ", Ambito: " + ambito
                 + ", Clase: " + tipoVariable);
         String query;
-
         boolean variableDuplicada = variableDuplicada(nombreVariable);
         boolean variableDeclarada = variableDeclarada(nombreVariable);
         switch (claseVariable) {
@@ -4527,9 +4551,32 @@ public class Interfaz extends javax.swing.JFrame {
             case "Caracter":
             case "Compleja":
             case "Booleana":
+            case "datoTupla":
+            case "datoLista":
                 if (areaDeclaracion && !variableDuplicada) {
+
+                    aumentarContadorAmbito();
+
                     tipoVariable = "var";
                     ambitoVariable = ambito + "";
+                    query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,valor) VALUES("
+                            + "'" + nombreVariable + "',"
+                            + "'" + claseVariable + "',"
+                            + "'" + tipoVariable + "',"
+                            + "'" + ambitoVariable + "',"
+                            + "'" + valorVariable + "');";
+
+                    try {
+                        st.executeUpdate(query);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    variableArreglo[contadorVariablesArreglo] = new Variable(nombreVariable, ambitoVariable);
+
+                } else if (banderaFor) {
+                    tipoVariable = "var";
+                    ambitoVariable = ambito + "";
+                    aumentarContadorAmbito();
                     query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,valor) VALUES("
                             + "'" + nombreVariable + "',"
                             + "'" + claseVariable + "',"
@@ -4542,6 +4589,7 @@ public class Interfaz extends javax.swing.JFrame {
                         Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     variableArreglo[contadorVariablesArreglo] = new Variable(nombreVariable, ambitoVariable);
+                    banderaFor = false;
                 } else {
                     if (!areaDeclaracion) {
                         if (variableDeclarada) {
@@ -4575,7 +4623,7 @@ public class Interfaz extends javax.swing.JFrame {
                             + "'" + tipoVariable + "',"
                             + "'" + ambitoVariable + "',"
                             + "'" + ambitoCreado + "');";
-
+                    aumentarContadorAmbito();
                     try {
                         st.executeUpdate(query);
                     } catch (SQLException ex) {
@@ -4639,7 +4687,7 @@ public class Interfaz extends javax.swing.JFrame {
                                 + "'" + ambitoE + "',"
                                 + "'" + noPosE + "',"
                                 + "'" + listaPerE + "');";
-
+                        contadorAmbitoArr[ambito].DatoEstructura++;
                         try {
                             st.executeUpdate(query);
                         } catch (SQLException ex) {
@@ -4668,6 +4716,7 @@ public class Interfaz extends javax.swing.JFrame {
                             + "'" + tipoVariable + "',"
                             + "'" + ambitoVariable + "',"
                             + "'" + tarrVariable + "');";
+                    aumentarContadorAmbito();
                     try {
                         st.executeUpdate(query);
                     } catch (SQLException ex) {
@@ -4688,6 +4737,7 @@ public class Interfaz extends javax.swing.JFrame {
                             + "'" + ambitoVariable + "',"
                             + "'" + ambitoCreado + "');";
                     auxiliarNombreVariable = nombreVariable;
+                    aumentarContadorAmbito();
                     try {
                         st.executeUpdate(query);
                     } catch (SQLException ex) {
@@ -4712,7 +4762,7 @@ public class Interfaz extends javax.swing.JFrame {
                                 + "'" + ambitoE + "',"
                                 + "'" + noPosE + "',"
                                 + "'" + listaPerE + "');";
-
+                        contadorAmbitoArr[ambito].DatoEstructura++;
                         try {
                             st.executeUpdate(query);
                         } catch (SQLException ex) {
@@ -4735,6 +4785,7 @@ public class Interfaz extends javax.swing.JFrame {
                 tipoVariable = "struct";
                 ambitoVariable = ambito + "";
                 String r1 = rango1 + ", " + rango2;
+                aumentarContadorAmbito();
                 query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,rango,avance) VALUES("
                         + "'" + nombreVariable + "',"
                         + "'" + claseVariable + "',"
@@ -4758,8 +4809,10 @@ public class Interfaz extends javax.swing.JFrame {
                 bandera814 = false;
                 break;
             case "Conjunto":
+
                 aumentarAmbito();
                 ambitoCreado = ambito + "";
+                aumentarContadorAmbito();
                 query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado) VALUES("
                         + "'" + nombreVariable + "',"
                         + "'" + claseVariable + "',"
@@ -4781,6 +4834,7 @@ public class Interfaz extends javax.swing.JFrame {
                     String ambitoE = conjunto[i].getAmb();
                     String noPosE = conjunto[i].getNoPosicion();
                     String listaPerE = conjunto[i].getListaPertenece();
+                    aumentarContadorAmbito();
                     query = "INSERT INTO tablasimbolos (clase,tipo,ambito,noPos,listaPertenece) VALUES("
                             + "'" + claseE + "',"
                             + "'" + tipoE + "',"
@@ -4812,6 +4866,7 @@ public class Interfaz extends javax.swing.JFrame {
                 System.out.println("InsertarDiccionario");
                 aumentarAmbito();
                 ambitoCreado = ambito + "";
+                aumentarContadorAmbito();
                 query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado) VALUES("
                         + "'" + nombreVariable + "',"
                         + "'" + claseVariable + "',"
@@ -4992,7 +5047,7 @@ public class Interfaz extends javax.swing.JFrame {
                     agregarDiccionario = true;
                 }
             }
-            if (pilaSintaxis.peek() == 8403) {//For
+            if (pilaSintaxis.peek() == 840) {//For
                 pilaSintaxis.pop();
                 banderaFor = true;
             }
@@ -5036,24 +5091,26 @@ public class Interfaz extends javax.swing.JFrame {
             if (pilaSintaxis.peek() == -6) {
                 auxiliarID = oper.mostrarLexemaPrimero();
             }
-            
-            if(banderaFor){
-                if(pilaSintaxis.peek() == -6){
+
+            if (banderaFor) {
+                if (pilaSintaxis.peek() == -6) {
                     System.out.println("simonfor6");
-                    System.out.println("nombreVariable: "+auxiliarID);
-                    System.out.println("oper.primero: "+oper.mostrarLexemaPrimero());
+                    System.out.println("nombreVariable: " + auxiliarID);
+                    System.out.println("oper.primero: " + oper.mostrarLexemaPrimero());
                     nombreVariable = auxiliarID;
                 }
-                if(pilaSintaxis.peek() == -7){
+                if (oper.mostrarPrimero() == -7) {
                     aumentarAmbito();
                     System.out.println("simonfor7");
                     valorVariable = oper.mostrarLexemaPrimero();
                     claseVariable = "Decimal";
                     banderaConstante = true;
-                    banderaFor = false;
                 }
             }
-            
+
+            if (pilaSintaxis.peek() == 8402) {
+                reducirAmbito();
+            }
 
             switch (pilaSintaxis.peek()) {
                 case 801:
@@ -5380,8 +5437,6 @@ public class Interfaz extends javax.swing.JFrame {
                         System.out.println("<SINTAXIS ERROR> FUERZA BRUTA Oper.mostrarPrimero:" + oper.mostrarPrimero());
                         System.out.println("<SINTAXIS ERROR> FUERZA BRUTA Oper.mostrarLexemaPrimero:" + oper.mostrarLexemaPrimero());
                         reproducir("src/fuerzabruta.wav");
-                        JOptionPane.showMessageDialog(null, "Es momento de dar de baja la matería",
-                                "Valio barriga", JOptionPane.WARNING_MESSAGE);
                         break;
                     }
                 } catch (Exception ex) {

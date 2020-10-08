@@ -4,9 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/Compilador/src/ConexionMySQL.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/Compilador/src/Token.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/Compilador/src/GenerarExcelLexico.java</file>
-            <file>file:/C:/Users/marco/Documents/NetBeansProjects/Compilador/src/Tupla.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/Compilador/src/TablaSimbolosMySQL.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/Compilador/src/ContadorAmbito.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/Compilador/src/Interfaz.java</file>
         </group>
     </open-files>
