@@ -1,0 +1,25 @@
+Largo de arreglo de la linea [0]: 2
+j: 0, contenido: f
+j: 1, contenido: b
+----Analizador Lexico----
+--- Caracter: [f] ---
+Fila: 0  /// Columna: 19
+Estado: 0
+Estado auxiliar´: 15
+--- Caracter: [b] ---
+Fila: 15  /// Columna: 20
+Estado: 15
+Estado auxiliar´: 15
+Estaba vacia, se inserto 🙂
+--------------INICIO DESLEXEMIZADOR--------------
+Vuelta desLex: 1
+[DESLEXEMIZADOR] Lexema a eliminar: fb
+[DESLEXEMIZADOR] Linea auxiliar entrante: fb
+[DESLEXEMIZADOR] aux[].length: 2
+[DESLEXEMIZADOR] aux[0]: f
+[DESLEXEMIZADOR] aux[1]: b
+---------------------------------------
+[DESLEXEMIZADOR] Linea auxiliar saliente: ||
+[DESLEXEMIZADOR] Lexema resultante: ||
+--------------FIN DESLEXEMIZADOR--------------
+---Termino el analizador de lexico---

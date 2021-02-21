@@ -1,0 +1,649 @@
+----------SINTAXIS DE LA MUERTE----------
+--------------<INICIO DE CICLO SINTAXIS VUELTA 1>--------------
+<SINTAXIS> Cima de la pila: 200
+<SINTAXIS> Lexema de primero: a
+<AMBITO> Nombre variable: 
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 200
+<SINTAXIS> Valor de la fila: 0
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 1
+Valor de la fila: 0
+<SINTAXIS Fila: 0, Columna: 1>   Produccion: 1
+Contenido de columnas
+1    1    ---Contadores Sintaxis---
+Produccion: 200
+SE AUMENTO EL CONTADOR DE 1
+<SINTAXIS> Valor de lugar: 1
+<SINTAXIS> Se agrego -48 a la pila
+<SINTAXIS> Se agrego 802 a la pila
+<SINTAXIS> Se agrego 204 a la pila
+<SINTAXIS> Se agrego 250 a la pila
+<SINTAXIS> Se agrego 801 a la pila
+<SINTAXIS> Se agrego -51 a la pila
+<SINTAXIS> Se agrego 201 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 2>--------------
+<SINTAXIS> Cima de la pila: 201
+<SINTAXIS> Lexema de primero: a
+<AMBITO> Nombre variable: 
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 201
+<SINTAXIS> Valor de la fila: 1
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 1
+Valor de la fila: 1
+<SINTAXIS Fila: 1, Columna: 1>   Produccion: 3
+Contenido de columnas
+2    3    ---Contadores Sintaxis---
+Produccion: 201
+SE AUMENTO EL CONTADOR DE 3
+<SINTAXIS> Valor de lugar: 3
+<SINTAXIS> Se agrego 201 a la pila
+<SINTAXIS> Se agrego -45 a la pila
+<SINTAXIS> Se agrego 211 a la pila
+<SINTAXIS> Se agrego -42 a la pila
+<SINTAXIS> Se agrego -6 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 3>--------------
+<SINTAXIS> Cima de la pila: -6
+<SINTAXIS> Lexema de primero: a
+<AMBITO> Nombre variable: 
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: -6
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 4>--------------
+<SINTAXIS> Cima de la pila: -42
+<SINTAXIS> Lexema de primero: =
+<AMBITO> Nombre variable: a
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: -42
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 5>--------------
+<SINTAXIS> Cima de la pila: 211
+<SINTAXIS> Lexema de primero: 4
+<AMBITO> Nombre variable: a
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 211
+<SINTAXIS> Valor de la fila: 8
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 21
+Valor de la fila: 8
+<SINTAXIS Fila: 8, Columna: 21>   Produccion: 16
+Contenido de columnas
+609    609    16    600    600    609    600    16    600    600    600    600    600    16    16    16    16    16    16    16    600    16    ---Contadores Sintaxis---
+Produccion: 211
+SE AUMENTO EL CONTADOR DE 16
+<SINTAXIS> Valor de lugar: 16
+<SINTAXIS> Se agrego 212 a la pila
+<SINTAXIS> Se agrego 900 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 6>--------------
+<SINTAXIS> Cima de la pila: 900
+<SINTAXIS> Lexema de primero: 4
+<AMBITO> Nombre variable: a
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 900
+<SINTAXIS> Valor de la fila: 9
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 21
+Valor de la fila: 9
+<SINTAXIS Fila: 9, Columna: 21>   Produccion: 20
+Contenido de columnas
+609    609    24    600    600    609    600    24    600    600    600    600    600    17    18    19    21    22    23    25    600    20    ---Contadores Sintaxis---
+Produccion: 212
+SE AUMENTO EL CONTADOR DE 20
+<SINTAXIS> Valor de lugar: 20
+<SINTAXIS> Se agrego 213 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 7>--------------
+<SINTAXIS> Cima de la pila: 213
+<SINTAXIS> Lexema de primero: 4
+<AMBITO> Nombre variable: a
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 213
+<SINTAXIS> Valor de la fila: 13
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 21
+Valor de la fila: 13
+<SINTAXIS Fila: 13, Columna: 21>   Produccion: 26
+Contenido de columnas
+610    610    610    600    600    610    600    610    600    600    600    600    600    610    610    610    610    610    610    610    600    26    ---Contadores Sintaxis---
+Produccion: 213
+SE AUMENTO EL CONTADOR DE 26
+<SINTAXIS> Valor de lugar: 26
+<SINTAXIS> Se agrego 214 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 8>--------------
+<SINTAXIS> Cima de la pila: 214
+<SINTAXIS> Lexema de primero: 4
+<AMBITO> Nombre variable: a
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 214
+<SINTAXIS> Valor de la fila: 14
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 21
+Valor de la fila: 14
+<SINTAXIS Fila: 14, Columna: 21>   Produccion: 27
+Contenido de columnas
+610    610    610    600    600    610    600    610    600    600    600    600    600    610    610    610    610    610    610    610    600    27    ---Contadores Sintaxis---
+Produccion: 214
+SE AUMENTO EL CONTADOR DE 27
+<SINTAXIS> Valor de lugar: 27
+<SINTAXIS> Se agrego -7 a la pila
+<SINTAXIS> Se agrego 805 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 9>--------------
+<SINTAXIS> Cima de la pila: 805
+<SINTAXIS> Lexema de primero: 4
+<AMBITO> Nombre variable: a
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 805
+<AMBITO:sintaxis>  Entro a if de 805 y 814 | 800:805
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 10>--------------
+<SINTAXIS> Cima de la pila: -45
+<SINTAXIS> Lexema de primero: ;
+<AMBITO> Nombre variable: a
+<AMBITO> Tipo variable: Decimal
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: -45
+<AMBITO:sintaxis> Agregar Variable Constante
+----Agregar Variable----
+<AMBITO:agregarVariable> Variable: a, Tipo: Decimal, Ambito: 0, Clase: 
+VALOR DE ESTADO INT: 0
+VARIABLE NO DUPLICADA
+Valor ID: a
+Valor ambito: 
+VALOR DE ESTADO INT: 0
+VARIABLE NO EXISTENTE
+---- Fin Agregar Variable----
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 11>--------------
+<SINTAXIS> Cima de la pila: 201
+<SINTAXIS> Lexema de primero: b
+<AMBITO> Nombre variable: 
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 201
+<SINTAXIS> Valor de la fila: 1
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 1
+Valor de la fila: 1
+<SINTAXIS Fila: 1, Columna: 1>   Produccion: 3
+Contenido de columnas
+2    3    ---Contadores Sintaxis---
+Produccion: 201
+SE AUMENTO EL CONTADOR DE 3
+<SINTAXIS> Valor de lugar: 3
+<SINTAXIS> Se agrego 201 a la pila
+<SINTAXIS> Se agrego -45 a la pila
+<SINTAXIS> Se agrego 211 a la pila
+<SINTAXIS> Se agrego -42 a la pila
+<SINTAXIS> Se agrego -6 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 12>--------------
+<SINTAXIS> Cima de la pila: -6
+<SINTAXIS> Lexema de primero: b
+<AMBITO> Nombre variable: 
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: -6
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 13>--------------
+<SINTAXIS> Cima de la pila: -42
+<SINTAXIS> Lexema de primero: =
+<AMBITO> Nombre variable: b
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: -42
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 14>--------------
+<SINTAXIS> Cima de la pila: 211
+<SINTAXIS> Lexema de primero: 132
+<AMBITO> Nombre variable: b
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 211
+<SINTAXIS> Valor de la fila: 8
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 21
+Valor de la fila: 8
+<SINTAXIS Fila: 8, Columna: 21>   Produccion: 16
+Contenido de columnas
+609    609    16    600    600    609    600    16    600    600    600    600    600    16    16    16    16    16    16    16    600    16    ---Contadores Sintaxis---
+Produccion: 211
+SE AUMENTO EL CONTADOR DE 16
+<SINTAXIS> Valor de lugar: 16
+<SINTAXIS> Se agrego 212 a la pila
+<SINTAXIS> Se agrego 900 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 15>--------------
+<SINTAXIS> Cima de la pila: 900
+<SINTAXIS> Lexema de primero: 132
+<AMBITO> Nombre variable: b
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 900
+<SINTAXIS> Valor de la fila: 9
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 21
+Valor de la fila: 9
+<SINTAXIS Fila: 9, Columna: 21>   Produccion: 20
+Contenido de columnas
+609    609    24    600    600    609    600    24    600    600    600    600    600    17    18    19    21    22    23    25    600    20    ---Contadores Sintaxis---
+Produccion: 212
+SE AUMENTO EL CONTADOR DE 20
+<SINTAXIS> Valor de lugar: 20
+<SINTAXIS> Se agrego 213 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 16>--------------
+<SINTAXIS> Cima de la pila: 213
+<SINTAXIS> Lexema de primero: 132
+<AMBITO> Nombre variable: b
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 213
+<SINTAXIS> Valor de la fila: 13
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 21
+Valor de la fila: 13
+<SINTAXIS Fila: 13, Columna: 21>   Produccion: 26
+Contenido de columnas
+610    610    610    600    600    610    600    610    600    600    600    600    600    610    610    610    610    610    610    610    600    26    ---Contadores Sintaxis---
+Produccion: 213
+SE AUMENTO EL CONTADOR DE 26
+<SINTAXIS> Valor de lugar: 26
+<SINTAXIS> Se agrego 214 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 17>--------------
+<SINTAXIS> Cima de la pila: 214
+<SINTAXIS> Lexema de primero: 132
+<AMBITO> Nombre variable: b
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 214
+<SINTAXIS> Valor de la fila: 14
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 21
+Valor de la fila: 14
+<SINTAXIS Fila: 14, Columna: 21>   Produccion: 27
+Contenido de columnas
+610    610    610    600    600    610    600    610    600    600    600    600    600    610    610    610    610    610    610    610    600    27    ---Contadores Sintaxis---
+Produccion: 214
+SE AUMENTO EL CONTADOR DE 27
+<SINTAXIS> Valor de lugar: 27
+<SINTAXIS> Se agrego -7 a la pila
+<SINTAXIS> Se agrego 805 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 18>--------------
+<SINTAXIS> Cima de la pila: 805
+<SINTAXIS> Lexema de primero: 132
+<AMBITO> Nombre variable: b
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 805
+<AMBITO:sintaxis>  Entro a if de 805 y 814 | 800:805
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 19>--------------
+<SINTAXIS> Cima de la pila: -45
+<SINTAXIS> Lexema de primero: ;
+<AMBITO> Nombre variable: b
+<AMBITO> Tipo variable: Decimal
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: -45
+<AMBITO:sintaxis> Agregar Variable Constante
+----Agregar Variable----
+<AMBITO:agregarVariable> Variable: b, Tipo: Decimal, Ambito: 0, Clase: 
+VALOR DE ESTADO INT: 0
+VARIABLE NO DUPLICADA
+Valor ID: b
+Valor ambito: 0
+VALOR DE ESTADO INT: 0
+VARIABLE NO EXISTENTE
+---- Fin Agregar Variable----
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 20>--------------
+<SINTAXIS> Cima de la pila: 201
+<SINTAXIS> Lexema de primero: c
+<AMBITO> Nombre variable: 
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 201
+<SINTAXIS> Valor de la fila: 1
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 1
+Valor de la fila: 1
+<SINTAXIS Fila: 1, Columna: 1>   Produccion: 3
+Contenido de columnas
+2    3    ---Contadores Sintaxis---
+Produccion: 201
+SE AUMENTO EL CONTADOR DE 3
+<SINTAXIS> Valor de lugar: 3
+<SINTAXIS> Se agrego 201 a la pila
+<SINTAXIS> Se agrego -45 a la pila
+<SINTAXIS> Se agrego 211 a la pila
+<SINTAXIS> Se agrego -42 a la pila
+<SINTAXIS> Se agrego -6 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 21>--------------
+<SINTAXIS> Cima de la pila: -6
+<SINTAXIS> Lexema de primero: c
+<AMBITO> Nombre variable: 
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: -6
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 22>--------------
+<SINTAXIS> Cima de la pila: -42
+<SINTAXIS> Lexema de primero: =
+<AMBITO> Nombre variable: c
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: -42
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 23>--------------
+<SINTAXIS> Cima de la pila: 211
+<SINTAXIS> Lexema de primero: "edfwsrklgmjksdtmn"
+<AMBITO> Nombre variable: c
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 211
+<SINTAXIS> Valor de la fila: 8
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 14
+Valor de la fila: 8
+<SINTAXIS Fila: 8, Columna: 14>   Produccion: 16
+Contenido de columnas
+609    609    16    600    600    609    600    16    600    600    600    600    600    16    16    ---Contadores Sintaxis---
+Produccion: 211
+SE AUMENTO EL CONTADOR DE 16
+<SINTAXIS> Valor de lugar: 16
+<SINTAXIS> Se agrego 212 a la pila
+<SINTAXIS> Se agrego 900 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 24>--------------
+<SINTAXIS> Cima de la pila: 900
+<SINTAXIS> Lexema de primero: "edfwsrklgmjksdtmn"
+<AMBITO> Nombre variable: c
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 900
+<SINTAXIS> Valor de la fila: 9
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 14
+Valor de la fila: 9
+<SINTAXIS Fila: 9, Columna: 14>   Produccion: 18
+Contenido de columnas
+609    609    24    600    600    609    600    24    600    600    600    600    600    17    18    ---Contadores Sintaxis---
+Produccion: 212
+SE AUMENTO EL CONTADOR DE 18
+<SINTAXIS> Valor de lugar: 18
+<SINTAXIS> Se agrego -4 a la pila
+<SINTAXIS> Se agrego 810 a la pila
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 25>--------------
+<SINTAXIS> Cima de la pila: 810
+<SINTAXIS> Lexema de primero: "edfwsrklgmjksdtmn"
+<AMBITO> Nombre variable: c
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 810
+<AMBITO:sintaxis>  Entro a if de 805 y 814 | 800:810
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 26>--------------
+<SINTAXIS> Cima de la pila: -45
+<SINTAXIS> Lexema de primero: ;
+<AMBITO> Nombre variable: c
+<AMBITO> Tipo variable: Cadena
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: -45
+<AMBITO:sintaxis> Agregar Variable Constante
+----Agregar Variable----
+<AMBITO:agregarVariable> Variable: c, Tipo: Cadena, Ambito: 0, Clase: 
+VALOR DE ESTADO INT: 0
+VARIABLE NO DUPLICADA
+Valor ID: c
+Valor ambito: 0
+VALOR DE ESTADO INT: 0
+VARIABLE NO EXISTENTE
+---- Fin Agregar Variable----
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+--------------<INICIO DE CICLO SINTAXIS VUELTA 27>--------------
+<SINTAXIS> Cima de la pila: 201
+<SINTAXIS> Lexema de primero: $
+<AMBITO> Nombre variable: 
+<AMBITO> Tipo variable: 
+<AMBITO> Clase variable: 
+<AMBITO> Rango 1: 
+<AMBITO> Rango 2: 
+<AMBITO> Avance: 
+<AMBITO> Ambito: 0
+<AMBITO> Ambito Creado: 
+<AMBITO> Cima de pila: 201
+<SINTAXIS> Valor de la fila: 1
+
+<SINTAXIS> INICIA TRY COLUMNA
+<SINTAXIS> TERMINA TRY COLUMNA
+
+Valor de la columna: 94
+Valor de la fila: 1
+<SINTAXIS Fila: 1, Columna: 94>   Produccion: 602
+Contenido de columnas
+2    3    602    602    602    602    602    369    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    602    <SINTAXIS ERROR> 602
+Esta vacio
+--------------<FIN DE CICLO SINTAXIS>--------------
+
+---------- FIN SINTAXIS DE LA MUERTE----------
+<AMBITO> Ambito 0
+<MySQL> Prueba de conexion a MySQL
+<TablaSimbolosMySQL> Conexion exitosa
+<SQL> Prueba de conexion SQL
+<SQL> Conexion exitosa SQL
