@@ -31,7 +31,7 @@ public class GenerarExcel {
 
     public void generarExcel(Token[] entradaTokens, Error[] entradaErrores, int[] contadores,
             int[][] contadoresLinea, int[] contadoresSin, ContadorAmbito[] ambito) {
-        String ruta = "MarcoAlejandro-Marcial-Coronado-LexicoSintaxisAmbito.xls";
+        String ruta = "MarcoAlejandroMarcialCoronado-Ambito.xls";
         try {//Hoja 1 - Lista de Tokens
             WorkbookSettings conf = new WorkbookSettings();
             conf.setEncoding("ISO-8859-1");

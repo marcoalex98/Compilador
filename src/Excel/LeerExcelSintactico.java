@@ -41,6 +41,7 @@ public class LeerExcelSintactico {
 //        }
     }
     public String[][] obtener(List cellDataList){
+        //70 96
         String matriz[][]=new String[70][96];
         for (int i = 0; i < cellDataList.size(); i++) {
             List cellTempList=(List) cellDataList.get(i);

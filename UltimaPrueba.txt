@@ -1,0 +1,10 @@
+arregloPrueba = [1,2,3,4,5];
+
+arr2 = ["abc","defg","hijk", 1];
+
+arr3 = [true, false, true, true, false, false];
+
+aee3 = [1.1, 2.3, 230.245, true];
+
+abc = range(0,130002,2);
+{}

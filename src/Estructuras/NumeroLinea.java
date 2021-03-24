@@ -44,12 +44,13 @@ public class NumeroLinea extends JPanel
         this.component = component;
         this.setBackground(new Color(25,25,25));
         setFont(component.getFont());
-
+        
         setBorderGap(5);
         setCurrentLineForeground(color1);
         setDigitAlignment(RIGHT);
         setMinimumDisplayDigits(minimumDisplayDigits);
-
+        
+        component.setMargin(new Insets(20,20,20,20));
         component.getDocument().addDocumentListener(this);
         component.addCaretListener(this);
         component.addPropertyChangeListener("font", this);

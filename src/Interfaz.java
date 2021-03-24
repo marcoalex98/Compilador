@@ -1,3 +1,4 @@
+
 import Analizador.Ambito;
 import SQL.TablaSimbolosMySQL;
 import SQL.ControladorSQL;
@@ -6,14 +7,19 @@ import Estructuras.NumeroLinea;
 import Analizador.Lexico;
 import Analizador.Sintaxis;
 import Controladores.ControladorTokenError;
+import java.awt.Desktop;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -33,16 +39,19 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author marco
  */
 public class Interfaz extends javax.swing.JFrame {
+
     Lexico analizadorLexico;
     Sintaxis analizadorSintaxis;
     Ambito analizadorAmbito;
     ControladorTokenError controladorTokenError;
     public static GenerarExcel generarExcel;
     ControladorSQL controladorSQL;
+    String urlLog;
 
     public Interfaz() {
         initComponents();
         cargarTextArea();
+        
     }
 
     /**
@@ -69,15 +78,19 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         tablaErrores = new javax.swing.JTable();
+        btnAbrirLog = new javax.swing.JButton();
+        btnEjecutarUltimaPrueba = new javax.swing.JButton();
+        btnLimpiar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
         jPanel5.setBackground(new java.awt.Color(51, 51, 51));
+        jPanel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 2));
 
         jPanel1.setBackground(new java.awt.Color(204, 0, 204));
 
-        jPanel2.setBackground(new java.awt.Color(15, 15, 15));
+        jPanel2.setBackground(new java.awt.Color(30, 30, 30));
 
         btnCargar.setBackground(new java.awt.Color(51, 51, 51));
         btnCargar.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
@@ -147,14 +160,14 @@ public class Interfaz extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
+                .addContainerGap(18, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnCompilar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCompilar, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnXlsx, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCargar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                        .addComponent(btnXlsx, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                        .addComponent(btnCargar, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)))
+                .addGap(14, 14, 14))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -226,33 +239,82 @@ public class Interfaz extends javax.swing.JFrame {
         });
         jScrollPane4.setViewportView(tablaErrores);
 
+        btnAbrirLog.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        btnAbrirLog.setForeground(new java.awt.Color(255, 255, 255));
+        btnAbrirLog.setText("Abrir Log");
+        btnAbrirLog.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 3, true));
+        btnAbrirLog.setContentAreaFilled(false);
+        btnAbrirLog.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAbrirLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAbrirLogActionPerformed(evt);
+            }
+        });
+
+        btnEjecutarUltimaPrueba.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        btnEjecutarUltimaPrueba.setForeground(new java.awt.Color(255, 255, 255));
+        btnEjecutarUltimaPrueba.setText("Ejecutar Última Prueba");
+        btnEjecutarUltimaPrueba.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 3, true));
+        btnEjecutarUltimaPrueba.setContentAreaFilled(false);
+        btnEjecutarUltimaPrueba.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEjecutarUltimaPrueba.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEjecutarUltimaPruebaActionPerformed(evt);
+            }
+        });
+
+        btnLimpiar.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        btnLimpiar.setForeground(new java.awt.Color(255, 255, 255));
+        btnLimpiar.setText("Limpiar TextArea");
+        btnLimpiar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+        btnLimpiar.setContentAreaFilled(false);
+        btnLimpiar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 787, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane4)
-                            .addComponent(jScrollPane3)))
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 787, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(11, 11, 11)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jScrollPane4)
+                                    .addComponent(jScrollPane3)))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel2))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel1))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(btnAbrirLog, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnEjecutarUltimaPrueba, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)))))
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel1)))
-                .addContainerGap(42, Short.MAX_VALUE))
+                        .addGap(34, 34, 34)
+                        .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 639, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addComponent(jLabel2)
@@ -261,20 +323,21 @@ public class Interfaz extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 639, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnEjecutarUltimaPrueba, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnAbrirLog, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -299,7 +362,6 @@ public class Interfaz extends javax.swing.JFrame {
             jTextArea1.setText("");
             try {
                 archivo = new File(select.getSelectedFile() + "");
-
                 FileReader archivos = new FileReader(archivo);
                 BufferedReader leer = new BufferedReader(archivos);
                 aux = leer.readLine();
@@ -325,39 +387,48 @@ public class Interfaz extends javax.swing.JFrame {
                 + "-" + localDate.getMonth() + "" + "-" + localDate.getYear() + "]";
         File directorio = new File("logs/" + url);
         directorio.mkdir();
-        File file = new File("logs/" + url + "/" + url + ".txt");
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            PrintStream out = new PrintStream(fos);
-            System.setOut(out);
-        } catch (FileNotFoundException e) {
-
-        }
         return url;
     }
 
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
         controladorSQL = new ControladorSQL();
         controladorSQL.limpiarTablaSimbolos();
-        String urlLog = crearDirectorioLog();
+        urlLog = crearDirectorioLog();
+        establecerUltimaPrueba();
         controladorTokenError = new ControladorTokenError(tablaTokens, tablaErrores);
         analizadorLexico = new Lexico(urlLog, controladorTokenError);
         analizadorLexico.iniciarLexico(jTextArea1);
-        
-        analizadorAmbito = new Ambito(urlLog, controladorSQL, controladorTokenError);
+        analizadorAmbito = new Ambito(controladorSQL, controladorTokenError);
         analizadorAmbito.iniciarAmbito();
         analizadorSintaxis = new Sintaxis(
-            urlLog, 
-            analizadorLexico.obtenerOperToken(),
-            analizadorLexico.obtenerContadorIdentificadores(), 
-            controladorTokenError,
-            analizadorAmbito);
-        
+                urlLog,
+                analizadorLexico.obtenerOperToken(),
+                analizadorLexico.obtenerContadorIdentificadores(),
+                controladorTokenError,
+                analizadorAmbito);
         analizadorSintaxis.iniciarSintaxis();
         controladorTokenError.actualizarTablas();
         controladorSQL.cerrarConexion();
         reproducir();
     }//GEN-LAST:event_btnCompilarActionPerformed
+
+    private void establecerUltimaPrueba() {
+        if (jTextArea1.getText() != "") {
+            String pruebaActual = jTextArea1.getText();
+            File archivo = new File("UltimaPrueba.txt");
+            if (archivo.exists()) {
+                archivo.delete();
+            }
+            BufferedWriter bw;
+            try {
+                bw = new BufferedWriter(new FileWriter("UltimaPrueba.txt"));
+                bw.write(pruebaActual);
+                bw.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
 
     private void btnXlsxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXlsxActionPerformed
         generarExcel = new GenerarExcel();
@@ -375,12 +446,58 @@ public class Interfaz extends javax.swing.JFrame {
         ts.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void btnAbrirLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirLogActionPerformed
+        if (!new File("logs/" + urlLog).exists()) {
+
+        } else {
+            try {
+                Desktop.getDesktop().open(new File("logs/" + urlLog));
+            } catch (IOException ex) {
+
+            }
+        }
+    }//GEN-LAST:event_btnAbrirLogActionPerformed
+
+    private void btnEjecutarUltimaPruebaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEjecutarUltimaPruebaActionPerformed
+        jTextArea1.setText("");
+        File ultimaPrueba = new File("UltimaPrueba.txt");
+        if (ultimaPrueba.exists()) {
+            FileReader archivos = null;
+            try {
+                archivos = new FileReader(ultimaPrueba);
+                BufferedReader leer = new BufferedReader(archivos);
+                try {
+                    String aux = leer.readLine();
+                    jTextArea1.append(aux);
+                    while ((aux = leer.readLine()) != null) {
+                        jTextArea1.append("\n" + aux);
+                    }
+                    btnCompilarActionPerformed(null);
+                } catch (IOException ex) {
+                    Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    archivos.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_btnEjecutarUltimaPruebaActionPerformed
+
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        jTextArea1.setText("");
+    }//GEN-LAST:event_btnLimpiarActionPerformed
+
     private void cargarTextArea() {
         jTextArea1.requestFocus();
         NumeroLinea numeroLinea = new NumeroLinea(jTextArea1);
         jScrollPane1.setRowHeaderView(numeroLinea);
     }
-    
+
     private void reproducir() {
         try {
             File f = new File("src/fuerzabruta.wav");
@@ -429,8 +546,11 @@ public class Interfaz extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAbrirLog;
     private javax.swing.JButton btnCargar;
     private javax.swing.JButton btnCompilar;
+    private javax.swing.JButton btnEjecutarUltimaPrueba;
+    private javax.swing.JButton btnLimpiar;
     private javax.swing.JButton btnXlsx;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;

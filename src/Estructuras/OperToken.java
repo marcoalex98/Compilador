@@ -29,6 +29,14 @@ public class OperToken {
     public String mostrarLexemaPrimero(){
         return prim.getLexema();
     }
+    
+    public int mostrarLineaPrimero(){
+        return prim.getNumlinea();
+    }
+    
+    public int mostrarPosicionPrimero(){
+        return prim.getPosicion();
+    }
 
     public boolean InsertarInicio(int posicion, String minilexem, int numlinea) {
         tam++;

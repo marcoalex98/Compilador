@@ -5,20 +5,17 @@
  */
 package Analizador;
 
-import Analizador.Auxiliar.AuxiliarSintaxis;
 import Contadores.ContadorAmbito;
 import Controladores.ControladorTokenError;
 import Estructuras.Conjunto;
-import Estructuras.Diccionario;
+import Estructuras.Controladores.ControladorDatoLista;
+import Estructuras.DatoDiccionario;
 import Estructuras.Lista;
 import Estructuras.OperToken;
 import Estructuras.Tupla;
 import Estructuras.Variable;
 import SQL.ControladorSQL;
 import SQL.TablaSimbolos;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Stack;
@@ -34,10 +31,10 @@ public class Ambito {
     int contadorIdentificadores, ambito, tamArr, tamVariablesGuardadasArr,
             contadorConjunto, contadorDiccionario, contadorElementosLista,
             ambitoActualDisponible, contadorTupla, contadorVariablesArreglo,
-            ambitoMayor, auxiliarTipoVariable;
-    String urlLog, claseVariable, nombreVariable, auxiliarNombreVariable, tipoVariable, valorVariable,
+            ambitoMayor, auxiliarTipoVariable, contadorParametros;
+    String claseVariable, nombreVariable, auxiliarNombreVariable, tipoVariable, valorVariable,
             ambitoCreado, ambitoVariable, tarrVariable, listaPerteneceVariable, rango1,
-            rango2, avance, auxiliarID, auxiliarDato;
+            rango2, avance, auxiliarID, auxiliarDato, nombreFuncion;
     boolean estadoError, banderaParametro, banderaArreglo, banderaTupla, banderaListaMultiple,
             banderaRango, banderaListaNormal, agregarLista, banderaFor, agregarTupla,
             agregarConjunto, agregarDiccionario, banderaConstante, banderaFuncion,
@@ -47,23 +44,24 @@ public class Ambito {
     Stack<Integer> pilaAmbito;
     ControladorSQL controladorSQL;
     TablaSimbolos tablaSimbolos[];
-    Diccionario diccionario[];
+    DatoDiccionario diccionario[];
     Conjunto conjunto[];
     Lista[] listaArreglo;
     Tupla[] tuplaArreglo;
     Variable variableArreglo[];
     ContadorAmbito contadorAmbitoArr[];
     ControladorTokenError controladorTokenError;
+    OperToken oper;
+    ControladorDatoLista controladorDatoLista;
 
-    public Ambito(String urlLog, ControladorSQL controladorSQL,
+    public Ambito(ControladorSQL controladorSQL,
             ControladorTokenError controladorTokenError) {
-        this.urlLog = urlLog;
         this.controladorSQL = controladorSQL;
         this.controladorTokenError = controladorTokenError;
+        this.controladorDatoLista = new ControladorDatoLista();
     }
 
     public void iniciarAmbito() {
-        crearArchivoLog();
         inicializarVariables();
     }
 
@@ -82,6 +80,7 @@ public class Ambito {
         avance = "";
         auxiliarID = "";
         auxiliarDato = "";
+        nombreFuncion = "";
         banderaConstante = false;
         banderaFuncion = false;
         banderaConjunto = false;
@@ -95,13 +94,16 @@ public class Ambito {
         ambito = 0;
         ambitoMayor = 0;
         contadorElementosLista = 0;
+        contadorParametros = 0;
         ambitoActualDisponible = 0;
         contadorTupla = 0;
+        contadorDiccionario = 0;
         contadorVariablesArreglo = 0;
         auxiliarTipoVariable = 0;
         conjunto = new Conjunto[400];
         listaArreglo = new Lista[400]; // este tenia [3]
         tuplaArreglo = new Tupla[400];
+        diccionario = new DatoDiccionario[400];
         tablaSimbolos = new TablaSimbolos[500];
         variableArreglo = new Variable[400];
         contadorAmbitoArr = new ContadorAmbito[1];
@@ -121,7 +123,9 @@ public class Ambito {
         System.out.println("<AMBITO> Avance: " + avance);
         System.out.println("<AMBITO> Ambito: " + ambito);
         System.out.println("<AMBITO> Ambito Creado: " + ambitoCreado);
+        System.out.println("<AMBITO> tarrVariable: " + tarrVariable);
         System.out.println("<AMBITO> Cima de pila: " + pilaSintaxis.peek());
+        this.oper = oper;
 
         if (pilaSintaxis.peek() == 8152) {
             pilaSintaxis.pop();
@@ -130,6 +134,9 @@ public class Ambito {
         if (pilaSintaxis.peek() == 8032) {
             pilaSintaxis.pop();
             banderaParametro = false;
+            actualizarCantidadParametrosFuncion();
+            contadorParametros = 0;
+            nombreFuncion = "";
 //                reducirAmbito();
         }
         if (pilaSintaxis.peek() == 8162) {
@@ -152,6 +159,12 @@ public class Ambito {
             banderaFor = true;
         }
 
+        if (banderaDiccionario) {
+            if (pilaSintaxis.peek() == 821) {
+                pilaSintaxis.pop();
+            }
+        }
+
         if (nombreVariable != "" && claseVariable != "" && valorVariable != "" && banderaConstante) {
             System.out.println("<AMBITO:sintaxis> Agregar Variable Constante");
             agregarVariableBaseDatos();
@@ -165,8 +178,7 @@ public class Ambito {
                 && avance != "" && banderaRango) {
             System.out.println("<AMBITO:sintaxis> Agregar Variable Rango");
             agregarVariableBaseDatos();
-        } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
-                && tarrVariable != "" && (banderaListaMultiple || banderaListaNormal) && agregarLista) {
+        } else if (agregarLista) {
             System.out.println("<AMBITO:sintaxis> Agregar Variable Lista");
             agregarVariableBaseDatos();
             primeraVezTipoLista = true;
@@ -174,6 +186,7 @@ public class Ambito {
             contadorElementosLista = 0;
             banderaListaMultiple = false;
             banderaListaNormal = false;
+            agregarLista = false;
         } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
                 && tarrVariable != "" && banderaTupla && agregarTupla) {
             System.out.println("<AMBITO:sintaxis> Agregar Variable Tupla");
@@ -214,12 +227,12 @@ public class Ambito {
 
         switch (pilaSintaxis.peek()) {
             case 801:
-                System.out.println("AREA DE DECLARACION HA SIDO DESACTIVADA");
+                System.out.println("<AMBITO> AREA DE DECLARACION HA SIDO DESACTIVADA");
                 areaDeclaracion = false;
                 pilaSintaxis.pop();
                 break;
             case 802:
-                System.out.println("AREA DE DECLARACION HA SIDO ACTIVADA");
+                System.out.println("<AMBITO> AREA DE DECLARACION HA SIDO ACTIVADA");
                 areaDeclaracion = true;
                 pilaSintaxis.pop();
                 break;
@@ -242,7 +255,19 @@ public class Ambito {
                 reducirAmbito();
                 pilaSintaxis.pop();
                 break;
+            case 8033:
+                pilaSintaxis.pop();
+                contadorParametros++;
+                break;
         }
+
+        if (pilaSintaxis.peek() == 815) {
+            banderaListaNormal = true;
+        }
+        if (pilaSintaxis.peek() == 8153) {
+            contadorElementosLista++;
+        }
+        
 
         if (pilaSintaxis.peek() >= 805 && pilaSintaxis.peek() <= 814 && !bandera814) {
             banderaConstante = true;
@@ -297,7 +322,7 @@ public class Ambito {
                     || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81
                     || pilaSintaxis.peek() == -82 && llaveDiccionario) {
                 System.out.println("AGREGAR DICCIONARIO");
-                diccionario[contadorDiccionario] = new Diccionario(tipoConstante(pilaSintaxis.peek()),
+                diccionario[contadorDiccionario] = new DatoDiccionario(tipoConstante(pilaSintaxis.peek()),
                         "datoDic", ambito + "", auxiliarDato, contadorDiccionario + "", oper.mostrarLexemaPrimero(), nombreVariable);
                 contadorDiccionario++;
                 llaveDiccionario = false;
@@ -344,7 +369,7 @@ public class Ambito {
         ////////////////////////////FIN TUPLAS//////////////////////////////
 
         ////////////////////////////LISTAS//////////////////////////////////
-        if (banderaListaNormal && !banderaListaMultiple) {
+        if (banderaListaNormal) {
             if (nombreVariable == "") {
                 nombreVariable = auxiliarID;
             }
@@ -357,58 +382,101 @@ public class Ambito {
             if (claseVariable == "") {
                 claseVariable = "Lista";
             }
-            if ((pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
-                    || pilaSintaxis.peek() == -8 || (pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82))
-                    && primeraVezTipoLista) {
-                primeraVezTipoLista = false;
-                auxiliarTipoVariable = pilaSintaxis.peek();
-                listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
-                        (ambito + 1) + "", contadorElementosLista + "", nombreVariable);
-                contadorElementosLista++;
-                tarrVariable = contadorElementosLista + "";
-            } else if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
-                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81
-                    || pilaSintaxis.peek() == -82) {
-                tarrVariable = contadorElementosLista + "";
-                if (pilaSintaxis.peek() == auxiliarTipoVariable
-                        || ((pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82)
-                        && (auxiliarTipoVariable == -81 || auxiliarTipoVariable == -82))) {
-                    listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
-                            (ambito + 1) + "", contadorElementosLista + "", nombreVariable);
-                    contadorElementosLista++;
-                    tarrVariable = contadorElementosLista + "";
-                } else {
-                    banderaListaMultiple = true;
-                    banderaListaNormal = false;
-                    listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
-                            ambito + "", contadorElementosLista + "", nombreVariable);
-                    contadorElementosLista++;
-                    tarrVariable = contadorElementosLista + "";
+            
+            if(pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7 || pilaSintaxis.peek() == -8 
+                    || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82){
+                controladorDatoLista.push(tipoConstante(pilaSintaxis.peek()), ambito+"",
+                    (controladorDatoLista.obtenerCantidadDatosLista()+1)+"", nombreVariable);
+            }
+            if (listaPerteneceVariable == "") {
+                switch (pilaSintaxis.peek()) {
+                    case -4:
+                    case -7:
+                    case -8:
+                    case -81:
+                    case -82:
+                        listaPerteneceVariable = tipoConstante(pilaSintaxis.peek());
+                        break;
                 }
-            }
-        } else if (banderaListaMultiple && !banderaListaNormal) {
-            if (nombreVariable == "") {
-                nombreVariable = auxiliarID;
-            }
-            if (ambitoVariable == "") {
-                ambitoVariable = ambito + "";
+            } else if((pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
+                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82) &&
+                    (listaPerteneceVariable != tipoConstante(pilaSintaxis.peek()) && tipoConstante(pilaSintaxis.peek()) != "")){
+                banderaListaMultiple = true;
+                banderaListaNormal = false;
             }
 
-            if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
-                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82) {
-                System.out.println("Tipo de constante: " + tipoConstante(pilaSintaxis.peek()));
-                System.out.println("Ambito: " + (ambito + 1));
-                System.out.println("NoPos | contadorElementosLista: " + contadorElementosLista);
-                System.out.println("ListaPertenece: " + nombreVariable);
-
-                System.out.println("AGREGAR ELEMENTO LISTA");
-                listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
-                        (ambito + 1) + "", contadorElementosLista + "", nombreVariable);
-                contadorElementosLista++;
-                tarrVariable = contadorElementosLista + "";
+        } else if (banderaListaMultiple) {
+            if(pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7 || pilaSintaxis.peek() == -8 
+                    || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82){
+                controladorDatoLista.push(tipoConstante(pilaSintaxis.peek()), ambito+"",
+                    (controladorDatoLista.obtenerCantidadDatosLista()+1)+"", nombreVariable);
             }
-
         }
+//        if (banderaListaNormal && !banderaListaMultiple) {
+//            if (nombreVariable == "") {
+//                nombreVariable = auxiliarID;
+//            }
+//            if (ambitoVariable == "") {
+//                ambitoVariable = ambito + "";
+//            }
+//            if (tipoVariable == "") {
+//                tipoVariable = "struct";
+//            }
+//            if (claseVariable == "") {
+//                claseVariable = "Lista";
+//            }
+//            if ((pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
+//                    || pilaSintaxis.peek() == -8 || (pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82))
+//                    && primeraVezTipoLista) {
+//                primeraVezTipoLista = false;
+//                auxiliarTipoVariable = pilaSintaxis.peek();
+//                listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
+//                        (ambito + 1) + "", contadorElementosLista + "", nombreVariable);
+//                contadorElementosLista++;
+//                tarrVariable = contadorElementosLista + "";
+//            } else if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
+//                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81
+//                    || pilaSintaxis.peek() == -82) {
+//                tarrVariable = contadorElementosLista + "";
+//                if (pilaSintaxis.peek() == auxiliarTipoVariable
+//                        || ((pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82)
+//                        && (auxiliarTipoVariable == -81 || auxiliarTipoVariable == -82))) {
+//                    listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
+//                            (ambito + 1) + "", contadorElementosLista + "", nombreVariable);
+//                    contadorElementosLista++;
+//                    tarrVariable = contadorElementosLista + "";
+//                } else {
+//                    banderaListaMultiple = true;
+//                    banderaListaNormal = false;
+//                    listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
+//                            ambito + "", contadorElementosLista + "", nombreVariable);
+//                    contadorElementosLista++;
+//                    tarrVariable = contadorElementosLista + "";
+//                }
+//            }
+//        } else if (banderaListaMultiple && !banderaListaNormal) {
+//            if (nombreVariable == "") {
+//                nombreVariable = auxiliarID;
+//            }
+//            if (ambitoVariable == "") {
+//                ambitoVariable = ambito + "";
+//            }
+//
+//            if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
+//                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82) {
+//                System.out.println("Tipo de constante: " + tipoConstante(pilaSintaxis.peek()));
+//                System.out.println("Ambito: " + (ambito + 1));
+//                System.out.println("NoPos | contadorElementosLista: " + contadorElementosLista);
+//                System.out.println("ListaPertenece: " + nombreVariable);
+//
+//                System.out.println("AGREGAR ELEMENTO LISTA");
+//                listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
+//                        (ambito + 1) + "", contadorElementosLista + "", nombreVariable);
+//                contadorElementosLista++;
+//                tarrVariable = contadorElementosLista + "";
+//            }
+//
+//        }
         ////////////////////////////FIN LISTAS//////////////////////////////
 
         //////////////////////////////RANGO/////////////////////////////////
@@ -441,6 +509,7 @@ public class Ambito {
 //                    aumentarAmbito();
                 ambitoCreado = ambito + "";
                 banderaFuncion = true;
+                nombreFuncion = oper.mostrarLexemaPrimero();
                 break;
         }
 //            if(pilaSintaxis.peek()==805){
@@ -496,23 +565,22 @@ public class Ambito {
                     controladorSQL.ejecutarQuery(query);
                     variableArreglo[contadorVariablesArreglo] = new Variable(nombreVariable, ambitoVariable);
                     banderaFor = false;
-                } else {
-                    if (!areaDeclaracion) {
-                        //@@@
-                        if (variableDeclarada) {
-                        } else {
-                            controladorTokenError.agregarError(1001, "Variable " + nombreVariable + " no declarada",
-                                    "Ambito: " + ambito + "", 0, "Ambito");
+                } else if (!areaDeclaracion) {
+                    //@@@
+                    if (variableDeclarada) {
+                    } else {
+                        controladorTokenError.agregarError(1001, "Variable " + nombreVariable + " no declarada",
+                                "Ambito: " + ambito + "", oper.mostrarLineaPrimero(), "Ambito");
 //                            errores[nR] = new Estructuras.Error(1001, "Variable " + nombreVariable + " no declarada",
 //                                    "Ambito: " + ambito + "", 0, "Ambito");
-                        }
-                    } else if (variableDuplicada) {
-                        controladorTokenError.agregarError(1002, "Variable " + nombreVariable + " duplicada",
-                                "Ambito: " + ambito + ", Tipo: " + tipoVariable, 0, "Ambito");
+                    }
+                } else if (variableDuplicada) {
+                    controladorTokenError.agregarError(1002, "Variable " + nombreVariable + " duplicada",
+                            "Ambito: " + ambito + ", Tipo: " + tipoVariable, oper.mostrarLineaPrimero(), "Ambito");
 //                        errores[nR] = new Estructuras.Error(1002, "Variable " + nombreVariable + " duplicada",
 //                                "Ambito: " + ambito + ", Tipo: " + tipoVariable, 0, "Ambito");
-                    }
                 }
+
                 valorVariable = "";
                 banderaConstante = false;
                 break;
@@ -523,12 +591,24 @@ public class Ambito {
                         aumentarAmbito();
                         ambitoCreado = ambito + "";
                     }
-                    query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado) VALUES("
-                            + "'" + nombreVariable + "',"
-                            + "'" + claseVariable + "',"
-                            + "'" + tipoVariable + "',"
-                            + "'" + ambitoVariable + "',"
-                            + "'" + ambitoCreado + "');";
+                    if (tipoVariable == "par") {
+                        query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado, noPos, listaPertenece) VALUES("
+                                + "'" + nombreVariable + "',"
+                                + "'" + claseVariable + "',"
+                                + "'" + tipoVariable + "',"
+                                + "'" + ambitoVariable + "',"
+                                + "'" + ambitoCreado + "',"
+                                + "'" + contadorParametros + "',"
+                                + "'" + nombreFuncion + "');";
+                    } else {
+                        query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado) VALUES("
+                                + "'" + nombreVariable + "',"
+                                + "'" + claseVariable + "',"
+                                + "'" + tipoVariable + "',"
+                                + "'" + ambitoVariable + "',"
+                                + "'" + ambitoCreado + "');";
+                    }
+
                     aumentarContadorAmbito();
                     controladorSQL.ejecutarQuery(query);
                 } else {
@@ -537,13 +617,13 @@ public class Ambito {
 
                         } else {
                             controladorTokenError.agregarError(1001, "Variable " + nombreVariable + " no declarada",
-                                    "Ambito: " + ambito + "", 0, "Ambito");
+                                    "Ambito: " + ambito + "", oper.mostrarLineaPrimero(), "Ambito");
 //                            errores[nR] = new Estructuras.Error(1001, "Variable " + nombreVariable + " no declarada",
 //                                    "Ambito: " + ambito + "", 0, "Ambito");
                         }
                     } else if (variableDuplicada) {
                         controladorTokenError.agregarError(1002, "Variable " + nombreVariable + " duplicada",
-                                "Ambito: " + ambito + ", Tipo: " + tipoVariable, 0, "Ambito");
+                                "Ambito: " + ambito + ", Tipo: " + tipoVariable, oper.mostrarLineaPrimero(), "Ambito");
 //                        errores[nR] = new Estructuras.Error(1002, "Variable " + nombreVariable + " duplicada",
 //                                "Ambito: " + ambito + ", Tipo: " + tipoVariable, 0, "Ambito");
                     }
@@ -601,59 +681,52 @@ public class Ambito {
                 break;
             case "Lista":
                 if (banderaListaNormal) {
-                    query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,tamanoArreglo) VALUES("
+                    query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,listaPertenece,tamanoArreglo) VALUES("
                             + "'" + nombreVariable + "',"
                             + "'" + claseVariable + "',"
                             + "'" + tipoVariable + "',"
                             + "'" + ambitoVariable + "',"
-                            + "'" + tarrVariable + "');";
+                            + "'" + listaPerteneceVariable + "',"
+                            + "'" + (controladorDatoLista.obtenerCantidadDatosLista()) + "');";
                     aumentarContadorAmbito();
-                    controladorSQL.ejecutarQuery(query);
-                    banderaListaMultiple = false;
-                    banderaListaNormal = false;
-                    agregarLista = false;
-                    bandera814 = false;
-                    contadorElementosLista = 0;
+                    controladorSQL.ejecutarQuery(query);                  
                 } else if (banderaListaMultiple) {
                     aumentarAmbito();
                     ambitoCreado = ambito + "";
-                    query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado) VALUES("
+                    query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado, tamanoArreglo) VALUES("
                             + "'" + nombreVariable + "',"
                             + "'" + claseVariable + "',"
                             + "'" + tipoVariable + "',"
                             + "'" + ambitoVariable + "',"
-                            + "'" + ambitoCreado + "');";
+                            + "'" + ambitoCreado + "',"
+                            + "'" + (controladorDatoLista.obtenerCantidadDatosLista()) + "');";
                     auxiliarNombreVariable = nombreVariable;
                     aumentarContadorAmbito();
                     controladorSQL.ejecutarQuery(query);
-                    banderaListaMultiple = false;
-                    banderaListaNormal = false;
-                    agregarLista = false;
-                    bandera814 = false;
+                    
                     tamVariablesGuardadasArr++;
                     System.out.println("contadorElemenosLista: " + contadorElementosLista);
-                    for (int i = 0; i < contadorElementosLista; i++) {
-                        listaArreglo[i].setAmb(ambito + "");
-                        String tipoE = listaArreglo[i].getTipo();
-                        String claseE = listaArreglo[i].getClase();
-                        String ambitoE = listaArreglo[i].getAmb();
-                        String noPosE = listaArreglo[i].getNoPos();
-                        String listaPerE = listaArreglo[i].getListaPertenece();
+                    Lista[] auxiliar = controladorDatoLista.obtenerDatosLista();
+                    for (int i = 0; i < controladorDatoLista.obtenerCantidadDatosLista(); i++) {
                         query = "INSERT INTO tablasimbolos (clase,tipo,ambito,noPos,listaPertenece) VALUES("
-                                + "'" + claseE + "',"
-                                + "'" + tipoE + "',"
-                                + "'" + ambitoE + "',"
-                                + "'" + noPosE + "',"
-                                + "'" + listaPerE + "');";
+                                + "'" + auxiliar[i].getClase() + "',"
+                                + "'" + auxiliar[i].getTipo() + "',"
+                                + "'" + ambito + "',"
+                                + "'" + auxiliar[i].getNoPos() + "',"
+                                + "'" + auxiliar[i].getListaPertenece() + "');";
                         contadorAmbitoArr[ambito].DatoEstructura++;
                         controladorSQL.ejecutarQuery(query);
-                        query = "UPDATE tablasimbolos SET tamanoArreglo = '" + contadorElementosLista + "' where id='" + auxiliarNombreVariable + "';";
-                        controladorSQL.ejecutarQuery(query);
                     }
-                    contadorElementosLista = 0;
+                    
                     reducirAmbito();
                 }
+                controladorDatoLista.vaciarDatosLista();
+                listaPerteneceVariable = "";
+                contadorElementosLista = 0;
+                agregarLista = false;
                 bandera814 = false;
+                banderaListaMultiple = false;
+                banderaListaNormal = true;
                 break;
             case "Rango":
                 tipoVariable = "struct";
@@ -836,7 +909,7 @@ public class Ambito {
                 tipo = "Tupla";
                 break;
             case 815:
-                tipo = "Arreglo";
+                tipo = "Lista";
                 break;
             case 817:
                 tipo = "Lista";
@@ -879,7 +952,7 @@ public class Ambito {
                 tipo = "Hexadecimal";
                 break;
             case -8:
-                tipo = "Complejo";
+                tipo = "Real";
                 break;
             case -4:
                 tipo = "Cadena";
@@ -924,7 +997,7 @@ public class Ambito {
     }
 
     private boolean variableDeclarada(String id) {
-        boolean existencia = false;
+        boolean existencia;
         int estadoInt = 0;
         System.out.println("Valor ID: " + id);
         System.out.println("Valor ambito: " + ambitoVariable);
@@ -1054,8 +1127,8 @@ public class Ambito {
         }
         return contadorAmbito;
     }
-    
-    public void establecerNombreVariable(String nombre){
+
+    public void establecerNombreVariable(String nombre) {
         this.nombreVariable = nombre;
     }
 
@@ -1069,38 +1142,31 @@ public class Ambito {
         return total;
     }
 
+    private void actualizarCantidadParametrosFuncion() {
+        controladorSQL.ejecutarQuery("UPDATE tablasimbolos SET tamanoArreglo='" + contadorParametros + "' WHERE id='" + nombreFuncion + "'");
+    }
+
     public void generarTablaSimbolos() {
 
     }
-    
-    public boolean obtenerBanderaArreglo(){
+
+    public boolean obtenerBanderaArreglo() {
         return banderaArreglo;
     }
-    
-    public void establecerTamArr(int tamArr){
+
+    public void establecerTamArr(int tamArr) {
         this.tamArr = tamArr;
     }
-    
-    public int obtenerTamArr(){
+
+    public int obtenerTamArr() {
         return this.tamArr;
     }
-    
-    public int obtenerAmbito(){
+
+    public int obtenerAmbito() {
         return ambito;
     }
 
     public ContadorAmbito[] obtenerContadorEstructurasAmbito() {
         return contadorAmbitoArr;
-    }
-
-    private void crearArchivoLog() {
-        File file = new File("logs/" + urlLog + "/" + urlLog + "-Ambito.txt");
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            PrintStream out = new PrintStream(fos);
-            System.setOut(out);
-        } catch (Exception e) {
-            System.err.println("No");
-        }
     }
 }
