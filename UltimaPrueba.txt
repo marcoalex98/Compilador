@@ -1,20 +1,9 @@
-X1=[4,5,8];
-Y1=("hoal",4,45.3,9);
-A=5.6;G=5.6;B=5.6;
-DEF Suma (Id,Yu,t)
-  X=36.6e-2;
-  Y="hola mundo";
-  X1=[4,5,8];
-  Y1=("hoal",4,45.3,9);
-  A=5.6;G=5.6;B=5.6;
- {
-   Suma=Id+Yu+t;
-   suma[ 2.4,3,"jajaja"];
-a[2,4,5,6,77];
-  };
+ x=36.6e-2;
+ Y="hola mundo";
+x = "asd";
 {
-  while x<9&&y==8|| x&k :
-      while x<9||true :
+  while x<9&&Y==8|| x&k :
+      while X<9||true :
         if d :
            Qx[3,a,Qa+g]=strlen+"nada"+sqr+a+y+"asas"+suma+2.4/3*"jajaja";
            x=input("sss");

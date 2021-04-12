@@ -876,56 +876,57 @@ public class Ambito {
     }
 
     private boolean variableDuplicada(String id) {
-        boolean existencia;
-        int estadoInt = 0;
-        String query = "SELECT COUNT(id) FROM tablasimbolos WHERE id="
-                + "'" + id + "' AND ambito='" + ambitoVariable + "';";
+        System.out.println("----------VARIABLE DUPLICADA----------");
+        String idAuxiliar = id.replaceAll("\\s", "");
+        String query = "SELECT * FROM tablasimbolos WHERE (id= BINARY "
+                + "'" + idAuxiliar + "' AND (ambito='" + ambito + "'))";
         try {
             ResultSet rs = controladorSQL.obtenerResultSet(query);
-            while (rs.next()) {
-                estadoInt = rs.getInt(1);
+            boolean existencia = rs.next();
+            System.err.println(id + ": " + existencia);
+            if (existencia) {
+                System.out.println("VARIABLE DUPLICADA");
+                return true;
+
+            } else {
+                System.out.println("VARIABLE NO DUPLICADA");
+                return false;
+
             }
         } catch (SQLException ex) {
             //Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        System.out.println("VALOR DE ESTADO INT: " + estadoInt);
-        if (estadoInt >= 1) {
-            existencia = true;
-            System.out.println("VARIABLE DUPLICADA");
-        } else {
-            existencia = false;
-            System.out.println("VARIABLE NO DUPLICADA");
-        }
-
-        return existencia;
+        System.out.println("----------FIN VARIABLE DUPLICADA----------");
+        return false;
     }
 
     private boolean variableDeclarada(String id) {
-        boolean existencia;
+        String idAuxiliar = id.replaceAll("\\s", "");
         int estadoInt = 0;
+        System.out.println("----------VARIABLE DECLARADA----------");
         System.out.println("Valor ID: " + id);
         System.out.println("Valor ambito: " + ambitoVariable);
-        String query = "SELECT COUNT(id) FROM tablasimbolos WHERE (id="
-                + "'" + id + "' AND ambito='" + ambito + "' OR ambito='0')";
+        String query = "SELECT * FROM tablasimbolos WHERE (id= BINARY "
+                + "'" + idAuxiliar + "' AND (ambito='" + ambito + "' OR ambito='0'))";
         try {
             ResultSet rs = controladorSQL.obtenerResultSet(query);
-            while (rs.next()) {
-                estadoInt = rs.getInt(1);
+            boolean existencia = rs.next();
+            if (existencia) {
+                System.out.println("VARIABLE EXITENTE");
+                return true;
+
+            } else {
+                System.out.println("VARIABLE NO EXISTENTE");
+                return false;
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(Ambito.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         System.out.println("VALOR DE ESTADO INT: " + estadoInt);
-        if (estadoInt >= 1) {
-            existencia = true;
-            System.out.println("VARIABLE EXITENTE");
-        } else {
-            existencia = false;
-            System.out.println("VARIABLE NO EXISTENTE");
-        }
-        return existencia;
+        System.out.println("----------FIN VARIABLE DECLARADA----------");
+        return false;
     }
 
     private void aumentarContadorAmbito() {
