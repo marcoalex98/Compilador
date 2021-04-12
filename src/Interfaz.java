@@ -5,6 +5,7 @@ import SQL.ControladorSQL;
 import Excel.GenerarExcel;
 import Estructuras.NumeroLinea;
 import Analizador.Lexico;
+import Analizador.Semantica1;
 import Analizador.Sintaxis;
 import Controladores.ControladorTokenError;
 import java.awt.Desktop;
@@ -41,6 +42,7 @@ public class Interfaz extends javax.swing.JFrame {
     Lexico analizadorLexico;
     Sintaxis analizadorSintaxis;
     Ambito analizadorAmbito;
+    Semantica1 analizadorSemantica1;
     ControladorTokenError controladorTokenError;
     public static GenerarExcel generarExcel;
     ControladorSQL controladorSQL;
@@ -429,6 +431,7 @@ public class Interfaz extends javax.swing.JFrame {
                 controladorTokenError,
                 analizadorAmbito);
         analizadorSintaxis.iniciarSintaxis();
+        analizadorSemantica1 = new Semantica1();
         controladorTokenError.actualizarTablas();
         controladorSQL.cerrarConexion();
         reproducir();

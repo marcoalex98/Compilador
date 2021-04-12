@@ -5,10 +5,16 @@
  */
 package Analizador;
 
+import Analizador.Auxiliar.AuxiliarSemantica1;
+
 /**
  *
  * @author marco
  */
 public class Semantica1 {
+    AuxiliarSemantica1 auxiliar;
     
+    public Semantica1(){
+        auxiliar = new AuxiliarSemantica1();
+    }
 }

@@ -1,16 +1,3 @@
- x=36.6e-2;
- Y="hola mundo";
-x = "asd";
-{
-  while x<9&&Y==8|| x&k :
-      while X<9||true :
-        if d :
-           Qx[3,a,Qa+g]=strlen+"nada"+sqr+a+y+"asas"+suma+2.4/3*"jajaja";
-           x=input("sss");
-           replace( 2.4,TRUE);
-         Else
-	   x+=4;  0
-       end
-  wend
-wend
-}
+a = [1,2,3,4];
+
+{}
