@@ -48,7 +48,7 @@ public class Sintaxis {
         crearArchivoLog();
         inicializarVariables();
         cargarMatriz();
-        cicloSintaxis();
+        analizadorSintaxis();
     }
 
     private void cargarMatriz() {
@@ -85,7 +85,7 @@ public class Sintaxis {
         pilaSintaxis = new Stack<Integer>();
     }
 
-    void cicloSintaxis() {
+    private void analizadorSintaxis() {
         System.out.println("----------SINTAXIS DE LA MUERTE----------");
         boolean tamArrPrimeraVez = false;
         pilaSintaxis.push(-1000);
@@ -98,7 +98,7 @@ public class Sintaxis {
             System.out.println("<SINTAXIS> Cima de la pila: " + pilaSintaxis.peek());
             System.out.println("<SINTAXIS> Lexema de primero: " + oper.mostrarLexemaPrimero());
             System.out.println("<SINTAXIS> Linea de primero: " + oper.mostrarLineaPrimero());
-            System.out.println("@<SINTAXIS> Avance Linea: " + avanceLinea);
+            System.out.println("<SINTAXIS> Avance Linea: " + avanceLinea);
             pilaSintaxis = analizadorAmbito.analizadorAmbito(pilaSintaxis, oper);
             if(lineaAvance != oper.mostrarLineaPrimero()){
                 avanceLinea = "";
@@ -187,6 +187,7 @@ public class Sintaxis {
 //                            System.out.println( + "<AMBITO:sintaxis> IF agregar variable" + );
 //                            agregarVariable();
 //                        }
+                        System.out.println("<SINTAXIS> Eliminar oper y pila sintaxis pop");
                         oper.eliminarInicio();
                         pilaSintaxis.pop();
                     } else if (pilaSintaxis.peek() != oper.mostrarPrimero()) {
@@ -216,8 +217,15 @@ public class Sintaxis {
         if (analizadorAmbito.obtenerAmbito() == 0) {
             System.out.println("<AMBITO> Ambito 0");
         } else {
-            controladorTokenError.agregarError(2000, "ERROR DE AMBITO", "Ambito Final: "
+            try{
+                controladorTokenError.agregarError(2000, "ERROR DE AMBITO", "Ambito Final: "
                     + analizadorAmbito.obtenerAmbito() + "", oper.mostrarLineaPrimero(), "Ambito");
+            }
+            catch(Exception e){
+                controladorTokenError.agregarError(9999, "Ha ocurrido un error de sintaxis o ambito inesperado, "
+                        + "ha sido captado en una excepcion", e.getCause()+"", -1, "SintaxisAmbito");
+            }
+            
             //errores[nR] = new Estructuras.Error(2000, "ERROR DE AMBITO", "Ambito Final: " + ambito + "", -1, "Ambito");
         }
         contadorAmbito = analizadorAmbito.obtenerContadorAmbito();

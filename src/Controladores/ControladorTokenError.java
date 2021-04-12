@@ -47,6 +47,8 @@ public class ControladorTokenError {
             int linea, String etapa){
         errores[errores.length - 1] = new Estructuras.Error(estado, descripcion, lexema, linea, etapa);
         aumentarArregloError();
+        System.out.println("<ControladorError> " +descripcion+", con lexema: "+lexema+","
+                + " en la linea "+linea+", de la etapa "+etapa);
     }
     
     public void actualizarTablas(){

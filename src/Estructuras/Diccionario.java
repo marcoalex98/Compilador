@@ -1,9 +1,9 @@
 package Estructuras;
 
-public class DatoDiccionario {
+public class Diccionario {
     String tipo, clase, amb, valor, NoPosicion, llave, ListaPertenece;
 
-    public DatoDiccionario(String tipo, String clase, String amb, String valor, 
+    public Diccionario(String tipo, String clase, String amb, String valor, 
             String NoPosicion, String llave, String ListaPertenece) {
         this.tipo = tipo;
         this.clase = clase;

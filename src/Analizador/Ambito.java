@@ -8,8 +8,9 @@ package Analizador;
 import Contadores.ContadorAmbito;
 import Controladores.ControladorTokenError;
 import Estructuras.Conjunto;
+import Estructuras.Controladores.ControladorDatoDiccionario;
 import Estructuras.Controladores.ControladorDatoLista;
-import Estructuras.DatoDiccionario;
+import Estructuras.Diccionario;
 import Estructuras.Lista;
 import Estructuras.OperToken;
 import Estructuras.Tupla;
@@ -29,7 +30,7 @@ import java.util.logging.Logger;
 public class Ambito {
 
     int contadorIdentificadores, ambito, tamArr, tamVariablesGuardadasArr,
-            contadorConjunto, contadorDiccionario, contadorElementosLista,
+            contadorDiccionario, contadorElementosLista,
             ambitoActualDisponible, contadorTupla, contadorVariablesArreglo,
             ambitoMayor, auxiliarTipoVariable, contadorParametros;
     String claseVariable, nombreVariable, auxiliarNombreVariable, tipoVariable, valorVariable,
@@ -37,15 +38,14 @@ public class Ambito {
             rango2, avance, auxiliarID, auxiliarDato, nombreFuncion;
     boolean estadoError, banderaParametro, banderaArreglo, banderaTupla, banderaListaMultiple,
             banderaRango, banderaListaNormal, agregarLista, banderaFor, agregarTupla,
-            agregarConjunto, agregarDiccionario, banderaConstante, banderaFuncion,
-            banderaConjunto, banderaAgregandoConjuntos, banderaDiccionario, asignarValor,
+            agregarDiccionario, banderaConstante, banderaFuncion,
+            banderaDiccionario, asignarValor,
             bandera814, areaDeclaracion, primeraVezTipoLista, llaveDiccionario;
     Stack<Integer> pilaSintaxis;
     Stack<Integer> pilaAmbito;
     ControladorSQL controladorSQL;
     TablaSimbolos tablaSimbolos[];
-    DatoDiccionario diccionario[];
-    Conjunto conjunto[];
+    Diccionario diccionario[];
     Lista[] listaArreglo;
     Tupla[] tuplaArreglo;
     Variable variableArreglo[];
@@ -53,12 +53,14 @@ public class Ambito {
     ControladorTokenError controladorTokenError;
     OperToken oper;
     ControladorDatoLista controladorDatoLista;
+    ControladorDatoDiccionario controladorDatoDiccionario;
 
     public Ambito(ControladorSQL controladorSQL,
             ControladorTokenError controladorTokenError) {
         this.controladorSQL = controladorSQL;
         this.controladorTokenError = controladorTokenError;
         this.controladorDatoLista = new ControladorDatoLista();
+        this.controladorDatoDiccionario = new ControladorDatoDiccionario();
     }
 
     public void iniciarAmbito() {
@@ -83,8 +85,6 @@ public class Ambito {
         nombreFuncion = "";
         banderaConstante = false;
         banderaFuncion = false;
-        banderaConjunto = false;
-        banderaAgregandoConjuntos = false;
         banderaDiccionario = false;
         asignarValor = false;
         bandera814 = false;
@@ -100,10 +100,9 @@ public class Ambito {
         contadorDiccionario = 0;
         contadorVariablesArreglo = 0;
         auxiliarTipoVariable = 0;
-        conjunto = new Conjunto[400];
         listaArreglo = new Lista[400]; // este tenia [3]
         tuplaArreglo = new Tupla[400];
-        diccionario = new DatoDiccionario[400];
+        diccionario = new Diccionario[400];
         tablaSimbolos = new TablaSimbolos[500];
         variableArreglo = new Variable[400];
         contadorAmbitoArr = new ContadorAmbito[1];
@@ -137,6 +136,9 @@ public class Ambito {
             actualizarCantidadParametrosFuncion();
             contadorParametros = 0;
             nombreFuncion = "";
+            claseVariable = "";
+            tipoVariable = "";
+            ambitoVariable = "";
 //                reducirAmbito();
         }
         if (pilaSintaxis.peek() == 8162) {
@@ -146,94 +148,120 @@ public class Ambito {
         }
         if (pilaSintaxis.peek() == 8202) {
             pilaSintaxis.pop();
-            if (banderaConjunto) {
-                System.out.println("<AMBITO:sintaxis> Bandera Agregar Conjunto");
-                agregarConjunto = true;
-            } else if (banderaDiccionario) {
-                System.out.println("<AMBITO:sintaxis> Bandera Agregar Diccionario");
-                agregarDiccionario = true;
-            }
+            agregarDiccionario = true;
         }
         if (pilaSintaxis.peek() == 840) {//For
             pilaSintaxis.pop();
             banderaFor = true;
         }
 
-        if (banderaDiccionario) {
-            if (pilaSintaxis.peek() == 821) {
-                pilaSintaxis.pop();
-            }
+        if (pilaSintaxis.peek() == 820) {
+            pilaSintaxis.pop();
+            banderaDiccionario = true;
         }
 
-        if (nombreVariable != "" && claseVariable != "" && valorVariable != "" && banderaConstante) {
-            System.out.println("<AMBITO:sintaxis> Agregar Variable Constante");
-            agregarVariableBaseDatos();
-        } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && banderaFuncion) {
-            System.out.println("<AMBITO:sintaxis> Agregar Variable Funcion");
-            agregarVariableBaseDatos();
-        } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && banderaParametro) {
-            System.out.println("<AMBITO:sintaxis> Agregar Variable Parametro");
-            agregarVariableBaseDatos();
-        } else if (nombreVariable != "" && claseVariable != "" && rango1 != "" && rango2 != ""
-                && avance != "" && banderaRango) {
-            System.out.println("<AMBITO:sintaxis> Agregar Variable Rango");
-            agregarVariableBaseDatos();
-        } else if (agregarLista) {
-            System.out.println("<AMBITO:sintaxis> Agregar Variable Lista");
-            agregarVariableBaseDatos();
-            primeraVezTipoLista = true;
-            auxiliarTipoVariable = 0;
-            contadorElementosLista = 0;
-            banderaListaMultiple = false;
-            banderaListaNormal = false;
-            agregarLista = false;
-        } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
-                && tarrVariable != "" && banderaTupla && agregarTupla) {
-            System.out.println("<AMBITO:sintaxis> Agregar Variable Tupla");
-            agregarVariableBaseDatos();
-        } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
-                && tarrVariable != "" && banderaConjunto && agregarConjunto) {
-            System.out.println("<AMBITO:sintaxis> Agregar Variable Conjunto");
-            agregarVariableBaseDatos();
-        } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
-                && tarrVariable != "" && banderaDiccionario && agregarDiccionario) {
-            System.out.println("<AMBITO:sintaxis> Agregar Variable Diccionario");
-            agregarVariableBaseDatos();
+        if (areaDeclaracion) {
+            if (nombreVariable != "" && claseVariable != "" && valorVariable != ""
+                    && banderaConstante && !banderaDiccionario) {
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Constante");
+                agregarVariableBaseDatos();
+            } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && banderaFuncion) {
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Funcion");
+                agregarVariableBaseDatos();
+            } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && banderaParametro) {
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Parametro");
+                agregarVariableBaseDatos();
+            } else if (nombreVariable != "" && claseVariable != "" && rango1 != "" && rango2 != ""
+                    && avance != "" && banderaRango) {
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Rango");
+                agregarVariableBaseDatos();
+            } else if (agregarLista) {
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Lista");
+                agregarVariableBaseDatos();
+                primeraVezTipoLista = true;
+                auxiliarTipoVariable = 0;
+                contadorElementosLista = 0;
+                banderaListaMultiple = false;
+                banderaListaNormal = false;
+                agregarLista = false;
+            } else if (agregarDiccionario) {
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Diccionario");
+                agregarVariableBaseDatos();
+                agregarDiccionario = false;
+            } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
+                    && tarrVariable != "" && banderaTupla && agregarTupla) {
+                System.out.println("<AMBITO:sintaxis> Agregar Variable Tupla");
+                agregarVariableBaseDatos();
+            }
+        } else {
+            if (pilaSintaxis.peek() == -6) {
+                if (!variableDeclarada(oper.mostrarLexemaPrimero())) {
+                    controladorTokenError.agregarError(1001, "Variable " + oper.mostrarLexemaPrimero() + " no declarada",
+                            "Ambito: " + ambito + "", oper.mostrarLineaPrimero(), "Ambito");
+                }
+            }
         }
 
         if (pilaSintaxis.peek() == -6) {
             auxiliarID = oper.mostrarLexemaPrimero();
         }
 
-        if (banderaFor) {
-            if (pilaSintaxis.peek() == -6) {
-                System.out.println("simonfor6");
-                System.out.println("nombreVariable: " + auxiliarID);
-                System.out.println("oper.primero: " + oper.mostrarLexemaPrimero());
-                nombreVariable = auxiliarID;
-            }
-            if (oper.mostrarPrimero() == -7) {
-                aumentarAmbito();
-                System.out.println("simonfor7");
-                valorVariable = oper.mostrarLexemaPrimero();
-                claseVariable = "Decimal";
-                banderaConstante = true;
-            }
-        }
-
+//        if (banderaFor) {
+//            if (pilaSintaxis.peek() == -6) {
+//                System.out.println("simonfor6");
+//                System.out.println("nombreVariable: " + auxiliarID);
+//                System.out.println("oper.primero: " + oper.mostrarLexemaPrimero());
+//                nombreVariable = auxiliarID;
+//            }
+//            if (oper.mostrarPrimero() == -7) {
+//                aumentarAmbito();
+//                System.out.println("simonfor7");
+//                valorVariable = oper.mostrarLexemaPrimero();
+//                claseVariable = "Decimal";
+//                banderaConstante = true;
+//            }
+//        }
         if (pilaSintaxis.peek() == 8402) {
             reducirAmbito();
+        }
+
+        if (pilaSintaxis.peek() == 8403) {
+            pilaSintaxis.pop();
+            aumentarAmbito();
+            if (oper.mostrarPosicionPrimero() == -6) {
+                System.out.println("@<AMBITO> Se ha agregado la variable " + oper.mostrarLexemaPrimero() + " perteneciente a un for");
+                controladorSQL.ejecutarQuery("INSERT INTO tablasimbolos (id,clase,tipo,listaPertenece,ambito) VALUES("
+                        + "'" + oper.mostrarLexemaPrimero() + "',"
+                        + "'" + "Decimal" + "',"
+                        + "'" + "var" + "',"
+                        + "'" + "for" + "',"
+                        + "'" + ambito + "');");
+            }
         }
 
         switch (pilaSintaxis.peek()) {
             case 801:
                 System.out.println("<AMBITO> AREA DE DECLARACION HA SIDO DESACTIVADA");
                 areaDeclaracion = false;
+                tamVariablesGuardadasArr = 0;
+                claseVariable = "";
+                nombreVariable = "";
+                tipoVariable = "";
+                valorVariable = "";
+                ambitoCreado = "";
+                tarrVariable = "";
                 pilaSintaxis.pop();
                 break;
             case 802:
                 System.out.println("<AMBITO> AREA DE DECLARACION HA SIDO ACTIVADA");
                 areaDeclaracion = true;
+                tamVariablesGuardadasArr = 0;
+                claseVariable = "";
+                nombreVariable = "";
+                tipoVariable = "";
+                valorVariable = "";
+                ambitoCreado = "";
+                tarrVariable = "";
                 pilaSintaxis.pop();
                 break;
             case 803:
@@ -247,7 +275,6 @@ public class Ambito {
                     claseVariable = "None";
                     tipoVariable = "par";
                     ambitoVariable = ambito + "";
-
                     pilaSintaxis.pop();
                 }
                 break;
@@ -267,14 +294,13 @@ public class Ambito {
         if (pilaSintaxis.peek() == 8153) {
             contadorElementosLista++;
         }
-        
 
         if (pilaSintaxis.peek() >= 805 && pilaSintaxis.peek() <= 814 && !bandera814) {
             banderaConstante = true;
             System.out.println("<AMBITO:sintaxis>  Entro a if de 805 y 814 | 800:" + pilaSintaxis.peek());
             tipo800(pilaSintaxis.peek());
             pilaSintaxis.pop();
-        } else if (pilaSintaxis.peek() > 814 && pilaSintaxis.peek() <= 821) {
+        } else if (pilaSintaxis.peek() > 814 && pilaSintaxis.peek() <= 820) {
             bandera814 = true;
             System.out.println("<AMBITO:sintaxis>  Entro a if de 815 y 821 | 800:" + pilaSintaxis.peek());
             tipo800(pilaSintaxis.peek());
@@ -290,64 +316,34 @@ public class Ambito {
                 tipoVariable = "struct";
                 System.out.println("<AMBITO:sintaxis> Bandera Tupla");
                 ambitoVariable = ambito + "";
-            } else if (claseVariable.equals("Conjunto") && !banderaDiccionario) {
-                banderaConjunto = true;
-                tipoVariable = "struct";
-                System.out.println("<AMBITO:sintaxis> Bandera Conjunto");
-                ambitoVariable = ambito + "";
             } else if (claseVariable.equals("Diccionario")) {
                 banderaDiccionario = true;
-                banderaConjunto = false;
                 tipoVariable = "struct";
-                System.out.println("<AMBITO:sintaxis> Bandera Diccionario");
-                ambitoVariable = ambito + "";
             }
             pilaSintaxis.pop();
         }
+
         /////////////////////////DICCIONARIOS///////////////////////////////
         if (banderaDiccionario) {
-            banderaConjunto = false;
             if (nombreVariable == "") {
                 nombreVariable = auxiliarID;
             }
             if (ambitoVariable == "") {
                 ambitoVariable = ambito + "";
             }
-            if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
-                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81
-                    || pilaSintaxis.peek() == -82 && !llaveDiccionario) {
+            claseVariable = "Diccionario";
+            if (pilaSintaxis.peek() == 8203) {
                 auxiliarDato = oper.mostrarLexemaPrimero();
-                llaveDiccionario = true;
-            } else if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
-                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81
-                    || pilaSintaxis.peek() == -82 && llaveDiccionario) {
-                System.out.println("AGREGAR DICCIONARIO");
-                diccionario[contadorDiccionario] = new DatoDiccionario(tipoConstante(pilaSintaxis.peek()),
-                        "datoDic", ambito + "", auxiliarDato, contadorDiccionario + "", oper.mostrarLexemaPrimero(), nombreVariable);
-                contadorDiccionario++;
-                llaveDiccionario = false;
+                pilaSintaxis.pop();
+            }
+            if (pilaSintaxis.peek() == 8204) {
+                pilaSintaxis.pop();
+                controladorDatoDiccionario.push(tipoConstante(pilaSintaxis.peek()),
+                        ambito + "", auxiliarDato, (controladorDatoDiccionario.obtenerCantidadDatosDiccionario() + 1) + "",
+                        oper.mostrarLexemaPrimero(), nombreVariable);
             }
         }
         /////////////////////FIN DICCIONARIOS///////////////////////////////
-
-        //////////////////////////CONJUNTOS/////////////////////////////////
-        if (banderaConjunto && !banderaDiccionario) {
-            if (nombreVariable == "") {
-                nombreVariable = auxiliarID;
-            }
-            if (ambitoVariable == "") {
-                ambitoVariable = ambito + "";
-            }
-            if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
-                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81
-                    || pilaSintaxis.peek() == -82) {
-                conjunto[contadorConjunto] = new Conjunto(tipoConstante(pilaSintaxis.peek()), "datoConj",
-                        ambito + "", contadorConjunto + "", nombreVariable);
-                contadorConjunto++;
-                tarrVariable = contadorConjunto + "";
-            }
-        }
-        //////////////////////////FIN CONJUNTOS/////////////////////////////
 
         ////////////////////////////TUPLAS//////////////////////////////////
         if (banderaTupla) {
@@ -382,101 +378,31 @@ public class Ambito {
             if (claseVariable == "") {
                 claseVariable = "Lista";
             }
-            
-            if(pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7 || pilaSintaxis.peek() == -8 
-                    || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82){
-                controladorDatoLista.push(tipoConstante(pilaSintaxis.peek()), ambito+"",
-                    (controladorDatoLista.obtenerCantidadDatosLista()+1)+"", nombreVariable);
+
+            if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7 || pilaSintaxis.peek() == -8
+                    || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82) {
+                controladorDatoLista.push(tipoConstante(pilaSintaxis.peek()), ambito + "",
+                        (controladorDatoLista.obtenerCantidadDatosLista() + 1) + "", nombreVariable);
             }
             if (listaPerteneceVariable == "") {
-                switch (pilaSintaxis.peek()) {
-                    case -4:
-                    case -7:
-                    case -8:
-                    case -81:
-                    case -82:
-                        listaPerteneceVariable = tipoConstante(pilaSintaxis.peek());
-                        break;
+                if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7 || pilaSintaxis.peek() == -8
+                        || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82) {
+                    listaPerteneceVariable = tipoConstante(pilaSintaxis.peek());
                 }
-            } else if((pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
-                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82) &&
-                    (listaPerteneceVariable != tipoConstante(pilaSintaxis.peek()) && tipoConstante(pilaSintaxis.peek()) != "")){
+            } else if ((pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
+                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82)
+                    && (listaPerteneceVariable != tipoConstante(pilaSintaxis.peek()) && tipoConstante(pilaSintaxis.peek()) != "")) {
                 banderaListaMultiple = true;
                 banderaListaNormal = false;
             }
 
         } else if (banderaListaMultiple) {
-            if(pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7 || pilaSintaxis.peek() == -8 
-                    || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82){
-                controladorDatoLista.push(tipoConstante(pilaSintaxis.peek()), ambito+"",
-                    (controladorDatoLista.obtenerCantidadDatosLista()+1)+"", nombreVariable);
+            if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7 || pilaSintaxis.peek() == -8
+                    || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82) {
+                controladorDatoLista.push(tipoConstante(pilaSintaxis.peek()), ambito + "",
+                        (controladorDatoLista.obtenerCantidadDatosLista() + 1) + "", nombreVariable);
             }
         }
-//        if (banderaListaNormal && !banderaListaMultiple) {
-//            if (nombreVariable == "") {
-//                nombreVariable = auxiliarID;
-//            }
-//            if (ambitoVariable == "") {
-//                ambitoVariable = ambito + "";
-//            }
-//            if (tipoVariable == "") {
-//                tipoVariable = "struct";
-//            }
-//            if (claseVariable == "") {
-//                claseVariable = "Lista";
-//            }
-//            if ((pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
-//                    || pilaSintaxis.peek() == -8 || (pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82))
-//                    && primeraVezTipoLista) {
-//                primeraVezTipoLista = false;
-//                auxiliarTipoVariable = pilaSintaxis.peek();
-//                listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
-//                        (ambito + 1) + "", contadorElementosLista + "", nombreVariable);
-//                contadorElementosLista++;
-//                tarrVariable = contadorElementosLista + "";
-//            } else if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
-//                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81
-//                    || pilaSintaxis.peek() == -82) {
-//                tarrVariable = contadorElementosLista + "";
-//                if (pilaSintaxis.peek() == auxiliarTipoVariable
-//                        || ((pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82)
-//                        && (auxiliarTipoVariable == -81 || auxiliarTipoVariable == -82))) {
-//                    listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
-//                            (ambito + 1) + "", contadorElementosLista + "", nombreVariable);
-//                    contadorElementosLista++;
-//                    tarrVariable = contadorElementosLista + "";
-//                } else {
-//                    banderaListaMultiple = true;
-//                    banderaListaNormal = false;
-//                    listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
-//                            ambito + "", contadorElementosLista + "", nombreVariable);
-//                    contadorElementosLista++;
-//                    tarrVariable = contadorElementosLista + "";
-//                }
-//            }
-//        } else if (banderaListaMultiple && !banderaListaNormal) {
-//            if (nombreVariable == "") {
-//                nombreVariable = auxiliarID;
-//            }
-//            if (ambitoVariable == "") {
-//                ambitoVariable = ambito + "";
-//            }
-//
-//            if (pilaSintaxis.peek() == -4 || pilaSintaxis.peek() == -7
-//                    || pilaSintaxis.peek() == -8 || pilaSintaxis.peek() == -81 || pilaSintaxis.peek() == -82) {
-//                System.out.println("Tipo de constante: " + tipoConstante(pilaSintaxis.peek()));
-//                System.out.println("Ambito: " + (ambito + 1));
-//                System.out.println("NoPos | contadorElementosLista: " + contadorElementosLista);
-//                System.out.println("ListaPertenece: " + nombreVariable);
-//
-//                System.out.println("AGREGAR ELEMENTO LISTA");
-//                listaArreglo[contadorElementosLista] = new Lista(tipoConstante(pilaSintaxis.peek()), "datoLista",
-//                        (ambito + 1) + "", contadorElementosLista + "", nombreVariable);
-//                contadorElementosLista++;
-//                tarrVariable = contadorElementosLista + "";
-//            }
-//
-//        }
         ////////////////////////////FIN LISTAS//////////////////////////////
 
         //////////////////////////////RANGO/////////////////////////////////
@@ -552,24 +478,11 @@ public class Ambito {
                             + "'" + valorVariable + "');";
                     controladorSQL.ejecutarQuery(query);
                     variableArreglo[contadorVariablesArreglo] = new Variable(nombreVariable, ambitoVariable);
-                } else if (banderaFor) {
-                    tipoVariable = "var";
-                    ambitoVariable = ambito + "";
-                    aumentarContadorAmbito();
-                    query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,valor) VALUES("
-                            + "'" + nombreVariable + "',"
-                            + "'" + claseVariable + "',"
-                            + "'" + tipoVariable + "',"
-                            + "'" + ambitoVariable + "',"
-                            + "'" + valorVariable + "');";
-                    controladorSQL.ejecutarQuery(query);
-                    variableArreglo[contadorVariablesArreglo] = new Variable(nombreVariable, ambitoVariable);
-                    banderaFor = false;
                 } else if (!areaDeclaracion) {
                     //@@@
                     if (variableDeclarada) {
                     } else {
-                        controladorTokenError.agregarError(1001, "Variable " + nombreVariable + " no declarada",
+                        controladorTokenError.agregarError(1001, "@Variable " + nombreVariable + " no declarada, area de declaracion: " + areaDeclaracion,
                                 "Ambito: " + ambito + "", oper.mostrarLineaPrimero(), "Ambito");
 //                            errores[nR] = new Estructuras.Error(1001, "Variable " + nombreVariable + " no declarada",
 //                                    "Ambito: " + ambito + "", 0, "Ambito");
@@ -656,7 +569,7 @@ public class Ambito {
                         String tipoE = tuplaArreglo[i].getTipo();
                         String claseE = tuplaArreglo[i].getClase();
                         String ambitoE = tuplaArreglo[i].getAmb();
-                        String noPosE = tuplaArreglo[i].getNoPos();
+                        String noPosE = (Integer.parseInt(tuplaArreglo[i].getNoPos()) + 1) + "";
                         String listaPerE = tuplaArreglo[i].getListaPertenece();
                         String valorDatoTupla = tuplaArreglo[i].getValor();
                         query = "INSERT INTO tablasimbolos (clase,tipo,ambito,noPos,listaPertenece,valor) VALUES("
@@ -670,7 +583,7 @@ public class Ambito {
                         System.err.println("datoEstructura: " + contadorAmbitoArr[ambito].DatoEstructura);
                         contadorAmbitoArr[ambito].DatoEstructura++;
                         controladorSQL.ejecutarQuery(query);
-                        query = "UPDATE tablasimbolos SET tamanoArreglo = '" + contadorTupla + "' where id='" + auxiliarNombreVariable + "';";
+                        query = "UPDATE tablasimbolos SET tamanoArreglo = '" + (contadorTupla) + "' where id='" + auxiliarNombreVariable + "';";
                         controladorSQL.ejecutarQuery(query);
                     }
                 }
@@ -689,7 +602,7 @@ public class Ambito {
                             + "'" + listaPerteneceVariable + "',"
                             + "'" + (controladorDatoLista.obtenerCantidadDatosLista()) + "');";
                     aumentarContadorAmbito();
-                    controladorSQL.ejecutarQuery(query);                  
+                    controladorSQL.ejecutarQuery(query);
                 } else if (banderaListaMultiple) {
                     aumentarAmbito();
                     ambitoCreado = ambito + "";
@@ -703,7 +616,7 @@ public class Ambito {
                     auxiliarNombreVariable = nombreVariable;
                     aumentarContadorAmbito();
                     controladorSQL.ejecutarQuery(query);
-                    
+
                     tamVariablesGuardadasArr++;
                     System.out.println("contadorElemenosLista: " + contadorElementosLista);
                     Lista[] auxiliar = controladorDatoLista.obtenerDatosLista();
@@ -717,7 +630,7 @@ public class Ambito {
                         contadorAmbitoArr[ambito].DatoEstructura++;
                         controladorSQL.ejecutarQuery(query);
                     }
-                    
+
                     reducirAmbito();
                 }
                 controladorDatoLista.vaciarDatosLista();
@@ -750,85 +663,80 @@ public class Ambito {
                 avance = "";
                 bandera814 = false;
                 break;
-            case "Conjunto":
-
-                aumentarAmbito();
-                ambitoCreado = ambito + "";
-                aumentarContadorAmbito();
-                query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado) VALUES("
-                        + "'" + nombreVariable + "',"
-                        + "'" + claseVariable + "',"
-                        + "'" + tipoVariable + "',"
-                        + "'" + ambitoVariable + "',"
-                        + "'" + ambitoCreado + "');";
-                auxiliarNombreVariable = nombreVariable;
-                controladorSQL.ejecutarQuery(query);
-                System.out.println("contadorConjunto: " + contadorConjunto);
-                for (int i = 0; i < contadorConjunto; i++) {
-                    conjunto[i].setAmb(ambito + "");
-                    String tipoE = conjunto[i].getTipo();
-                    String claseE = conjunto[i].getClase();
-                    String ambitoE = conjunto[i].getAmb();
-                    String noPosE = conjunto[i].getNoPosicion();
-                    String listaPerE = conjunto[i].getListaPertenece();
-                    aumentarContadorAmbito();
-                    query = "INSERT INTO tablasimbolos (clase,tipo,ambito,noPos,listaPertenece) VALUES("
-                            + "'" + claseE + "',"
-                            + "'" + tipoE + "',"
-                            + "'" + ambitoE + "',"
-                            + "'" + noPosE + "',"
-                            + "'" + listaPerE + "');";
-                    controladorSQL.ejecutarQuery(query);
-                    query = "UPDATE tablasimbolos SET tamanoArreglo = '" + contadorConjunto + "' where id='" + auxiliarNombreVariable + "';";
-                    controladorSQL.ejecutarQuery(query);
-                }
-                agregarConjunto = false;
-                contadorConjunto = 0;
-                reducirAmbito();
-                banderaConjunto = false;
-                agregarConjunto = false;
-                bandera814 = false;
-                break;
+//            case "Conjunto":
+//
+//                aumentarAmbito();
+//                ambitoCreado = ambito + "";
+//                aumentarContadorAmbito();
+//                query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado) VALUES("
+//                        + "'" + nombreVariable + "',"
+//                        + "'" + claseVariable + "',"
+//                        + "'" + tipoVariable + "',"
+//                        + "'" + ambitoVariable + "',"
+//                        + "'" + ambitoCreado + "');";
+//                auxiliarNombreVariable = nombreVariable;
+//                controladorSQL.ejecutarQuery(query);
+//                System.out.println("contadorConjunto: " + contadorConjunto);
+//                for (int i = 0; i < contadorConjunto; i++) {
+//                    conjunto[i].setAmb(ambito + "");
+//                    String tipoE = conjunto[i].getTipo();
+//                    String claseE = conjunto[i].getClase();
+//                    String ambitoE = conjunto[i].getAmb();
+//                    String noPosE = conjunto[i].getNoPosicion();
+//                    String listaPerE = conjunto[i].getListaPertenece();
+//                    aumentarContadorAmbito();
+//                    query = "INSERT INTO tablasimbolos (clase,tipo,ambito,noPos,listaPertenece) VALUES("
+//                            + "'" + claseE + "',"
+//                            + "'" + tipoE + "',"
+//                            + "'" + ambitoE + "',"
+//                            + "'" + noPosE + "',"
+//                            + "'" + listaPerE + "');";
+//                    controladorSQL.ejecutarQuery(query);
+//                    query = "UPDATE tablasimbolos SET tamanoArreglo = '" + contadorConjunto + "' where id='" + auxiliarNombreVariable + "';";
+//                    controladorSQL.ejecutarQuery(query);
+//                }
+//                agregarConjunto = false;
+//                contadorConjunto = 0;
+//                reducirAmbito();
+//                banderaConjunto = false;
+//                agregarConjunto = false;
+//                bandera814 = false;
+//                break;
             case "Diccionario":
                 System.out.println("InsertarDiccionario");
                 aumentarAmbito();
                 ambitoCreado = ambito + "";
                 aumentarContadorAmbito();
-                query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado) VALUES("
+                query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado,tamanoArreglo) VALUES("
                         + "'" + nombreVariable + "',"
                         + "'" + claseVariable + "',"
                         + "'" + tipoVariable + "',"
                         + "'" + ambitoVariable + "',"
-                        + "'" + ambitoCreado + "');";
+                        + "'" + ambitoCreado + "',"
+                        + "'" + (controladorDatoDiccionario.obtenerCantidadDatosDiccionario()) + "');";
                 auxiliarNombreVariable = nombreVariable;
                 controladorSQL.ejecutarQuery(query);
                 System.out.println("contadorDiccionario: " + contadorDiccionario);
-                for (int i = 0; i < contadorDiccionario; i++) {
-                    diccionario[i].setAmb(ambito + "");
-                    String tipoE = diccionario[i].getTipo();
-                    String claseE = diccionario[i].getClase();
-                    String ambitoE = diccionario[i].getAmb();
-                    String valorE = diccionario[i].getValor();
-                    String noPosE = diccionario[i].getNoPosicion();
-                    String llaveE = diccionario[i].getLlave();
-                    String listaPerE = diccionario[i].getListaPertenece();
+                Diccionario[] auxiliar = controladorDatoDiccionario.obtenerDatosDiccionario();
+                for (int i = 0; i < auxiliar.length; i++) {
+                    auxiliar[i].setAmb(ambito + "");
                     query = "INSERT INTO tablasimbolos (clase,tipo,ambito,valor,noPos,llave,listaPertenece) VALUES("
-                            + "'" + claseE + "',"
-                            + "'" + tipoE + "',"
-                            + "'" + ambitoE + "',"
-                            + "'" + valorE + "',"
-                            + "'" + noPosE + "',"
-                            + "'" + llaveE + "',"
-                            + "'" + listaPerE + "');";
+                            + "'" + auxiliar[i].getClase() + "',"
+                            + "'" + auxiliar[i].getTipo() + "',"
+                            + "'" + auxiliar[i].getAmb() + "',"
+                            + "'" + auxiliar[i].getValor() + "',"
+                            + "'" + auxiliar[i].getNoPosicion() + "',"
+                            + "'" + auxiliar[i].getLlave() + "',"
+                            + "'" + auxiliar[i].getListaPertenece() + "');";
                     controladorSQL.ejecutarQuery(query);
                     query = "UPDATE tablasimbolos SET tamanoArreglo = '" + contadorDiccionario + "' where id='" + auxiliarNombreVariable + "';";
                     controladorSQL.ejecutarQuery(query);
                 }
+                controladorDatoDiccionario.vaciarDatosDiccionario();
                 agregarDiccionario = false;
                 contadorDiccionario = 0;
                 reducirAmbito();
                 banderaDiccionario = false;
-                agregarDiccionario = false;
                 bandera814 = false;
                 break;
         }
@@ -921,9 +829,6 @@ public class Ambito {
                 tipo = "Rango";
                 break;
             case 820:
-                tipo = "Conjunto";
-                break;
-            case 821:
                 tipo = "Diccionario";
                 break;
             default:
@@ -952,7 +857,7 @@ public class Ambito {
                 tipo = "Hexadecimal";
                 break;
             case -8:
-                tipo = "Real";
+                tipo = "Flotante";
                 break;
             case -4:
                 tipo = "Cadena";
@@ -1002,7 +907,7 @@ public class Ambito {
         System.out.println("Valor ID: " + id);
         System.out.println("Valor ambito: " + ambitoVariable);
         String query = "SELECT COUNT(id) FROM tablasimbolos WHERE (id="
-                + "'" + id + "' AND ambito='" + ambitoVariable + "')";
+                + "'" + id + "' AND ambito='" + ambito + "' OR ambito='0')";
         try {
             ResultSet rs = controladorSQL.obtenerResultSet(query);
             while (rs.next()) {
@@ -1013,7 +918,7 @@ public class Ambito {
         }
 
         System.out.println("VALOR DE ESTADO INT: " + estadoInt);
-        if (estadoInt == 1) {
+        if (estadoInt >= 1) {
             existencia = true;
             System.out.println("VARIABLE EXITENTE");
         } else {

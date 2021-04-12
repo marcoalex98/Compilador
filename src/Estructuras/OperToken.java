@@ -30,7 +30,7 @@ public class OperToken {
         return prim.getLexema();
     }
     
-    public int mostrarLineaPrimero(){
+    public int mostrarLineaPrimero(){      
         return prim.getNumlinea();
     }
     

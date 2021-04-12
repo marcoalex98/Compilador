@@ -12,11 +12,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,6 +61,7 @@ public class Interfaz extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel5 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -81,6 +80,8 @@ public class Interfaz extends javax.swing.JFrame {
         btnAbrirLog = new javax.swing.JButton();
         btnEjecutarUltimaPrueba = new javax.swing.JButton();
         btnLimpiar = new javax.swing.JButton();
+        jRBLexico = new javax.swing.JRadioButton();
+        jRBSintaxis = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -275,6 +276,18 @@ public class Interfaz extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(jRBLexico);
+        jRBLexico.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jRBLexico.setForeground(new java.awt.Color(255, 255, 255));
+        jRBLexico.setText("Léxico");
+        jRBLexico.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        buttonGroup1.add(jRBSintaxis);
+        jRBSintaxis.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jRBSintaxis.setForeground(new java.awt.Color(255, 255, 255));
+        jRBSintaxis.setText("SintaxisAmbito");
+        jRBSintaxis.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -299,9 +312,14 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addComponent(jLabel1))
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(btnAbrirLog, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btnEjecutarUltimaPrueba, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)))))
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(jRBLexico)
+                                        .addGap(10, 10, 10)
+                                        .addComponent(jRBSintaxis))
+                                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(btnAbrirLog, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnEjecutarUltimaPrueba, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE))))))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGap(34, 34, 34)
                         .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -327,7 +345,11 @@ public class Interfaz extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(btnEjecutarUltimaPrueba, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnAbrirLog, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnAbrirLog, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jRBLexico)
+                            .addComponent(jRBSintaxis))))
                 .addGap(18, 18, 18)
                 .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(14, Short.MAX_VALUE))
@@ -447,11 +469,17 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnAbrirLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirLogActionPerformed
-        if (!new File("logs/" + urlLog).exists()) {
+        String ruta = "logs/" + urlLog;
+        if (!new File(ruta).exists()) {
 
         } else {
+            if(jRBLexico.isSelected()){
+                ruta += "/"+urlLog+"-Lexico.txt";
+            }else if(jRBSintaxis.isSelected()){
+                ruta += "/"+urlLog+"-SintaxisAmbito.txt";
+            }
             try {
-                Desktop.getDesktop().open(new File("logs/" + urlLog));
+                Desktop.getDesktop().open(new File(ruta));
             } catch (IOException ex) {
 
             }
@@ -552,12 +580,15 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JButton btnEjecutarUltimaPrueba;
     private javax.swing.JButton btnLimpiar;
     private javax.swing.JButton btnXlsx;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JRadioButton jRBLexico;
+    private javax.swing.JRadioButton jRBSintaxis;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
