@@ -1,4 +1,4 @@
-package Estructuras;
+package Modelos;
 
 import java.awt.*;
 import java.beans.*;

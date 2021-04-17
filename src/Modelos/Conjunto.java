@@ -1,16 +1,13 @@
-package Estructuras;
+package Modelos;
 
-public class Diccionario {
-    String tipo, clase, amb, valor, NoPosicion, llave, ListaPertenece;
+public class Conjunto {
+    String tipo, clase, amb, NoPosicion,ListaPertenece;
 
-    public Diccionario(String tipo, String clase, String amb, String valor, 
-            String NoPosicion, String llave, String ListaPertenece) {
+    public Conjunto(String tipo, String clase, String amb, String NoPosicion, String ListaPertenece) {
         this.tipo = tipo;
         this.clase = clase;
         this.amb = amb;
-        this.valor = valor;
         this.NoPosicion = NoPosicion;
-        this.llave = llave;
         this.ListaPertenece = ListaPertenece;
     }
 
@@ -38,28 +35,12 @@ public class Diccionario {
         this.amb = amb;
     }
 
-    public String getValor() {
-        return valor;
-    }
-
-    public void setValor(String valor) {
-        this.valor = valor;
-    }
-
     public String getNoPosicion() {
         return NoPosicion;
     }
 
     public void setNoPosicion(String NoPosicion) {
         this.NoPosicion = NoPosicion;
-    }
-
-    public String getLlave() {
-        return llave;
-    }
-
-    public void setLlave(String llave) {
-        this.llave = llave;
     }
 
     public String getListaPertenece() {
@@ -69,5 +50,4 @@ public class Diccionario {
     public void setListaPertenece(String ListaPertenece) {
         this.ListaPertenece = ListaPertenece;
     }
-    
 }

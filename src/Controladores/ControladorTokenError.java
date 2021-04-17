@@ -5,7 +5,7 @@
  */
 package Controladores;
 
-import Estructuras.Token;
+import Modelos.Token;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,7 +17,7 @@ public class ControladorTokenError {
     JTable tablaTokens;
     JTable tablaErrores;
     Token tokens[];
-    Estructuras.Error errores[];
+    Modelos.Error errores[];
 
     public ControladorTokenError(JTable tablaTokens, JTable tablaErrores) {
         this.tablaTokens = tablaTokens;
@@ -29,13 +29,13 @@ public class ControladorTokenError {
         return this.tokens;
     }
     
-    public Estructuras.Error[] obtenerArregloErrores(){
+    public Modelos.Error[] obtenerArregloErrores(){
         return this.errores;
     }
     
     private void inicializarVariables(){
         tokens = new Token[1];
-        errores = new Estructuras.Error[1];
+        errores = new Modelos.Error[1];
     }
     
     public void agregarToken(int estado, String lexema, int linea){
@@ -45,7 +45,7 @@ public class ControladorTokenError {
     
     public void agregarError(int estado, String descripcion, String lexema, 
             int linea, String etapa){
-        errores[errores.length - 1] = new Estructuras.Error(estado, descripcion, lexema, linea, etapa);
+        errores[errores.length - 1] = new Modelos.Error(estado, descripcion, lexema, linea, etapa);
         aumentarArregloError();
         System.out.println("<ControladorError> " +descripcion+", con lexema: "+lexema+","
                 + " en la linea "+linea+", de la etapa "+etapa);
@@ -89,8 +89,8 @@ public class ControladorTokenError {
     }
     
     private void aumentarArregloError() {
-        Estructuras.Error aux[] = errores;
-        errores = new Estructuras.Error[errores.length + 1];
+        Modelos.Error aux[] = errores;
+        errores = new Modelos.Error[errores.length + 1];
         for (int i = 0; i < aux.length; i++) {
             errores[i] = aux[i];
         }

@@ -1,4 +1,4 @@
-package Estructuras;
+package Modelos;
 
 public class Lista {
     String tipo, clase, amb, noPos, listaPertenece;

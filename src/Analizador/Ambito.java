@@ -7,14 +7,14 @@ package Analizador;
 
 import Contadores.ContadorAmbito;
 import Controladores.ControladorTokenError;
-import Estructuras.Conjunto;
+import Modelos.Conjunto;
 import Estructuras.Controladores.ControladorDatoDiccionario;
 import Estructuras.Controladores.ControladorDatoLista;
-import Estructuras.Diccionario;
-import Estructuras.Lista;
-import Estructuras.OperToken;
-import Estructuras.Tupla;
-import Estructuras.Variable;
+import Modelos.Diccionario;
+import Modelos.Lista;
+import Modelos.OperToken;
+import Modelos.Tupla;
+import Modelos.Variable;
 import SQL.ControladorSQL;
 import SQL.TablaSimbolos;
 import java.sql.ResultSet;
@@ -54,13 +54,16 @@ public class Ambito {
     OperToken oper;
     ControladorDatoLista controladorDatoLista;
     ControladorDatoDiccionario controladorDatoDiccionario;
+    Semantica1 analizadorSemantica1;
 
     public Ambito(ControladorSQL controladorSQL,
-            ControladorTokenError controladorTokenError) {
+            ControladorTokenError controladorTokenError,
+            Semantica1 analizadorSemantica1) {
         this.controladorSQL = controladorSQL;
         this.controladorTokenError = controladorTokenError;
         this.controladorDatoLista = new ControladorDatoLista();
         this.controladorDatoDiccionario = new ControladorDatoDiccionario();
+        this.analizadorSemantica1 = analizadorSemantica1;
     }
 
     public void iniciarAmbito() {
@@ -112,6 +115,14 @@ public class Ambito {
         pilaAmbito.push(ambitoActualDisponible);
         ambitoActualDisponible++;
     }
+    
+    public void agregarOperadorOperando(int token, OperToken oper){
+        if(!areaDeclaracion){
+            System.err.println(token);
+            analizadorSemantica1.agregarOperando(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero());
+            analizadorSemantica1.agregarOperador(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero());
+        }
+    }
 
     public Stack<Integer> analizadorAmbito(Stack<Integer> pilaSintaxis, OperToken oper) {
         System.out.println("<AMBITO> Nombre variable: " + nombreVariable);
@@ -123,9 +134,9 @@ public class Ambito {
         System.out.println("<AMBITO> Ambito: " + ambito);
         System.out.println("<AMBITO> Ambito Creado: " + ambitoCreado);
         System.out.println("<AMBITO> tarrVariable: " + tarrVariable);
-        System.out.println("<AMBITO> Cima de pila: " + pilaSintaxis.peek());
+        System.out.println("<AMBITO> Cima de pila: @" + pilaSintaxis.peek());
         this.oper = oper;
-
+        
         if (pilaSintaxis.peek() == 8152) {
             pilaSintaxis.pop();
             agregarLista = true;

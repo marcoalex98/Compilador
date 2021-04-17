@@ -6,7 +6,7 @@
 package Analizador;
 
 import Controladores.ControladorTokenError;
-import Estructuras.OperToken;
+import Modelos.OperToken;
 import Excel.LeerExcelLexico;
 import java.io.File;
 import java.io.FileOutputStream;

@@ -1,4 +1,4 @@
-package Estructuras;
+package Modelos;
 
 public class Tupla {
     String tipo, clase, amb, noPos, listaPertenece, valor;

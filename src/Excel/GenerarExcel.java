@@ -2,8 +2,8 @@ package Excel;
 
 import SQL.TablaSimbolosMySQL;
 import Contadores.ContadorAmbito;
-import Estructuras.Token;
-import Estructuras.Error;
+import Modelos.Token;
+import Modelos.Error;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;

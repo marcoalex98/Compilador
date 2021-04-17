@@ -3,7 +3,7 @@ import Analizador.Ambito;
 import SQL.TablaSimbolosMySQL;
 import SQL.ControladorSQL;
 import Excel.GenerarExcel;
-import Estructuras.NumeroLinea;
+import Modelos.NumeroLinea;
 import Analizador.Lexico;
 import Analizador.Semantica1;
 import Analizador.Sintaxis;
@@ -84,6 +84,7 @@ public class Interfaz extends javax.swing.JFrame {
         btnLimpiar = new javax.swing.JButton();
         jRBLexico = new javax.swing.JRadioButton();
         jRBSintaxis = new javax.swing.JRadioButton();
+        jRBSemantica1 = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -290,6 +291,12 @@ public class Interfaz extends javax.swing.JFrame {
         jRBSintaxis.setText("SintaxisAmbito");
         jRBSintaxis.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
+        buttonGroup1.add(jRBSemantica1);
+        jRBSemantica1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jRBSemantica1.setForeground(new java.awt.Color(255, 255, 255));
+        jRBSemantica1.setText("Semantica 1");
+        jRBSemantica1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -318,7 +325,9 @@ public class Interfaz extends javax.swing.JFrame {
                                     .addGroup(jPanel5Layout.createSequentialGroup()
                                         .addComponent(jRBLexico)
                                         .addGap(10, 10, 10)
-                                        .addComponent(jRBSintaxis))
+                                        .addComponent(jRBSintaxis)
+                                        .addGap(10, 10, 10)
+                                        .addComponent(jRBSemantica1))
                                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(btnAbrirLog, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btnEjecutarUltimaPrueba, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE))))))
@@ -351,7 +360,8 @@ public class Interfaz extends javax.swing.JFrame {
                         .addGap(9, 9, 9)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jRBLexico)
-                            .addComponent(jRBSintaxis))))
+                            .addComponent(jRBSintaxis)
+                            .addComponent(jRBSemantica1))))
                 .addGap(18, 18, 18)
                 .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(14, Short.MAX_VALUE))
@@ -422,7 +432,8 @@ public class Interfaz extends javax.swing.JFrame {
         controladorTokenError = new ControladorTokenError(tablaTokens, tablaErrores);
         analizadorLexico = new Lexico(urlLog, controladorTokenError);
         analizadorLexico.iniciarLexico(jTextArea1);
-        analizadorAmbito = new Ambito(controladorSQL, controladorTokenError);
+        analizadorSemantica1 = new Semantica1(urlLog);
+        analizadorAmbito = new Ambito(controladorSQL, controladorTokenError, analizadorSemantica1);
         analizadorAmbito.iniciarAmbito();
         analizadorSintaxis = new Sintaxis(
                 urlLog,
@@ -431,7 +442,7 @@ public class Interfaz extends javax.swing.JFrame {
                 controladorTokenError,
                 analizadorAmbito);
         analizadorSintaxis.iniciarSintaxis();
-        analizadorSemantica1 = new Semantica1();
+        analizadorSemantica1.iniciarSemantica1();
         controladorTokenError.actualizarTablas();
         controladorSQL.cerrarConexion();
         reproducir();
@@ -480,6 +491,8 @@ public class Interfaz extends javax.swing.JFrame {
                 ruta += "/"+urlLog+"-Lexico.txt";
             }else if(jRBSintaxis.isSelected()){
                 ruta += "/"+urlLog+"-SintaxisAmbito.txt";
+            }else if (jRBSemantica1.isSelected()){
+                ruta += "/"+urlLog+"-Semantica1.txt";
             }
             try {
                 Desktop.getDesktop().open(new File(ruta));
@@ -591,6 +604,7 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JRadioButton jRBLexico;
+    private javax.swing.JRadioButton jRBSemantica1;
     private javax.swing.JRadioButton jRBSintaxis;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;

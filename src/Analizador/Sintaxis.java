@@ -7,7 +7,7 @@ package Analizador;
 
 import Analizador.Auxiliar.AuxiliarSintaxis;
 import Controladores.ControladorTokenError;
-import Estructuras.OperToken;
+import Modelos.OperToken;
 import Excel.LeerExcelSintactico;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -149,6 +149,8 @@ public class Sintaxis {
                 for (int i = 0; i < producciones[lugar].length; i++) {
                     System.out.println("<SINTAXIS> Se agrego " + producciones[lugar][i] + " a la pila");
                     pilaSintaxis.push(producciones[lugar][i]);
+                    
+                    
                 }
             } else if (produccion == 369) {
                 System.out.println("<SINTAXIS> EPSILON DETECTADO");
@@ -188,10 +190,10 @@ public class Sintaxis {
 //                            agregarVariable();
 //                        }
                         System.out.println("<SINTAXIS> Eliminar oper y pila sintaxis pop");
+                        analizadorAmbito.agregarOperadorOperando(pilaSintaxis.peek(), oper);
                         oper.eliminarInicio();
                         pilaSintaxis.pop();
                     } else if (pilaSintaxis.peek() != oper.mostrarPrimero()) {
-                        
                         controladorTokenError.agregarError(1000, "ERROR DE FUERZA BRUTA", "", oper.mostrarLineaPrimero(), "Sintaxis");
                         //errores[nR] = new Estructuras.Error(1000, "ERROR DE FUERZA BRUTA", "", -1, "Sintaxis");
                         System.out.println("<SINTAXIS ERROR> FUERZA BRUTA");

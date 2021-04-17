@@ -5,7 +5,7 @@
  */
 package Estructuras.Controladores;
 
-import Estructuras.Lista;
+import Modelos.Lista;
 
 /**
  *

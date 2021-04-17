@@ -1,4 +1,4 @@
-package Estructuras;
+package Modelos;
 
 
 public class NodoToken {

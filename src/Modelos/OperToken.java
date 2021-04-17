@@ -1,7 +1,7 @@
-package Estructuras;
+package Modelos;
 
 
-import Estructuras.NodoToken;
+import Modelos.NodoToken;
 
 
 public class OperToken {
