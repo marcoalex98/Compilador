@@ -9,11 +9,11 @@ package Modelos;
  *
  * @author marco
  */
-public class OperandosOperadores {
+public class Operadores {
     int linea, token;
     String lexema;
 
-    public OperandosOperadores(int linea, int token, String lexema) {
+    public Operadores(int linea, int token, String lexema) {
         this.linea = linea;
         this.token = token;
         this.lexema = lexema;

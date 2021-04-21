@@ -4,12 +4,13 @@ def Suma (Id,Yu,T)
   def SumaNumeros(Num1,Num2)
     Resultado=32;
     { 
+     Resultado=Num1+Num2;
     }; 
   X=36.6;
   Y="hola mundo"; 
   S="Hola";
   {
-    S=(Str+"jhgjh"/23*35>5);
+    Suma=Id+Yu+T;
   };
   def Ambito3 (Num1,Num2)
   Ingnorante="hola";
@@ -19,7 +20,7 @@ def Suma (Id,Yu,T)
     GradosF=365+67j;
     Resultado=0b101001;
   {
-      Resultado=32 + 9 * GradosC / 5;
+      Resultado=  GradosC / 5;
 #      Return Resultado;
   };
   def LongCircunferencia(Radio) 
@@ -54,4 +55,5 @@ def Suma (Id,Yu,T)
      Y=23*7/X;
      X=X+4*Z/2.34222>34; 
      Z=X+4*Z/2.34222>34&& 56<Ar;  
+}
 }

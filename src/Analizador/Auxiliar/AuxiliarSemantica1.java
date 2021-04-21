@@ -39,13 +39,15 @@ public class AuxiliarSemantica1 {
     }
 
     public String getRelacion(String tipo, String fila, String columna) {
-        System.out.println("<AUXILIAR SEMANTICA 1> Tipo: "+ tipo + ", "+ getTipoMatriz(tipo));
-        System.out.println("<AUXILIAR SEMANTICA 1> Fila: "+ fila + ", "+ getIndiceTipoVariable(fila));
-        System.out.println("<AUXILIAR SEMANTICA 1> Columna: "+ columna + ", "+ getIndiceTipoVariable(columna));
+        System.err.println("<AUXILIAR SEMANTICA1 getRelacion> Tipo: "+ tipo + ", "+ getTipoMatriz(tipo));
+        System.err.println("<AUXILIAR SEMANTICA1 getRelacion> Fila: "+ fila + ", "+ getIndiceTipoVariable(fila));
+        System.err.println("<AUXILIAR SEMANTICA1 getRelacion> Columna: "+ columna + ", "+ getIndiceTipoVariable(columna));
         return matrices[getTipoMatriz(tipo)][getIndiceTipoVariable(fila)][getIndiceTipoVariable(columna)];
     }
     
     public String getAsignacion(String fila, String columna){
+        System.err.println("<AUXILIAR SEMANTICA1 getAsignacion> Fila: "+ fila + ", "+ getIndiceTipoVariable(fila));
+        System.err.println("<AUXILIAR SEMANTICA1 getAsignacion> Columna: "+ columna + ", "+ getIndiceTipoVariable(columna));
         return matrices[getTipoMatriz("Asignacion")][getIndiceTipoVariable(fila)][getIndiceTipoVariable(columna)];
     }
 

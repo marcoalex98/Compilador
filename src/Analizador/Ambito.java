@@ -118,7 +118,12 @@ public class Ambito {
 
     public void agregarOperadorOperando(int token, OperToken oper) {
         if (!areaDeclaracion) {
-            analizadorSemantica1.agregarOperando(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero());
+            if (token == -6) {
+                analizadorSemantica1.agregarOperando(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero(), pilaAmbito.peek());
+            } else {
+                analizadorSemantica1.agregarOperando(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero(), -1);
+
+            }
             analizadorSemantica1.agregarOperador(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero());
         }
     }
@@ -135,13 +140,10 @@ public class Ambito {
         System.out.println("<AMBITO> tarrVariable: " + tarrVariable);
         System.out.println("<AMBITO> Cima de pila: @" + pilaSintaxis.peek());
         this.oper = oper;
-        if (pilaSintaxis.peek() == 1101 && !areaDeclaracion){
+        if (pilaSintaxis.peek() == 1101 && !areaDeclaracion) {
             pilaSintaxis.pop();
             analizadorSemantica1.ejecutarOperacion();
-        }else if (pilaSintaxis.peek() == 1102 && !areaDeclaracion) {
-            pilaSintaxis.pop();
-            analizadorSemantica1.agregarNombreVariable(oper.mostrarLexemaPrimero());
-        } else if (pilaSintaxis.peek() == 1100 && !areaDeclaracion){
+        } else if (pilaSintaxis.peek() == 1100 && !areaDeclaracion) {
             analizadorSemantica1.comprobarAsignacion();
             pilaSintaxis.pop();
         }
@@ -931,11 +933,11 @@ public class Ambito {
             ResultSet rs = controladorSQL.obtenerResultSet(query);
             boolean existencia = rs.next();
             if (existencia) {
-                System.out.println("<AMBITO> VARIABLE "+idAuxiliar+" EXISTENTE, area de declaracion: "+areaDeclaracion);
+                System.out.println("<AMBITO> VARIABLE " + idAuxiliar + " EXISTENTE, area de declaracion: " + areaDeclaracion);
                 return true;
 
             } else {
-                System.out.println("<AMBITO> VARIABLE "+idAuxiliar+" NO EXISTENTE, area de declaracion: "+areaDeclaracion);
+                System.out.println("<AMBITO> VARIABLE " + idAuxiliar + " NO EXISTENTE, area de declaracion: " + areaDeclaracion);
                 return false;
 
             }
