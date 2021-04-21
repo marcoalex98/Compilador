@@ -115,10 +115,9 @@ public class Ambito {
         pilaAmbito.push(ambitoActualDisponible);
         ambitoActualDisponible++;
     }
-    
-    public void agregarOperadorOperando(int token, OperToken oper){
-        if(!areaDeclaracion){
-            System.err.println(token);
+
+    public void agregarOperadorOperando(int token, OperToken oper) {
+        if (!areaDeclaracion) {
             analizadorSemantica1.agregarOperando(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero());
             analizadorSemantica1.agregarOperador(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero());
         }
@@ -136,7 +135,17 @@ public class Ambito {
         System.out.println("<AMBITO> tarrVariable: " + tarrVariable);
         System.out.println("<AMBITO> Cima de pila: @" + pilaSintaxis.peek());
         this.oper = oper;
-        
+        if (pilaSintaxis.peek() == 1101 && !areaDeclaracion){
+            pilaSintaxis.pop();
+            analizadorSemantica1.ejecutarOperacion();
+        }else if (pilaSintaxis.peek() == 1102 && !areaDeclaracion) {
+            pilaSintaxis.pop();
+            analizadorSemantica1.agregarNombreVariable(oper.mostrarLexemaPrimero());
+        } else if (pilaSintaxis.peek() == 1100 && !areaDeclaracion){
+            analizadorSemantica1.comprobarAsignacion();
+            pilaSintaxis.pop();
+        }
+
         if (pilaSintaxis.peek() == 8152) {
             pilaSintaxis.pop();
             agregarLista = true;
@@ -894,7 +903,6 @@ public class Ambito {
         try {
             ResultSet rs = controladorSQL.obtenerResultSet(query);
             boolean existencia = rs.next();
-            System.err.println(id + ": " + existencia);
             if (existencia) {
                 System.out.println("VARIABLE DUPLICADA");
                 return true;
@@ -923,11 +931,11 @@ public class Ambito {
             ResultSet rs = controladorSQL.obtenerResultSet(query);
             boolean existencia = rs.next();
             if (existencia) {
-                System.out.println("VARIABLE EXITENTE");
+                System.out.println("<AMBITO> VARIABLE "+idAuxiliar+" EXISTENTE, area de declaracion: "+areaDeclaracion);
                 return true;
 
             } else {
-                System.out.println("VARIABLE NO EXISTENTE");
+                System.out.println("<AMBITO> VARIABLE "+idAuxiliar+" NO EXISTENTE, area de declaracion: "+areaDeclaracion);
                 return false;
 
             }

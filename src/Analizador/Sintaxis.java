@@ -374,7 +374,7 @@ public class Sintaxis {
     }
 
     private void crearArchivoLog() {
-        File file = new File("logs/" + urlLog + "/" + urlLog + "-SintaxisAmbito.txt");
+        File file = new File("logs/" + urlLog + "/" + urlLog + "-[Sintaxis-Ambito-Semantica1].txt");
         try {
             FileOutputStream fos = new FileOutputStream(file);
             PrintStream out = new PrintStream(fos);
