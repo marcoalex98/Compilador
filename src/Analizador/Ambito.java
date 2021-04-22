@@ -142,9 +142,19 @@ public class Ambito {
         this.oper = oper;
         if (pilaSintaxis.peek() == 1101 && !areaDeclaracion) {
             pilaSintaxis.pop();
-            analizadorSemantica1.ejecutarOperacion();
+            try{
+                analizadorSemantica1.ejecutarOperacion();
+            }catch(Exception e){
+                
+            }
+           
         } else if (pilaSintaxis.peek() == 1100 && !areaDeclaracion) {
-            analizadorSemantica1.comprobarAsignacion();
+            System.err.println("-------------------------------------------1100 detectado-------------------------------------------");
+            try{
+                analizadorSemantica1.comprobarAsignacion();
+            }catch(Exception e){
+                
+            }
             pilaSintaxis.pop();
         }
 

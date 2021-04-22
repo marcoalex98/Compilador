@@ -6,6 +6,7 @@
 package Analizador;
 
 import Analizador.Auxiliar.AuxiliarSemantica1;
+import Contadores.ContadorSemantica1;
 import Controladores.ControladorTokenError;
 import Modelos.Operadores;
 import Modelos.Operando;
@@ -31,11 +32,16 @@ public class Semantica1 {
     Stack<Operadores> operadores;
     Stack<Operando> operandos;
     ControladorSQL controladorSQL;
+    ContadorSemantica1[] contadores;
     ControladorTokenError controladorTokenError;
     //                      ID   
     int listaOperandos[] = {-6, -1, -4, -7, -8, -9, -10, -12, -81, -82};
-    //                        +     -    *    /    =
-    int listaOperadores[] = {-14, -17, -20, -24, -42};
+    //                        +     -    *    /    %    =    ^   
+    int listaOperadores[] = {-14, -17, -20, -24, -28, -42, -44, -33, -32, -34, -30, -37, -117,
+        //   +=   -=   *=   /=   <<   >>   ++   --
+        -16, -19, -23, -27, -37, -40, -15, -18,
+        //    <   <=   ==   !=   >=    >   IS  ISNOT IN INNOT
+        -36, -38, -43, -31, -41, -39, -71, -72, -70, -98};
     //                         TD    TF
     int listaTemporales[] = {-400, -401};
 
@@ -49,35 +55,64 @@ public class Semantica1 {
     private void inicializarVariables() {
         operandos = new Stack<>();
         operadores = new Stack<>();
+        contadores = new ContadorSemantica1[1];
+        contadores[0] = new ContadorSemantica1();
+    }
+
+    private void aumentarArregloContadores() {
+        System.err.println("------------aumentar arreglo---------");
+        try {
+            ContadorSemantica1[] aux = contadores;
+            contadores = new ContadorSemantica1[aux.length+1];
+            for (int i = 0; i < aux.length; i++) {
+                contadores[i] = aux[i];
+            }
+            contadores[contadores.length] = new ContadorSemantica1();
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
     }
 
     public void ejecutarOperacion() {
         System.err.println("");
         System.err.println("<SEMANTICA 1 ejecutarOperacion> Ejecutar operacion");
         Operando valorA = asignarValorOperando();
+        System.err.println(contadores.length);
+        if (contadores[contadores.length - 1].getLinea() == 0) {
+            System.err.println("cambiar linea");
+            contadores[contadores.length - 1].setLinea(valorA.getLinea());
+        } else if (contadores[contadores.length - 1].getLinea() != valorA.getLinea()) {
+            aumentarArregloContadores();
+            contadores[contadores.length - 1].setLinea(valorA.getLinea());
+        }
         Operando auxiliarOperando = operandos.peek();
         Operando valorB = asignarValorOperando();
         String operacion = asignarValorOperador();
         System.err.println("<SEMANTICA 1 ejecutarOperacion> operacion: " + operacion);
         System.err.println("<SEMANTICA 1 ejecutarOperacion> valorA: " + valorA.getClase());
+        System.err.println("<SEMANTICA 1 ejecutarOperacion> valorA.linea: " + valorA.getLinea());
         System.err.println("<SEMANTICA 1 ejecutarOperacion> valorB: " + valorB.getClase());
 
         int temporal;
         if (valorA.getToken() == -6 && valorB.getToken() == -6) {
-            temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion, valorA.getClase(), valorB.getClase()));
+            temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion,
+                    valorA.getClase(), valorB.getClase()), contadores);
         } else if (valorA.getToken() == -6) {
-            temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion, valorA.getClase(),
-                    auxiliar.getTipoConstante(valorB.getToken())));
+            temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion,
+                    valorA.getClase(), auxiliar.getTipoConstante(valorB.getToken())), contadores);
         } else if (valorB.getToken() == -6) {
-            temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion, auxiliar.getTipoConstante(valorA.getToken()),
-                    valorB.getClase()));
+            temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion,
+                    auxiliar.getTipoConstante(valorA.getToken()), valorB.getClase()), contadores);
         } else {
-            temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion, auxiliar.getTipoConstante(valorA.getToken()),
-                    auxiliar.getTipoConstante(valorB.getToken())));
+            temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion,
+                    auxiliar.getTipoConstante(valorA.getToken()),
+                    auxiliar.getTipoConstante(valorB.getToken())), contadores);
         }
         System.err.println("<SEMANTICA 1 ejecutarOperacion> temporal: " + temporal);
         if (temporal == 950) {
-            controladorTokenError.agregarError(950, valorA + " no es compatible con " + valorB, "",
+            controladorTokenError.agregarError(950, valorB.getClase() + " no es compatible con "
+                    + valorA.getClase() + " en la operacion " + operacion, "",
                     auxiliarOperando.getLinea(), "Semantica 1");
             agregarTemporal(valorB.getLinea(), -414, 0, valorB.getLexema(), "variant");
         } else {
@@ -92,7 +127,7 @@ public class Semantica1 {
     }
 
     private String obtenerClaseVariable(String variable, int ambito) {
-        String query = "SELECT clase FROM tablasimbolos WHERE (id = BINARY '" + variable + "' AND ambito = '"+ambito+"')";
+        String query = "SELECT clase FROM tablasimbolos WHERE (id = BINARY '" + variable + "' AND ambito = '" + ambito + "')";
         String claseVariable = "";
         try {
             ResultSet rs = controladorSQL.obtenerResultSet(query);
@@ -102,8 +137,8 @@ public class Semantica1 {
         } catch (SQLException ex) {
             Logger.getLogger(Semantica1.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.err.println("<SEMANTICA 1 obtenerClaseVariable> query: "+query);
-        System.err.println("<SEMANTICA 1 obtenerClaseVariable> clase: "+claseVariable);
+        System.err.println("<SEMANTICA 1 obtenerClaseVariable> query: " + query);
+        System.err.println("<SEMANTICA 1 obtenerClaseVariable> clase: " + claseVariable);
         return claseVariable;
     }
 
@@ -125,6 +160,7 @@ public class Semantica1 {
             System.err.println("<SEMANTICA 1> La operacion de la variable " + variable.getLexema() + " no es aceptable");
         }
         System.err.println("---------------<SEMANTICA 1> Fin Comprobar Asignacion---------------\n");
+        imprimirArreglo();
     }
 
     private String asignarValorOperador() {
@@ -175,8 +211,32 @@ public class Semantica1 {
 
     public void agregarOperador(int operador, int linea, String lexema) {
         if (auxiliar.verificarExistencia(operador, listaOperadores)) {
+            if (operador == -15 || operador == -18) {
+                agregarOperando(-7, linea, "1", -1);
+            }
             System.err.println("<SEMANTICA 1> Se ha agregado el operador " + operador);
             operadores.push(new Operadores(linea, operador, lexema));
         }
+    }
+
+    private void imprimirArreglo() {
+        System.err.println("Imprimir arreglo");
+//        for(int i = 0; i < contadores.length; i++){
+//            System.err.println(contadores[i].getLinea());
+//            System.err.println(contadores[i].getTD());
+//            System.err.println(contadores[i].getTDO());
+//            System.err.println(contadores[i].getTDB());
+//            System.err.println(contadores[i].getTDH());
+//            System.err.println(contadores[i].getTF());
+//            System.err.println(contadores[i].getTC());
+//            System.err.println(contadores[i].getTCH());
+//            System.err.println(contadores[i].getTCM());
+//            System.err.println(contadores[i].getTB());
+//            System.err.println(contadores[i].getTT());
+//            System.err.println(contadores[i].getTL());
+//            System.err.println(contadores[i].getTA());
+//            System.err.println(contadores[i].getTDic());
+//            System.err.println(contadores[i].getTV());
+//        }
     }
 }
