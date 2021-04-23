@@ -11,7 +11,7 @@ def Suma (Id,Yu,T)
   S="Hola";
   {
     Suma=Id+Yu+T;
-    S=(Str+"jhgjh"/23*35>5);
+    S=("jhgjh"/23*35>5);
   };
   def Ambito3 (Num1,Num2)
   Ingnorante="hola";
