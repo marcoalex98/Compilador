@@ -32,7 +32,7 @@ public class Semantica1 {
     Stack<Operadores> operadores;
     Stack<Operando> operandos;
     ControladorSQL controladorSQL;
-    ContadorSemantica1[] contadores;
+    public ContadorSemantica1[] contadores;
     ControladorTokenError controladorTokenError;
     //                      ID   
     int listaOperandos[] = {-6, -1, -4, -7, -8, -9, -10, -12, -81, -82};
@@ -61,16 +61,12 @@ public class Semantica1 {
 
     private void aumentarArregloContadores() {
         System.err.println("------------aumentar arreglo---------");
-        try {
-            ContadorSemantica1[] aux = contadores;
-            contadores = new ContadorSemantica1[aux.length+1];
-            for (int i = 0; i < aux.length; i++) {
-                contadores[i] = aux[i];
-            }
-            contadores[contadores.length] = new ContadorSemantica1();
-        } catch (Exception e) {
-            System.err.println(e);
+        ContadorSemantica1[] aux = contadores;
+        contadores = new ContadorSemantica1[aux.length + 1];
+        for (int i = 0; i < aux.length; i++) {
+            contadores[i] = aux[i];
         }
+        contadores[contadores.length-1] = new ContadorSemantica1();
 
     }
 
@@ -84,7 +80,7 @@ public class Semantica1 {
             contadores[contadores.length - 1].setLinea(valorA.getLinea());
         } else if (contadores[contadores.length - 1].getLinea() != valorA.getLinea()) {
             aumentarArregloContadores();
-            contadores[contadores.length - 1].setLinea(valorA.getLinea());
+            contadores[contadores.length-1].setLinea(valorA.getLinea());
         }
         Operando auxiliarOperando = operandos.peek();
         Operando valorB = asignarValorOperando();
@@ -221,22 +217,23 @@ public class Semantica1 {
 
     private void imprimirArreglo() {
         System.err.println("Imprimir arreglo");
-//        for(int i = 0; i < contadores.length; i++){
-//            System.err.println(contadores[i].getLinea());
-//            System.err.println(contadores[i].getTD());
-//            System.err.println(contadores[i].getTDO());
-//            System.err.println(contadores[i].getTDB());
-//            System.err.println(contadores[i].getTDH());
-//            System.err.println(contadores[i].getTF());
-//            System.err.println(contadores[i].getTC());
-//            System.err.println(contadores[i].getTCH());
-//            System.err.println(contadores[i].getTCM());
-//            System.err.println(contadores[i].getTB());
-//            System.err.println(contadores[i].getTT());
-//            System.err.println(contadores[i].getTL());
-//            System.err.println(contadores[i].getTA());
-//            System.err.println(contadores[i].getTDic());
-//            System.err.println(contadores[i].getTV());
-//        }
+        for (int i = 0; i < contadores.length; i++) {
+            System.err.println(contadores[i].getLinea());
+            System.err.println(contadores[i].getTD());
+            System.err.println(contadores[i].getTDO());
+            System.err.println(contadores[i].getTDB());
+            System.err.println(contadores[i].getTDH());
+            System.err.println(contadores[i].getTF());
+            System.err.println(contadores[i].getTC());
+            System.err.println(contadores[i].getTCH());
+            System.err.println(contadores[i].getTCM());
+            System.err.println(contadores[i].getTB());
+            System.err.println(contadores[i].getTT());
+            System.err.println(contadores[i].getTL());
+            System.err.println(contadores[i].getTA());
+            System.err.println(contadores[i].getTDic());
+            System.err.println(contadores[i].getTV());
+            System.err.println("");
+        }
     }
 }

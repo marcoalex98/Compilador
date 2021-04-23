@@ -149,6 +149,8 @@ public class AuxiliarSemantica1 {Workbook excel;
             case "TCOM":
             case "Compleja":
             case "complejo":
+            case "Complejo":
+            case "compleja":
                 return 7;
             case "TBOL":
             case "Booleana":
@@ -215,6 +217,8 @@ public class AuxiliarSemantica1 {Workbook excel;
                 return listaTemporales[6];
             case "Compleja":
             case "complejo":
+            case "Complejo":
+            case "compleja":
                 contadores[contadores.length-1].setTCM(contadores[contadores.length-1].getTCM()+1);
                 return listaTemporales[7];
             case "Booleana":

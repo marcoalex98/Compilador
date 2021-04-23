@@ -1154,7 +1154,7 @@ public class Lexico {
 
     public int[] obtenerContadoresLexico() {
         for (int i = 0; i < controladorTokenError.obtenerArregloTokens().length; i++) {
-            contadoresLexico(controladorTokenError.obtenerArregloTokens()[i].getEstado());
+            //contadoresLexico(controladorTokenError.obtenerArregloTokens()[i].getEstado());
         }
         return contadoresLexico;
     }

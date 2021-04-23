@@ -464,7 +464,8 @@ public class Interfaz extends javax.swing.JFrame {
                 analizadorLexico.obtenerContadoresLexico(),
                 analizadorLexico.obtenerContadoresPorLineaLexico(),
                 analizadorSintaxis.obtenerContadorDiagramasSintaxis(),
-                analizadorAmbito.obtenerContadorEstructurasAmbito());
+                analizadorAmbito.obtenerContadorEstructurasAmbito(),
+                analizadorSemantica1);
     }//GEN-LAST:event_btnXlsxActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
