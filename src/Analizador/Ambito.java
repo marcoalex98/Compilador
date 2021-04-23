@@ -143,7 +143,8 @@ public class Ambito {
         }
         if (pilaSintaxis.peek() == 8162) {
             pilaSintaxis.pop();
-            agregarTupla = true;
+            if(areaDeclaracion)
+                agregarTupla = true;
             //reducirAmbito();
         }
         if (pilaSintaxis.peek() == 8202) {
@@ -200,6 +201,7 @@ public class Ambito {
                             "Ambito: " + ambito + "", oper.mostrarLineaPrimero(), "Ambito");
                 }
             }
+
         }
 
         if (pilaSintaxis.peek() == -6) {
@@ -229,7 +231,7 @@ public class Ambito {
             pilaSintaxis.pop();
             aumentarAmbito();
             if (oper.mostrarPosicionPrimero() == -6) {
-                System.out.println("@<AMBITO> Se ha agregado la variable " + oper.mostrarLexemaPrimero() + " perteneciente a un for");
+                System.out.println("<AMBITO> Se ha agregado la variable " + oper.mostrarLexemaPrimero() + " perteneciente a un for");
                 controladorSQL.ejecutarQuery("INSERT INTO tablasimbolos (id,clase,tipo,listaPertenece,ambito) VALUES("
                         + "'" + oper.mostrarLexemaPrimero() + "',"
                         + "'" + "Decimal" + "',"
@@ -243,9 +245,11 @@ public class Ambito {
             case 801:
                 System.out.println("<AMBITO> AREA DE DECLARACION HA SIDO DESACTIVADA");
                 areaDeclaracion = false;
+                bandera814 = false;
                 tamVariablesGuardadasArr = 0;
                 claseVariable = "";
                 nombreVariable = "";
+                auxiliarID = "";
                 tipoVariable = "";
                 valorVariable = "";
                 ambitoCreado = "";
@@ -255,8 +259,10 @@ public class Ambito {
             case 802:
                 System.out.println("<AMBITO> AREA DE DECLARACION HA SIDO ACTIVADA");
                 areaDeclaracion = true;
+                bandera814 = false;
                 tamVariablesGuardadasArr = 0;
                 claseVariable = "";
+                auxiliarID = "";
                 nombreVariable = "";
                 tipoVariable = "";
                 valorVariable = "";
@@ -521,7 +527,6 @@ public class Ambito {
                                 + "'" + ambitoVariable + "',"
                                 + "'" + ambitoCreado + "');";
                     }
-
                     aumentarContadorAmbito();
                     controladorSQL.ejecutarQuery(query);
                 } else {
@@ -782,63 +787,65 @@ public class Ambito {
 
     private void tipo800(int arroba) {
         String tipo;
-        switch (arroba) {
-            case 805:
-                tipo = "Decimal";
-                break;
-            case 806:
-                tipo = "Binario";
-                break;
-            case 807:
-                tipo = "Octal";
-                break;
-            case 808:
-                tipo = "Hexadecimal";
-                break;
-            case 809:
-                tipo = "Flotante";
-                break;
-            case 810:
-                tipo = "Cadena";
-                break;
-            case 811:
-                tipo = "Caracter";
-                break;
-            case 812:
-                tipo = "Compleja";
-                break;
-            case 813:
-                tipo = "Booleana";
-                break;
-            case 814:
+        if (areaDeclaracion) {
+            switch (arroba) {
+                case 805:
+                    tipo = "Decimal";
+                    break;
+                case 806:
+                    tipo = "Binario";
+                    break;
+                case 807:
+                    tipo = "Octal";
+                    break;
+                case 808:
+                    tipo = "Hexadecimal";
+                    break;
+                case 809:
+                    tipo = "Flotante";
+                    break;
+                case 810:
+                    tipo = "Cadena";
+                    break;
+                case 811:
+                    tipo = "Caracter";
+                    break;
+                case 812:
+                    tipo = "Compleja";
+                    break;
+                case 813:
+                    tipo = "Booleana";
+                    break;
+                case 814:
+                    tipo = "None";
+                    break;
+                case 816:
+                    tipo = "Tupla";
+                    break;
+                case 815:
+                    tipo = "Lista";
+                    break;
+                case 817:
+                    tipo = "Lista";
+                    break;
+                case 818:
+                    tipo = "Registro";
+                    break;
+                case 819:
+                    tipo = "Rango";
+                    break;
+                case 820:
+                    tipo = "Diccionario";
+                    break;
+                default:
+                    tipo = "Desconocido";
+            }
+            if (banderaParametro) {
                 tipo = "None";
-                break;
-            case 816:
-                tipo = "Tupla";
-                break;
-            case 815:
-                tipo = "Lista";
-                break;
-            case 817:
-                tipo = "Lista";
-                break;
-            case 818:
-                tipo = "Registro";
-                break;
-            case 819:
-                tipo = "Rango";
-                break;
-            case 820:
-                tipo = "Diccionario";
-                break;
-            default:
-                tipo = "Desconocido";
+                tipoVariable = "par";
+            }
+            claseVariable = tipo;
         }
-        if (banderaParametro) {
-            tipo = "None";
-            tipoVariable = "par";
-        }
-        claseVariable = tipo;
     }
 
     private String tipoConstante(int token) {
@@ -878,8 +885,8 @@ public class Ambito {
     private boolean variableDuplicada(String id) {
         System.out.println("----------VARIABLE DUPLICADA----------");
         String idAuxiliar = id.replaceAll("\\s", "");
-        String query = "SELECT * FROM tablasimbolos WHERE (id= BINARY "
-                + "'" + idAuxiliar + "' AND (ambito='" + ambito + "'))";
+        String query = "SELECT * FROM tablasimbolos WHERE (id = BINARY " + "'"
+                + idAuxiliar + "' AND (ambito='" + ambito + "'))";
         try {
             ResultSet rs = controladorSQL.obtenerResultSet(query);
             boolean existencia = rs.next();
@@ -906,7 +913,7 @@ public class Ambito {
         System.out.println("----------VARIABLE DECLARADA----------");
         System.out.println("Valor ID: " + id);
         System.out.println("Valor ambito: " + ambitoVariable);
-        String query = "SELECT * FROM tablasimbolos WHERE (id= BINARY "
+        String query = "SELECT * FROM tablasimbolos WHERE (id = BINARY "
                 + "'" + idAuxiliar + "' AND (ambito='" + ambito + "' OR ambito='0'))";
         try {
             ResultSet rs = controladorSQL.obtenerResultSet(query);
@@ -1049,11 +1056,7 @@ public class Ambito {
     }
 
     private void actualizarCantidadParametrosFuncion() {
-        controladorSQL.ejecutarQuery("UPDATE tablasimbolos SET tamanoArreglo='" + contadorParametros + "' WHERE id='" + nombreFuncion + "'");
-    }
-
-    public void generarTablaSimbolos() {
-
+        controladorSQL.ejecutarQuery("UPDATE tablasimbolos SET tamanoArreglo='" + contadorParametros + "' WHERE id= BINARY '" + nombreFuncion + "'");
     }
 
     public boolean obtenerBanderaArreglo() {

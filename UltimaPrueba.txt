@@ -1,16 +1,59 @@
- x=36.6e-2;
- Y="hola mundo";
-x = "asd";
+Valor1=true;      
+def Suma (Id,Yu,T)
+  Suma=3.5;
+  def SumaNumeros(Num1,Num2)
+    Resultado=32;
+    { 
+     Resultado=Num1+Num2;
+    }; 
+  X=36.6;
+  Y="hola mundo"; 
+  S="Hola";
+  {
+    Suma=Id+Yu+T;
+    S=("jhgjh"/23*35>5);
+  };
+  def Ambito3 (Num1,Num2)
+  Ingnorante="hola";
+  C="hola" ;
+  def Farenheit()
+    GradosC=5+7j; 
+    GradosF=365+67j;
+    Resultado=0b101001;
+  {
+      Resultado=32 + 9 * GradosC / 5;
+#      Return Resultado;
+  };
+  def LongCircunferencia(Radio) 
+    Longitud=0; 
+    Area=0x32d86a;
+    PI=3.1416;
+    {            
+      Longitud = 2 * PI * Radio;  
+      Area = PI * Radio^2; 
+#      Return Area;                 
+    };
+  def ImprimirArray ()
+    A=012543;
+    B=365;
+    C=56+5j;
+    P=range(25,45,6); 
+    {   
+      P= P*(P-A)*(P-B)*(P-C);            
+    };
+   N=0;
+   A=34.6;
+   B="hola mundo";
+   {      
+      Valor1=34*5/4>34&& Valor1||398/A*4^B==31-34*2/90;
+      Valor1=34*5/4>34&& Valor1||398/N*4^N==31-34*2/90;
+   };
+    X=36.6;
+    Y="hola mundo";
+    Z=89; 
+    Ar=true;
 {
-  while x<9&&Y==8|| x&k :
-      while X<9||true :
-        if d :
-           Qx[3,a,Qa+g]=strlen+"nada"+sqr+a+y+"asas"+suma+2.4/3*"jajaja";
-           x=input("sss");
-           replace( 2.4,TRUE);
-         Else
-	   x+=4;  0
-       end
-  wend
-wend
+     Y=23*7/X;
+     X=X+4*Z/2.34222>34; 
+     Z=X+4*Z/2.34222>34&& 56<Ar;  
 }
