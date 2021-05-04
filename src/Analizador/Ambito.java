@@ -56,15 +56,18 @@ public class Ambito {
     ControladorDatoLista controladorDatoLista;
     ControladorDatoDiccionario controladorDatoDiccionario;
     Semantica1 analizadorSemantica1;
+    Semantica2 analizadorSemantica2;
 
     public Ambito(ControladorSQL controladorSQL,
             ControladorTokenError controladorTokenError,
-            Semantica1 analizadorSemantica1) {
+            Semantica1 analizadorSemantica1,
+            Semantica2 analizadorSemantica2) {
         this.controladorSQL = controladorSQL;
         this.controladorTokenError = controladorTokenError;
         this.controladorDatoLista = new ControladorDatoLista();
         this.controladorDatoDiccionario = new ControladorDatoDiccionario();
         this.analizadorSemantica1 = analizadorSemantica1;
+        this.analizadorSemantica2 = analizadorSemantica2;
     }
 
     public void iniciarAmbito() {
@@ -141,18 +144,16 @@ public class Ambito {
         System.out.println("<AMBITO> tarrVariable: " + tarrVariable);
         System.out.println("<AMBITO> Cima de pila: " + pilaSintaxis.peek());
         this.oper = oper;
+        if (pilaSintaxis.peek() == 1010 || pilaSintaxis.peek() == 1011 || pilaSintaxis.peek() == 1012) {
+            if (analizadorSemantica1.ejecutarOperacionSemantica2().equals("booleano")) {
+                analizadorSemantica2.agregarRegla(pilaSintaxis.peek(), oper.mostrarLineaPrimero(), ambito, true);
+            }else{
+                analizadorSemantica2.agregarRegla(pilaSintaxis.peek(), oper.mostrarLineaPrimero(), ambito, false);
+            }
+            pilaSintaxis.pop();
+        }
 
-//        if (pilaSintaxis.peek() == 1101) {
-//            System.err.println("1101 detectado");
-//            pilaSintaxis.pop();
-//            try {
-//                analizadorSemantica1.ejecutarOperacion();
-//            } catch (Exception e) {
-//                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al ejecutar una operacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
-//            }
-//        } else 
-        if (pilaSintaxis.peek() == 1100) {
-            System.err.println("1100 detectado");
+        if (pilaSintaxis.peek() == 920) {
             pilaSintaxis.pop();
             try {
                 analizadorSemantica1.comprobarAsignacion();

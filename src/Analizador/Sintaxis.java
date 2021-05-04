@@ -100,9 +100,7 @@ public class Sintaxis {
             System.out.println("<SINTAXIS> Linea de primero: " + oper.mostrarLineaPrimero());
             System.out.println("<SINTAXIS> Avance Linea: " + avanceLinea);
             pilaSintaxis = analizadorAmbito.analizadorAmbito(pilaSintaxis, oper);
-            if(pilaSintaxis.peek() == 1101){
-                pilaSintaxis.pop();
-            }
+            
             if(lineaAvance != oper.mostrarLineaPrimero()){
                 avanceLinea = "";
                 ultimoAgregado = "";

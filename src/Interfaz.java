@@ -6,6 +6,7 @@ import Excel.GenerarExcel;
 import Modelos.NumeroLinea;
 import Analizador.Lexico;
 import Analizador.Semantica1;
+import Analizador.Semantica2;
 import Analizador.Sintaxis;
 import Controladores.ControladorTokenError;
 import java.awt.Desktop;
@@ -45,6 +46,7 @@ public class Interfaz extends javax.swing.JFrame {
     Sintaxis analizadorSintaxis;
     Ambito analizadorAmbito;
     Semantica1 analizadorSemantica1;
+    Semantica2 analizadorSemantica2;
     ControladorTokenError controladorTokenError;
     public static GenerarExcel generarExcel;
     ControladorSQL controladorSQL;
@@ -517,8 +519,9 @@ public class Interfaz extends javax.swing.JFrame {
         controladorTokenError = new ControladorTokenError(tablaTokens, tablaErrores);
         analizadorLexico = new Lexico(urlLog, controladorTokenError);
         analizadorLexico.iniciarLexico(jTextArea1);
-        analizadorSemantica1 = new Semantica1(controladorSQL, controladorTokenError);
-        analizadorAmbito = new Ambito(controladorSQL, controladorTokenError, analizadorSemantica1);
+        analizadorSemantica2 = new Semantica2();
+        analizadorSemantica1 = new Semantica1(controladorSQL, controladorTokenError, analizadorSemantica2);
+        analizadorAmbito = new Ambito(controladorSQL, controladorTokenError, analizadorSemantica1, analizadorSemantica2);
         analizadorAmbito.iniciarAmbito();
         analizadorSintaxis = new Sintaxis(
                 urlLog,
@@ -531,7 +534,8 @@ public class Interfaz extends javax.swing.JFrame {
         controladorTokenError.actualizarTablas();
         controladorSQL.cerrarConexion();
         reproducir();
-        nombreExcel = "Semantica1";
+        nombreExcel = "Semantica2";
+        analizadorSemantica2.imprimirReglas();
     }//GEN-LAST:event_btnCompilarActionPerformed
 
     private void establecerUltimaPrueba() {
@@ -561,7 +565,7 @@ public class Interfaz extends javax.swing.JFrame {
                 analizadorLexico.obtenerContadoresPorLineaLexico(),
                 analizadorSintaxis.obtenerContadorDiagramasSintaxis(),
                 analizadorAmbito.obtenerContadorEstructurasAmbito(),
-                analizadorSemantica1, nombreExcel);
+                analizadorSemantica1, analizadorSemantica2, nombreExcel);
         if (jRBExcel.isSelected()) {
             try {
                 Desktop.getDesktop().open(new File("MarcoAlejandroMarcialCoronado-"+nombreExcel+".xls"));

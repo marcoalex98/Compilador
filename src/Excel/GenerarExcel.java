@@ -1,6 +1,7 @@
 package Excel;
 
 import Analizador.Semantica1;
+import Analizador.Semantica2;
 import SQL.TablaSimbolosMySQL;
 import Contadores.ContadorAmbito;
 import Modelos.Token;
@@ -28,20 +29,117 @@ import SQL.ControladorSQL;
 public class GenerarExcel {
 
     Connection con;
+    WritableWorkbook woorkbook;
+    WritableSheet sheet;
+    WritableFont h;
+    WritableFont htitulos;
+    WritableCellFormat hFormat;
+    WritableCellFormat titulosFormat;
+    
+    private void generarHojasSemantica2(int ambitos, Semantica2 analizador){
+        generarHojaListaDeSemantica2();
+        generarHojaReglas();
+        generarHojaReglasPorAmbito(ambitos);
+        analizador.imprimirReglas();
+    }
+    
+    private void generarHojaListaDeSemantica2(){
+        sheet = woorkbook.createSheet("Lista de Semántica 2", 8);
+        String titulosHoja[] = {"Regla","Tope Pila","Valor Real","Linea","Edo","Ambito"};
+        String reglas[] = {"1010","1011","1012","1020","1021","1030","1031","1040",
+        "1060","1061","1070","1071","1080","1081","1082","1090","1100","1110","1120",
+        "1130","1140","1150","1160","1161","1170"};
+        try{
+            for (int i = 0; i < titulosHoja.length; i++) {
+                sheet.addCell(new jxl.write.Label(i, 0, titulosHoja[i], titulosFormat));
+            }
+            for (int i = 0; i < reglas.length; i++) {
+                sheet.addCell(new jxl.write.Label(0, i+1, reglas[i], titulosFormat));
+            }
+            
+            for (int i = 0; i < titulosHoja.length - 1; i++) {
+                for (int j = 0; j < reglas.length; j++) {
+                    sheet.addCell(new jxl.write.Label(i+1, j+1, "-", hFormat));
+                }
+            }
+        }catch (WriteException ex) {
+            Logger.getLogger(GenerarExcel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void generarHojaReglas(){
+        sheet = woorkbook.createSheet("Reglas", 9);
+        String titulosHoja[] = {"Regla","Aparecen","Aceptada","Errores"};
+        String reglas[] = {"1010","1011","1012","1020","1021","1030","1031","1040",
+        "1060","1061","1070","1071","1080","1081","1082","1090","1100","1110","1120",
+        "1130","1140","1150","1160","1161","1170"};
+        try{
+            for (int i = 0; i < titulosHoja.length; i++) {
+                sheet.addCell(new jxl.write.Label(i, 0, titulosHoja[i], titulosFormat));
+            }
+            for (int i = 0; i < reglas.length; i++) {
+                sheet.addCell(new jxl.write.Label(0, i+1, reglas[i], titulosFormat));
+            }
+            
+            for (int i = 0; i < titulosHoja.length - 1; i++) {
+                for (int j = 0; j < reglas.length; j++) {
+                    sheet.addCell(new jxl.write.Label(i+1, j+1, "0", hFormat));
+                }
+            }
+        }catch (WriteException ex) {
+            Logger.getLogger(GenerarExcel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void generarHojaReglasPorAmbito(int ambitos){
+        sheet = woorkbook.createSheet("Reglas por Ambito", 10);
+        String titulosHoja[] = {"Regla","Ambitos Definidos","Totales"};
+        String reglas[] = {"1010","1011","1012","1020","1021","1030","1031","1040",
+        "1060","1061","1070","1071","1080","1081","1082","1090","1100","1110","1120",
+        "1130","1140","1150","1160","1161","1170","Total"};
+        try{
+            int col1 = 0; int col2 = 0; int row1 = 0; int row2 = 1;
+            sheet.mergeCells(col1,row1,col2,row2);
+            for (int i = 0; i < titulosHoja.length; i++) {
+                if(i == titulosHoja.length - 1){
+                    sheet.addCell(new jxl.write.Label(i+ambitos-1, 0, titulosHoja[i], titulosFormat));
+                }else{
+                    sheet.addCell(new jxl.write.Label(i, 0, titulosHoja[i], titulosFormat));
+                }   
+            }
+            col1 = 1; col2 = ambitos; row1 = 0; row2 = 0;
+            sheet.mergeCells(col1,row1,col2,row2);
+            for (int i = 0; i < ambitos; i++){
+                sheet.addCell(new jxl.write.Label(i+1, 1, i+"", titulosFormat));
+            }
+            col1 = ambitos + 1; col2 = ambitos + 1; row1 = 0; row2 = 1;
+            sheet.mergeCells(col1,row1,col2,row2);
+            for (int i = 0; i < reglas.length; i++) {
+                sheet.addCell(new jxl.write.Label(0, i+2, reglas[i], titulosFormat));
+            }
+            for (int i = 0; i < ambitos + 1; i++) {
+                for (int j = 0; j < reglas.length; j++) {
+                    sheet.addCell(new jxl.write.Label(i+1, j+2, "0", hFormat));
+                }
+            }
+        }catch (WriteException ex) {
+            Logger.getLogger(GenerarExcel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void generarExcel(Token[] entradaTokens, Error[] entradaErrores, int[] contadores,
-            int[][] contadoresLinea, int[] contadoresSin, ContadorAmbito[] ambito, Semantica1 analizadorSemantica1, String nombreExcel) {
+            int[][] contadoresLinea, int[] contadoresSin, ContadorAmbito[] ambito, Semantica1 analizadorSemantica1,
+            Semantica2 analizadorSemantica2, String nombreExcel) {
         String ruta = "MarcoAlejandroMarcialCoronado-"+nombreExcel+".xls";
         try {//Hoja 1 - Lista de Tokens
             WorkbookSettings conf = new WorkbookSettings();
             conf.setEncoding("ISO-8859-1");
-            
-            WritableWorkbook woorkbook = Workbook.createWorkbook(new File(ruta), conf);
-            WritableSheet sheet = woorkbook.createSheet("Lista de Tokens", 0);
-            WritableFont h = new WritableFont(WritableFont.COURIER, 16, WritableFont.NO_BOLD);
-            WritableFont htitulos = new WritableFont(WritableFont.COURIER, 16, WritableFont.BOLD);
-            WritableCellFormat hFormat = new WritableCellFormat(h);
-            WritableCellFormat titulosFormat = new WritableCellFormat(htitulos);
+            woorkbook = Workbook.createWorkbook(new File(ruta), conf);
+            sheet = woorkbook.createSheet("Lista de Tokens", 0);
+            h = new WritableFont(WritableFont.COURIER, 16, WritableFont.NO_BOLD);
+            htitulos = new WritableFont(WritableFont.COURIER, 16, WritableFont.BOLD);
+            hFormat = new WritableCellFormat(h);
+            titulosFormat = new WritableCellFormat(htitulos);
             try {
                 sheet.addCell(new jxl.write.Label(0, 0, "Linea", titulosFormat));
                 sheet.addCell(new jxl.write.Label(1, 0, "Token", titulosFormat));
@@ -337,6 +435,8 @@ public class GenerarExcel {
                 for (int i = 0; i < contadoresSemantica1.length; i++) {
                     sheet.addCell(new jxl.write.Label(i+1, ultimaFila, contadoresSemantica1[i]+"", hFormat));
                 }
+                
+                generarHojasSemantica2(ambito.length, analizadorSemantica2);
                 woorkbook.write();
                 woorkbook.close();
             } catch (WriteException ex) {

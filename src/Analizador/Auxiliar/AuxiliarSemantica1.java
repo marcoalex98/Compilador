@@ -250,6 +250,76 @@ public class AuxiliarSemantica1 {
                 return -1;
         }
     }
+    public int getTokenTemporal2(String tipo, Contadores.ContadorSemantica1 contadores[]) {
+        switch (tipo) {
+            case "decimal":
+            case "Decimal":
+            case "TD":
+//                contadores[contadores.length - 1].setTD(contadores[contadores.length - 1].getTD() + 1);
+                return listaTemporales[0];
+            case "Octal":
+            case "octal":
+//                contadores[contadores.length - 1].setTDO(contadores[contadores.length - 1].getTDO() + 1);
+                return listaTemporales[1];
+            case "Binario":
+            case "binario":
+//                contadores[contadores.length - 1].setTDB(contadores[contadores.length - 1].getTDB() + 1);
+                return listaTemporales[2];
+            case "Hexadecimal":
+            case "hexadecimal":
+//                contadores[contadores.length - 1].setTDH(contadores[contadores.length - 1].getTDH() + 1);
+                return listaTemporales[3];
+            case "flotante":
+            case "Flotante":
+//                contadores[contadores.length - 1].setTF(contadores[contadores.length - 1].getTF() + 1);
+                return listaTemporales[4];
+            case "Cadena":
+            case "cadena":
+//                contadores[contadores.length - 1].setTC(contadores[contadores.length - 1].getTC() + 1);
+                return listaTemporales[5];
+            case "Caracter":
+            case "caracter":
+//                contadores[contadores.length - 1].setTCH(contadores[contadores.length - 1].getTCH() + 1);
+                return listaTemporales[6];
+            case "Compleja":
+            case "complejo":
+            case "Complejo":
+            case "compleja":
+//                contadores[contadores.length - 1].setTCM(contadores[contadores.length - 1].getTCM() + 1);
+                return listaTemporales[7];
+            case "Booleana":
+            case "Boolean":
+            case "booleano":
+//                contadores[contadores.length - 1].setTB(contadores[contadores.length - 1].getTB() + 1);
+                return listaTemporales[8];
+            case "None":
+            case "none":
+                return listaTemporales[9];
+            case "Tupla":
+            case "tupla":
+//                contadores[contadores.length - 1].setTT(contadores[contadores.length - 1].getTT() + 1);
+                return listaTemporales[10];
+            case "Lista":
+            case "lista":
+                return listaTemporales[11];
+            case "Arreglo":
+            case "arreglo":
+//                contadores[contadores.length - 1].setTA(contadores[contadores.length - 1].getTA() + 1);
+                return listaTemporales[12];
+            case "Diccionario":
+            case "diccionario":
+//                contadores[contadores.length - 1].setTDic(contadores[contadores.length - 1].getTDic() + 1);
+                return listaTemporales[13];
+            case "TV":
+            case "variant":
+            case "Variant":
+//                contadores[contadores.length - 1].setTV(contadores[contadores.length - 1].getTV() + 1);
+                return listaTemporales[14];
+            default:
+//                contadores[contadores.length - 1].setErrores(contadores[contadores.length - 1].getErrores() + 1);
+                return 950;
+        }
+    }
 
     public int getTokenTemporal(String tipo, Contadores.ContadorSemantica1 contadores[]) {
         switch (tipo) {
