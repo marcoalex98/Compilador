@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jxl.Cell;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.format.VerticalAlignment;
@@ -31,40 +30,42 @@ public class GenerarExcel {
     Connection con;
 
     public void generarExcel(Token[] entradaTokens, Error[] entradaErrores, int[] contadores,
-            int[][] contadoresLinea, int[] contadoresSin, ContadorAmbito[] ambito, Semantica1 analizadorSemantica1) {
-        String ruta = "MarcoAlejandroMarcialCoronado-Ambito.xls";
+            int[][] contadoresLinea, int[] contadoresSin, ContadorAmbito[] ambito, Semantica1 analizadorSemantica1, String nombreExcel) {
+        String ruta = "MarcoAlejandroMarcialCoronado-"+nombreExcel+".xls";
         try {//Hoja 1 - Lista de Tokens
             WorkbookSettings conf = new WorkbookSettings();
             conf.setEncoding("ISO-8859-1");
+            
             WritableWorkbook woorkbook = Workbook.createWorkbook(new File(ruta), conf);
             WritableSheet sheet = woorkbook.createSheet("Lista de Tokens", 0);
             WritableFont h = new WritableFont(WritableFont.COURIER, 16, WritableFont.NO_BOLD);
+            WritableFont htitulos = new WritableFont(WritableFont.COURIER, 16, WritableFont.BOLD);
             WritableCellFormat hFormat = new WritableCellFormat(h);
+            WritableCellFormat titulosFormat = new WritableCellFormat(htitulos);
             try {
-                sheet.addCell(new jxl.write.Label(0, 0, "Linea", hFormat));
-                sheet.addCell(new jxl.write.Label(1, 0, "Token", hFormat));
-                sheet.addCell(new jxl.write.Label(2, 0, "Lexema", hFormat));
+                sheet.addCell(new jxl.write.Label(0, 0, "Linea", titulosFormat));
+                sheet.addCell(new jxl.write.Label(1, 0, "Token", titulosFormat));
+                sheet.addCell(new jxl.write.Label(2, 0, "Lexema", titulosFormat));
 
-//                for (int i = 0; i < entradaTokens.length; i++) {//fila
-//                    sheet.addCell(new jxl.write.Label(0, i + 1, entradaTokens[i].getLinea() + "", hFormat));
-//                    sheet.addCell(new jxl.write.Label(1, i + 1, entradaTokens[i].getEstado() + "", hFormat));
-//                    sheet.addCell(new jxl.write.Label(2, 1 + i, entradaTokens[i].getLexema() + "", hFormat));
-//
-//                }
+                for (int i = 0; i < entradaTokens.length-1; i++) {//fila
+                    sheet.addCell(new jxl.write.Label(0, i + 1, entradaTokens[i].getLinea() + "", hFormat));
+                    sheet.addCell(new jxl.write.Label(1, i + 1, entradaTokens[i].getEstado() + "", hFormat));
+                    sheet.addCell(new jxl.write.Label(2, 1 + i, entradaTokens[i].getLexema() + "", hFormat));
+                }
                 sheet = woorkbook.createSheet("Lista de Errores", 1);
-                sheet.addCell(new jxl.write.Label(0, 0, "Linea", hFormat));
-                sheet.addCell(new jxl.write.Label(1, 0, "Error", hFormat));
-                sheet.addCell(new jxl.write.Label(2, 0, "Descripción", hFormat));
-                sheet.addCell(new jxl.write.Label(3, 0, "Lexema", hFormat));
-                sheet.addCell(new jxl.write.Label(4, 0, "Tipo", hFormat));
-//                for (int i = 0; i < entradaErrores.length; i++) {//fila
-//                    sheet.addCell(new jxl.write.Label(0, i + 1, entradaErrores[i].getLinea() + "", hFormat));
-//                    sheet.addCell(new jxl.write.Label(1, i + 1, entradaErrores[i].getEstado() + "", hFormat));
-//                    sheet.addCell(new jxl.write.Label(2, 1 + i, entradaErrores[i].getDescripcion() + "", hFormat));
-//                    sheet.addCell(new jxl.write.Label(3, 1 + i, entradaErrores[i].getLexema() + "", hFormat));
-//                    sheet.addCell(new jxl.write.Label(4, 1 + i, entradaErrores[i].getTipo() + "", hFormat));
-//
-//                }
+                sheet.addCell(new jxl.write.Label(0, 0, "Linea", titulosFormat));
+                sheet.addCell(new jxl.write.Label(1, 0, "Error", titulosFormat));
+                sheet.addCell(new jxl.write.Label(2, 0, "Descripción", titulosFormat));
+                sheet.addCell(new jxl.write.Label(3, 0, "Lexema", titulosFormat));
+                sheet.addCell(new jxl.write.Label(4, 0, "Tipo", titulosFormat));
+                for (int i = 0; i < entradaErrores.length-1; i++) {//fila
+                    sheet.addCell(new jxl.write.Label(0, i + 1, entradaErrores[i].getLinea() + "", hFormat));
+                    sheet.addCell(new jxl.write.Label(1, i + 1, entradaErrores[i].getEstado() + "", hFormat));
+                    sheet.addCell(new jxl.write.Label(2, 1 + i, entradaErrores[i].getDescripcion() + "", hFormat));
+                    sheet.addCell(new jxl.write.Label(3, 1 + i, entradaErrores[i].getLexema() + "", hFormat));
+                    sheet.addCell(new jxl.write.Label(4, 1 + i, entradaErrores[i].getTipo() + "", hFormat));
+
+                }
                 //---Pagina 3--- 
                 sheet = woorkbook.createSheet("Contadores", 2);
                 String[] encabezado = {"Errores", "Identificadores", "Comentarios", "Palabras Reservadas",
@@ -72,7 +73,7 @@ public class GenerarExcel {
                     "Aritmeticos", "Monogamo", "Logico", "Bit", "Identidad", "Relacionales",
                     "Puntuacion", "Agrupacion", "Asignacion"};
                 for (int i = 0; i < 21; i++) {
-                    sheet.addCell(new jxl.write.Label(i, 0, encabezado[i], hFormat));
+                    sheet.addCell(new jxl.write.Label(i, 0, encabezado[i], titulosFormat));
                 }
                 for (int i = 0; i < contadores.length; i++) {
                     sheet.addCell(new jxl.write.Label(i, 1, contadores[i] + "", hFormat));
@@ -84,7 +85,7 @@ public class GenerarExcel {
                     "Aritmeticos", "Monogamo", "Logico", "Bit", "Identidad", "Relacionales",
                     "Puntuacion", "Agrupacion", "Asignacion"};
                 for (int i = 0; i < 22; i++) {
-                    sheet.addCell(new jxl.write.Label(i, 0, encabezado2[i], hFormat));
+                    sheet.addCell(new jxl.write.Label(i, 0, encabezado2[i], titulosFormat));
                 }
                 System.out.println("Largo de arreglo de contadoresLinea: " + contadoresLinea.length);
                 for (int i = 0; i < contadoresLinea.length; i++) {
@@ -100,50 +101,50 @@ public class GenerarExcel {
                 }
                 //---Pagina 5---
                 sheet = woorkbook.createSheet("Sintaxis", 4);
-                sheet.addCell(new jxl.write.Label(0, 0, "Program", hFormat));
-                sheet.addCell(new jxl.write.Label(1, 0, "CONSTANTE", hFormat));
-                sheet.addCell(new jxl.write.Label(2, 0, "CONST ENTERO", hFormat));
-                sheet.addCell(new jxl.write.Label(3, 0, "LIST-TUP-RANGOS", hFormat));
-                sheet.addCell(new jxl.write.Label(4, 0, "Termino Pascal", hFormat));
-                sheet.addCell(new jxl.write.Label(5, 0, "ELEVACION", hFormat));
-                sheet.addCell(new jxl.write.Label(6, 0, "SIMPLE EXP-PAS", hFormat));
-                sheet.addCell(new jxl.write.Label(7, 0, "FACTOR", hFormat));
-                sheet.addCell(new jxl.write.Label(8, 0, "NOT", hFormat));
-                sheet.addCell(new jxl.write.Label(9, 0, "OR", hFormat));
-                sheet.addCell(new jxl.write.Label(10, 0, "OPBIT", hFormat));
-                sheet.addCell(new jxl.write.Label(11, 0, "AND", hFormat));
-                sheet.addCell(new jxl.write.Label(12, 0, "ANDLOG", hFormat));
-                sheet.addCell(new jxl.write.Label(13, 0, "ORLOG", hFormat));
-                sheet.addCell(new jxl.write.Label(14, 0, "XORLOG", hFormat));
-                sheet.addCell(new jxl.write.Label(15, 0, "EST", hFormat));
-                sheet.addCell(new jxl.write.Label(16, 0, "ASIGN", hFormat));
-                sheet.addCell(new jxl.write.Label(17, 0, "FunList", hFormat));
-                sheet.addCell(new jxl.write.Label(18, 0, "ARR", hFormat));
-                sheet.addCell(new jxl.write.Label(19, 0, "FUNCIONES", hFormat));
-                sheet.addCell(new jxl.write.Label(20, 0, "EXP-PAS", hFormat));
+                sheet.addCell(new jxl.write.Label(0, 0, "Program", titulosFormat));
+                sheet.addCell(new jxl.write.Label(1, 0, "CONSTANTE", titulosFormat));
+                sheet.addCell(new jxl.write.Label(2, 0, "CONST ENTERO", titulosFormat));
+                sheet.addCell(new jxl.write.Label(3, 0, "LIST-TUP-RANGOS", titulosFormat));
+                sheet.addCell(new jxl.write.Label(4, 0, "Termino Pascal", titulosFormat));
+                sheet.addCell(new jxl.write.Label(5, 0, "ELEVACION", titulosFormat));
+                sheet.addCell(new jxl.write.Label(6, 0, "SIMPLE EXP-PAS", titulosFormat));
+                sheet.addCell(new jxl.write.Label(7, 0, "FACTOR", titulosFormat));
+                sheet.addCell(new jxl.write.Label(8, 0, "NOT", titulosFormat));
+                sheet.addCell(new jxl.write.Label(9, 0, "OR", titulosFormat));
+                sheet.addCell(new jxl.write.Label(10, 0, "OPBIT", titulosFormat));
+                sheet.addCell(new jxl.write.Label(11, 0, "AND", titulosFormat));
+                sheet.addCell(new jxl.write.Label(12, 0, "ANDLOG", titulosFormat));
+                sheet.addCell(new jxl.write.Label(13, 0, "ORLOG", titulosFormat));
+                sheet.addCell(new jxl.write.Label(14, 0, "XORLOG", titulosFormat));
+                sheet.addCell(new jxl.write.Label(15, 0, "EST", titulosFormat));
+                sheet.addCell(new jxl.write.Label(16, 0, "ASIGN", titulosFormat));
+                sheet.addCell(new jxl.write.Label(17, 0, "FunList", titulosFormat));
+                sheet.addCell(new jxl.write.Label(18, 0, "ARR", titulosFormat));
+                sheet.addCell(new jxl.write.Label(19, 0, "FUNCIONES", titulosFormat));
+                sheet.addCell(new jxl.write.Label(20, 0, "EXP-PAS", titulosFormat));
                 for (int i = 0; i < contadoresSin.length; i++) {//fila
                     sheet.addCell(new jxl.write.Label(i, 1, contadoresSin[i] + "", hFormat));
                 }
                 //Pagina 6 -----------------------------------Ambito------------------------------
                 sheet = woorkbook.createSheet("Ambito", 5);
-                sheet.addCell(new jxl.write.Label(0, 0, "Ambito", hFormat));
-                sheet.addCell(new jxl.write.Label(1, 0, "Decimal", hFormat));
-                sheet.addCell(new jxl.write.Label(2, 0, "Binario", hFormat));
-                sheet.addCell(new jxl.write.Label(3, 0, "Octal", hFormat));
-                sheet.addCell(new jxl.write.Label(4, 0, "Hexadecimal", hFormat));
-                sheet.addCell(new jxl.write.Label(5, 0, "Flotante", hFormat));
-                sheet.addCell(new jxl.write.Label(6, 0, "Cadena", hFormat));
-                sheet.addCell(new jxl.write.Label(7, 0, "Caracter", hFormat));
-                sheet.addCell(new jxl.write.Label(8, 0, "Compleja", hFormat));
-                sheet.addCell(new jxl.write.Label(9, 0, "Booleana", hFormat));
-                sheet.addCell(new jxl.write.Label(10, 0, "None", hFormat));
-                sheet.addCell(new jxl.write.Label(11, 0, "Arreglo", hFormat));
-                sheet.addCell(new jxl.write.Label(12, 0, "Tupla", hFormat));
-                sheet.addCell(new jxl.write.Label(13, 0, "Lista", hFormat));
-                sheet.addCell(new jxl.write.Label(14, 0, "Rango", hFormat));
-                sheet.addCell(new jxl.write.Label(15, 0, "Diccionario", hFormat));
-                sheet.addCell(new jxl.write.Label(16, 0, "Datos de estructuras", hFormat));
-                sheet.addCell(new jxl.write.Label(17, 0, "Total/Ambito", hFormat));
+                sheet.addCell(new jxl.write.Label(0, 0, "Ambito", titulosFormat));
+                sheet.addCell(new jxl.write.Label(1, 0, "Decimal", titulosFormat));
+                sheet.addCell(new jxl.write.Label(2, 0, "Binario", titulosFormat));
+                sheet.addCell(new jxl.write.Label(3, 0, "Octal", titulosFormat));
+                sheet.addCell(new jxl.write.Label(4, 0, "Hexadecimal", titulosFormat));
+                sheet.addCell(new jxl.write.Label(5, 0, "Flotante", titulosFormat));
+                sheet.addCell(new jxl.write.Label(6, 0, "Cadena", titulosFormat));
+                sheet.addCell(new jxl.write.Label(7, 0, "Caracter", titulosFormat));
+                sheet.addCell(new jxl.write.Label(8, 0, "Compleja", titulosFormat));
+                sheet.addCell(new jxl.write.Label(9, 0, "Booleana", titulosFormat));
+                sheet.addCell(new jxl.write.Label(10, 0, "None", titulosFormat));
+                sheet.addCell(new jxl.write.Label(11, 0, "Arreglo", titulosFormat));
+                sheet.addCell(new jxl.write.Label(12, 0, "Tupla", titulosFormat));
+                sheet.addCell(new jxl.write.Label(13, 0, "Lista", titulosFormat));
+                sheet.addCell(new jxl.write.Label(14, 0, "Rango", titulosFormat));
+                sheet.addCell(new jxl.write.Label(15, 0, "Diccionario", titulosFormat));
+                sheet.addCell(new jxl.write.Label(16, 0, "Datos de estructuras", titulosFormat));
+                sheet.addCell(new jxl.write.Label(17, 0, "Total/Ambito", titulosFormat));
 
                 int filaMaximaAmbito = 0;
                 for (int i = 0; i < ambito.length; i++) {
@@ -211,18 +212,18 @@ public class GenerarExcel {
 
                 //Pagina 6 -----------------------------------Ambito------------------------------
                 sheet = woorkbook.createSheet("Tabla de Simbolos", 6);
-                sheet.addCell(new jxl.write.Label(0, 0, "ID", hFormat));
-                sheet.addCell(new jxl.write.Label(1, 0, "Tipo", hFormat));
-                sheet.addCell(new jxl.write.Label(2, 0, "Clase", hFormat));
-                sheet.addCell(new jxl.write.Label(3, 0, "Ambito", hFormat));
-                sheet.addCell(new jxl.write.Label(4, 0, "Tamano Arreglo", hFormat));
-                sheet.addCell(new jxl.write.Label(5, 0, "Ambito Creado", hFormat));
-                sheet.addCell(new jxl.write.Label(6, 0, "NoPos", hFormat));
-                sheet.addCell(new jxl.write.Label(7, 0, "Lista Pertenece", hFormat));
-                sheet.addCell(new jxl.write.Label(8, 0, "Rango", hFormat));
-                sheet.addCell(new jxl.write.Label(9, 0, "Avance", hFormat));
-                sheet.addCell(new jxl.write.Label(10, 0, "Llave", hFormat));
-                sheet.addCell(new jxl.write.Label(11, 0, "Valor", hFormat));
+                sheet.addCell(new jxl.write.Label(0, 0, "ID", titulosFormat));
+                sheet.addCell(new jxl.write.Label(1, 0, "Tipo", titulosFormat));
+                sheet.addCell(new jxl.write.Label(2, 0, "Clase", titulosFormat));
+                sheet.addCell(new jxl.write.Label(3, 0, "Ambito", titulosFormat));
+                sheet.addCell(new jxl.write.Label(4, 0, "Tamano Arreglo", titulosFormat));
+                sheet.addCell(new jxl.write.Label(5, 0, "Ambito Creado", titulosFormat));
+                sheet.addCell(new jxl.write.Label(6, 0, "NoPos", titulosFormat));
+                sheet.addCell(new jxl.write.Label(7, 0, "Lista Pertenece", titulosFormat));
+                sheet.addCell(new jxl.write.Label(8, 0, "Rango", titulosFormat));
+                sheet.addCell(new jxl.write.Label(9, 0, "Avance", titulosFormat));
+                sheet.addCell(new jxl.write.Label(10, 0, "Llave", titulosFormat));
+                sheet.addCell(new jxl.write.Label(11, 0, "Valor", titulosFormat));
 
                 ResultSet rs = ejecutarQuery("SELECT * FROM tablasimbolos");
                 int fila = 1;
@@ -251,24 +252,26 @@ public class GenerarExcel {
                     System.out.println(ex);
                 }
 
-                //---Pagina 5---
-                sheet = woorkbook.createSheet("Semantica1", 7);
-                sheet.addCell(new jxl.write.Label(0, 0, "Linea", hFormat));
-                sheet.addCell(new jxl.write.Label(1, 0, "TD", hFormat));
-                sheet.addCell(new jxl.write.Label(2, 0, "TDO", hFormat));
-                sheet.addCell(new jxl.write.Label(3, 0, "TDB", hFormat));
-                sheet.addCell(new jxl.write.Label(4, 0, "TDH", hFormat));
-                sheet.addCell(new jxl.write.Label(5, 0, "TF", hFormat));
-                sheet.addCell(new jxl.write.Label(6, 0, "TC", hFormat));
-                sheet.addCell(new jxl.write.Label(7, 0, "TCH", hFormat));
-                sheet.addCell(new jxl.write.Label(8, 0, "TCM", hFormat));
-                sheet.addCell(new jxl.write.Label(9, 0, "TB", hFormat));
-                sheet.addCell(new jxl.write.Label(10, 0, "TT", hFormat));
-                sheet.addCell(new jxl.write.Label(11, 0, "TL", hFormat));
-                sheet.addCell(new jxl.write.Label(12, 0, "TA", hFormat));
-                sheet.addCell(new jxl.write.Label(13, 0, "TDic", hFormat));
-                sheet.addCell(new jxl.write.Label(14, 0, "TV", hFormat));
-
+                //---Pagina 5--- SEMANTICA 1
+                sheet = woorkbook.createSheet("Semantica 1", 7);
+                sheet.addCell(new jxl.write.Label(0, 0, "Linea", titulosFormat));
+                sheet.addCell(new jxl.write.Label(1, 0, "TD", titulosFormat));
+                sheet.addCell(new jxl.write.Label(2, 0, "TDO", titulosFormat));
+                sheet.addCell(new jxl.write.Label(3, 0, "TDB", titulosFormat));
+                sheet.addCell(new jxl.write.Label(4, 0, "TDH", titulosFormat));
+                sheet.addCell(new jxl.write.Label(5, 0, "TF", titulosFormat));
+                sheet.addCell(new jxl.write.Label(6, 0, "TC", titulosFormat));
+                sheet.addCell(new jxl.write.Label(7, 0, "TCH", titulosFormat));
+                sheet.addCell(new jxl.write.Label(8, 0, "TCM", titulosFormat));
+                sheet.addCell(new jxl.write.Label(9, 0, "TB", titulosFormat));
+                sheet.addCell(new jxl.write.Label(10, 0, "TT", titulosFormat));
+                sheet.addCell(new jxl.write.Label(11, 0, "TL", titulosFormat));
+                sheet.addCell(new jxl.write.Label(12, 0, "TA", titulosFormat));
+                sheet.addCell(new jxl.write.Label(13, 0, "TDic", titulosFormat));
+                sheet.addCell(new jxl.write.Label(14, 0, "TV", titulosFormat));
+                sheet.addCell(new jxl.write.Label(15, 0, "Errores", titulosFormat));
+                sheet.addCell(new jxl.write.Label(16, 0, "Asignacion", titulosFormat));
+                
                 for(int i = 0; i < analizadorSemantica1.contadores.length;i++){
                 sheet.addCell(new jxl.write.Label(0, i+1, analizadorSemantica1.contadores[i].getLinea()+"", hFormat));
                 sheet.addCell(new jxl.write.Label(1, i+1, analizadorSemantica1.contadores[i].getTD()+"", hFormat));
@@ -285,6 +288,54 @@ public class GenerarExcel {
                 sheet.addCell(new jxl.write.Label(12, i+1, analizadorSemantica1.contadores[i].getTA()+"", hFormat));
                 sheet.addCell(new jxl.write.Label(13, i+1, analizadorSemantica1.contadores[i].getTDic()+"", hFormat));
                 sheet.addCell(new jxl.write.Label(14, i+1, analizadorSemantica1.contadores[i].getTV()+"", hFormat));
+                sheet.addCell(new jxl.write.Label(15, i+1, analizadorSemantica1.contadores[i].getErrores()+"", hFormat));
+                sheet.addCell(new jxl.write.Label(16, i+1, analizadorSemantica1.contadores[i].getAsignacion(), hFormat));
+                }
+//                for (int i = 0; i < contadoresLineaSemantica1.length; i++) {
+//                    contadoresLineaSemantica1[i] = 0;
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTD();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTDO();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTDB();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTDH();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTF();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTC();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTCH();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTCM();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTB();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTT();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTL();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTA();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTDic();
+//                    contadoresLineaSemantica1[i] += analizadorSemantica1.contadores[i].getTV();
+//                    sheet.addCell(new jxl.write.Label(15, i+1, contadoresLineaSemantica1[i]+"", hFormat));
+//                }
+                
+                int ultimaFila = analizadorSemantica1.contadores.length+1;
+                sheet.addCell(new jxl.write.Label(0, ultimaFila, "Totales", hFormat));
+                int[] contadoresSemantica1 = new int[15];
+                for (int i = 0; i < analizadorSemantica1.contadores.length; i++) {
+                    for (int j = 0; j < 15; j++) {
+                        switch(j){
+                            case 0: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTD(); break;
+                            case 1: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTDO(); break;
+                            case 2: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTDB(); break;
+                            case 3: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTDH(); break;
+                            case 4: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTF(); break;
+                            case 5: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTC(); break;
+                            case 6: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTCH(); break;
+                            case 7: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTCM(); break;
+                            case 8: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTB(); break;
+                            case 9: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTT(); break;
+                            case 10: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTL(); break;
+                            case 11: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTA(); break;
+                            case 12: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTDic(); break;
+                            case 13: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getTV(); break;
+                            case 14: contadoresSemantica1[j] += analizadorSemantica1.contadores[i].getErrores(); break;
+                        }
+                    }
+                }
+                for (int i = 0; i < contadoresSemantica1.length; i++) {
+                    sheet.addCell(new jxl.write.Label(i+1, ultimaFila, contadoresSemantica1[i]+"", hFormat));
                 }
                 woorkbook.write();
                 woorkbook.close();

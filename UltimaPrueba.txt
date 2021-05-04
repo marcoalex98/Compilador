@@ -11,7 +11,6 @@ def Suma (Id,Yu,T)
   S="Hola";
   {
     Suma=Id+Yu+T;
-    S=("jhgjh"/23*35>5);
   };
   def Ambito3 (Num1,Num2)
   Ingnorante="hola";
@@ -37,7 +36,7 @@ def Suma (Id,Yu,T)
     A=012543;
     B=365;
     C=56+5j;
-    P=range(25,45,6); 
+    P=2; 
     {   
       P= P*(P-A)*(P-B)*(P-C);            
     };

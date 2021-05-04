@@ -100,6 +100,9 @@ public class Sintaxis {
             System.out.println("<SINTAXIS> Linea de primero: " + oper.mostrarLineaPrimero());
             System.out.println("<SINTAXIS> Avance Linea: " + avanceLinea);
             pilaSintaxis = analizadorAmbito.analizadorAmbito(pilaSintaxis, oper);
+            if(pilaSintaxis.peek() == 1101){
+                pilaSintaxis.pop();
+            }
             if(lineaAvance != oper.mostrarLineaPrimero()){
                 avanceLinea = "";
                 ultimoAgregado = "";
@@ -136,6 +139,8 @@ public class Sintaxis {
                     System.out.print(matrizSintactico[fila][i] + "    ");
                 }
             } else {
+                System.out.println("<SINTAXIS> produccion 0");
+                System.out.println("<SINTAXIS> pila sintaxis peek: "+pilaSintaxis.peek());
                 produccion = 0;
             }
 
@@ -379,6 +384,15 @@ public class Sintaxis {
             FileOutputStream fos = new FileOutputStream(file);
             PrintStream out = new PrintStream(fos);
             System.setOut(out);
+            
+//            analizadorAmbito.analizadorSemantica1.sys = new PrintStream(fos);
+//            analizadorAmbito.analizadorSemantica1.auxiliar.sys = new PrintStream(fos);
+//            System.setOut(analizadorAmbito.analizadorSemantica1.sys);
+//            System.setOut(analizadorAmbito.analizadorSemantica1.auxiliar.sys);
+            
+            analizadorAmbito.analizadorSemantica1.sys = System.err;
+            analizadorAmbito.analizadorSemantica1.auxiliar.sys = System.err;
+
         } catch (FileNotFoundException e) {
 
         }

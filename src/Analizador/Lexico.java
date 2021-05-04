@@ -188,7 +188,7 @@ public class Lexico {
                     if (estado == -6) {
                         contadorIdentificadores++;
                     }
-//                    oper.insertarUltimo(estado, lexemaMultiple, lineaMultiComentario);
+                    oper.insertarUltimo(estado, lexemaMultiple, lineaMulticomentario);
 //                    actualizarTablaToken(tokens);
 //                    contadoresLexico(estado);
 
@@ -1153,15 +1153,16 @@ public class Lexico {
     }
 
     public int[] obtenerContadoresLexico() {
-        for (int i = 0; i < controladorTokenError.obtenerArregloTokens().length; i++) {
-            //contadoresLexico(controladorTokenError.obtenerArregloTokens()[i].getEstado());
+        System.err.println(controladorTokenError.obtenerArregloTokens().length);
+        for (int i = 0; i < controladorTokenError.obtenerArregloTokens().length-1; i++) {
+            contadoresLexico(controladorTokenError.obtenerArregloTokens()[i].getEstado());
         }
         return contadoresLexico;
     }
 
     public int[][] obtenerContadoresPorLineaLexico() {
         contadoresLinea = new int[lineaActual][21];
-        for (int i = 0; i < controladorTokenError.obtenerArregloTokens().length - 1; i++) {
+        for (int i = 0; i < controladorTokenError.obtenerArregloTokens().length-1; i++) {
             switch (controladorTokenError.obtenerArregloTokens()[i].getEstado()) {
                 case -6:
 //                contadoresLexico[1]++;

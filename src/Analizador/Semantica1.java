@@ -8,6 +8,8 @@ package Analizador;
 import Analizador.Auxiliar.AuxiliarSemantica1;
 import Contadores.ContadorSemantica1;
 import Controladores.ControladorTokenError;
+import Modelos.NodoToken;
+import Modelos.OperToken;
 import Modelos.Operadores;
 import Modelos.Operando;
 import SQL.ControladorSQL;
@@ -17,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.logging.Level;
@@ -29,101 +32,176 @@ import java.util.logging.Logger;
 public class Semantica1 {
 
     AuxiliarSemantica1 auxiliar;
-    Stack<Operadores> operadores;
-    Stack<Operando> operandos;
+    Stack<Operadores> pilaOperadores;
+    Stack<Operando> pilaOperandos;
+    ArrayList <Operadores> operadores;
+    ArrayList <Operando> operandos;
     ControladorSQL controladorSQL;
     public ContadorSemantica1[] contadores;
+    
     ControladorTokenError controladorTokenError;
+    PrintStream sys = System.out;
     //                      ID   
     int listaOperandos[] = {-6, -1, -4, -7, -8, -9, -10, -12, -81, -82};
-    //                        +     -    *    /    %    =    ^   
-    int listaOperadores[] = {-14, -17, -20, -24, -28, -42, -44, -33, -32, -34, -30, -37, -117,
-        //   +=   -=   *=   /=   <<   >>   ++   --
-        -16, -19, -23, -27, -37, -40, -15, -18,
-        //    <   <=   ==   !=   >=    >   IS  ISNOT IN INNOT
-        -36, -38, -43, -31, -41, -39, -71, -72, -70, -98};
-    //                         TD    TF
-    int listaTemporales[] = {-400, -401};
+    //                         >    +    -    *    /    %    =    ^   
+    int listaOperadores[] = {-39, -14, -17, -20, -24, -28, -42, -44, -33, -32, -34, -30, -37, -117,
+        //    +=   -=   *=   /=   <<   >>   ++   --    <   <=    !=  >=   IS  ISNOT IN INNOT
+        -16, -19, -23, -27, -37, -40, -15, -18, -36, -38, -43, -31, -41, -71, -72, -70, -98, -35};
 
     public Semantica1(ControladorSQL controladorSQL, ControladorTokenError controladorTokenError) {
-        auxiliar = new AuxiliarSemantica1();
+        auxiliar = new AuxiliarSemantica1(sys);
         this.controladorSQL = controladorSQL;
         this.controladorTokenError = controladorTokenError;
         inicializarVariables();
     }
 
     private void inicializarVariables() {
-        operandos = new Stack<>();
-        operadores = new Stack<>();
+        operadores = new ArrayList<>();
+        operandos = new ArrayList<>();
+        pilaOperandos = new Stack<>();
+        pilaOperadores = new Stack<>();
         contadores = new ContadorSemantica1[1];
         contadores[0] = new ContadorSemantica1();
     }
 
-    private void aumentarArregloContadores() {
-        System.err.println("------------aumentar arreglo---------");
-        ContadorSemantica1[] aux = contadores;
-        contadores = new ContadorSemantica1[aux.length + 1];
-        for (int i = 0; i < aux.length; i++) {
-            contadores[i] = aux[i];
-        }
-        contadores[contadores.length-1] = new ContadorSemantica1();
-
-    }
-
-    public void ejecutarOperacion() {
-        System.err.println("");
-        System.err.println("<SEMANTICA 1 ejecutarOperacion> Ejecutar operacion");
-        Operando valorA = asignarValorOperando();
-        System.err.println(contadores.length);
+    public void ejecutarOperacion(Operando valorA, Operando valorB, String operacion, int index) {
+        sys.println("");
+        sys.println("@--------------------------------------Inicio Ejecutar operacion--------------------------------------");
+//        Operando valorB = asignarValorOperando();
         if (contadores[contadores.length - 1].getLinea() == 0) {
-            System.err.println("cambiar linea");
-            contadores[contadores.length - 1].setLinea(valorA.getLinea());
-        } else if (contadores[contadores.length - 1].getLinea() != valorA.getLinea()) {
+            contadores[contadores.length - 1].setLinea(valorB.getLinea());
+        } else if (contadores[contadores.length - 1].getLinea() != valorB.getLinea()) {
             aumentarArregloContadores();
-            contadores[contadores.length-1].setLinea(valorA.getLinea());
+            contadores[contadores.length - 1].setLinea(valorB.getLinea());
         }
-        Operando auxiliarOperando = operandos.peek();
-        Operando valorB = asignarValorOperando();
-        String operacion = asignarValorOperador();
-        System.err.println("<SEMANTICA 1 ejecutarOperacion> operacion: " + operacion);
-        System.err.println("<SEMANTICA 1 ejecutarOperacion> valorA: " + valorA.getClase());
-        System.err.println("<SEMANTICA 1 ejecutarOperacion> valorA.linea: " + valorA.getLinea());
-        System.err.println("<SEMANTICA 1 ejecutarOperacion> valorB: " + valorB.getClase());
-
+        sys.println("    <SEMANTICA 1 ejecutarOperacion> operacion: " + operacion);
+        sys.println("    <SEMANTICA 1 ejecutarOperacion> valorA: " + valorA.getLexema() + ", " + valorA.getClase() + ", " + valorA.getToken());
+        sys.println("    <SEMANTICA 1 ejecutarOperacion> valorB: " + valorB.getLexema() + ", " + valorB.getClase() + ", " + valorB.getToken());
         int temporal;
+        
         if (valorA.getToken() == -6 && valorB.getToken() == -6) {
+            sys.println("    <SEMANTICA 1 ejecutarOperacion if> variable contra variable");
             temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion,
-                    valorA.getClase(), valorB.getClase()), contadores);
+                    obtenerClaseVariable(valorA.getLexema(), valorA.getAmbito()),
+                    obtenerClaseVariable(valorB.getLexema(), valorB.getAmbito())), contadores);
         } else if (valorA.getToken() == -6) {
+            sys.println("    <SEMANTICA 1 ejecutarOperacion if> variable contra otra cosa");
             temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion,
-                    valorA.getClase(), auxiliar.getTipoConstante(valorB.getToken())), contadores);
+                    obtenerClaseVariable(valorA.getLexema(), valorA.getAmbito()),
+                    auxiliar.getTipoConstante(valorB.getToken())), contadores);
         } else if (valorB.getToken() == -6) {
+            sys.println("    <SEMANTICA 1 ejecutarOperacion if> otra cosa contra variable");
             temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion,
-                    auxiliar.getTipoConstante(valorA.getToken()), valorB.getClase()), contadores);
+                    auxiliar.getTipoConstante(valorA.getToken()),
+                    obtenerClaseVariable(valorB.getLexema(), valorB.getAmbito())), contadores);
         } else {
+            sys.println("    <SEMANTICA 1 ejecutarOperacion if> otra cosa contra otra cosa");
             temporal = auxiliar.getTokenTemporal(auxiliar.getRelacion(operacion,
                     auxiliar.getTipoConstante(valorA.getToken()),
                     auxiliar.getTipoConstante(valorB.getToken())), contadores);
         }
-        System.err.println("<SEMANTICA 1 ejecutarOperacion> temporal: " + temporal);
+        sys.println("    <SEMANTICA 1 ejecutarOperacion> temporal: " + temporal);
         if (temporal == 950) {
             controladorTokenError.agregarError(950, valorB.getClase() + " no es compatible con "
-                    + valorA.getClase() + " en la operacion " + operacion, "",
-                    auxiliarOperando.getLinea(), "Semantica 1");
-            agregarTemporal(valorB.getLinea(), -414, 0, valorB.getLexema(), "variant");
+                    + valorA.getClase() + " en la operacion " + operacion, valorB.getLexema() + ", " + valorA.getLexema(),
+                    valorA.getLinea(), "Semantica 1");
+            agregarTemporal(valorB.getLinea(), -414, valorB.getAmbito(), "Temporal", "variant", index);
         } else {
-            agregarTemporal(valorB.getLinea(), temporal, valorB.getAmbito(), "Temporal", valorB.getClase());
+            agregarTemporal(valorB.getLinea(), temporal, valorB.getAmbito(), "Temporal", valorB.getClase(), index);
         }
-        System.err.println("");
+        sys.println("--------------------------------------FIN EJECUTAR OPERACION--------------------------------------");
     }
 
-    private void agregarTemporal(int linea, int temporal, int ambito, String lexema, String clase) {
-        System.out.println("<SEMANTICA 1> Se ha agregado el temporal " + temporal);
-        operandos.push(new Operando(linea, temporal, ambito, lexema, clase));
+    private void agregarTemporal(int linea, int temporal, int ambito, String lexema, String clase, int index) {
+        sys.println("<SEMANTICA 1 agregarTemporal> Se ha agregado el temporal " + temporal + ", " + clase + ", " + lexema);
+        operandos.add(index, new Operando(linea, temporal, ambito, lexema, clase));
+//        pilaOperandos.push(new Operando(linea, temporal, ambito, lexema, clase));
+    }
+    
+    private void analizador(){
+        Operando operandosArr[] = new Operando[pilaOperandos.size()];
+        Operadores operadoresArr[] = new Operadores[pilaOperadores.size()];
+        for (int i = pilaOperandos.size(); i > 0; i--) {
+            operandosArr[i-1] = pilaOperandos.peek();
+            pilaOperandos.pop();
+        }
+        for (int i = pilaOperadores.size(); i > 0; i--) {
+            operadoresArr[i-1] = pilaOperadores.peek();
+            pilaOperadores.pop();
+        }
+        operadores = new ArrayList<>();
+        operandos = new ArrayList<>();
+        operandos.addAll(Arrays.asList(operandosArr));
+        operadores.addAll(Arrays.asList(operadoresArr));
+        
+        boolean banderaWhile = true;
+        while(banderaWhile){
+            int index = auxiliar.obtenerPosicionMayorOperador(operadores);
+            if(index == 0){
+                break;
+            }
+            Operando valorA = operandos.get(index);
+            Operando valorB = operandos.get(index+1);
+            sys.println("<SEMANTICA 1 analizador> Se va a remover: "+operandos.get(index).getLexema());
+            operandos.remove(index);
+            sys.println("<SEMANTICA 1 analizador> Se va a remover: "+operandos.get(index).getLexema());
+            operandos.remove(index);
+            Operadores operador = operadores.get(index);
+            sys.println("<SEMANTICA 1 analizador> Se va a remover: "+operadores.get(index).getLexema());
+            operadores.remove(operador);
+            ejecutarOperacion(valorA, valorB, auxiliar.getTipoOperador(operador.getToken()), index);
+        }
+    }
+
+    public void comprobarAsignacion() {
+        analizador();
+        sys.println("\n--------------------------------------<SEMANTICA 1> Comprobar Asignacion--------------------------------------");
+        String valorTemporal;
+        if (operandos.get(1).getToken() == -6) {
+            sys.println("<SEMANTICA 1 comprobarAsignacion if> Token: " + operandos.get(1).getToken());
+            sys.println("<SEMANTICA 1 comprobarAsignacion if> Lexema: " + operandos.get(1).getLexema());
+            sys.println("<SEMANTICA 1 comprobarAsignacion if> Clase: " + operandos.get(1).getClase());
+            valorTemporal = obtenerClaseVariable(operandos.get(1).getLexema(), operandos.get(1).getAmbito());
+        } else {
+            sys.println("<SEMANTICA 1 comprobarAsignacion else if> Lexema: " + operandos.get(1).getLexema());
+            valorTemporal = auxiliar.getTipoConstante(operandos.get(1).getToken());
+        }
+//        valorTemporal = obtenerClaseVariable(operandos.peek().getLexema(), operandos.peek().getAmbito());
+        sys.println("<SEMANTICA 1 comprobarAsignacion> valorTemporal: " + valorTemporal);
+        operandos.remove(1);
+        Operando variable = operandos.get(0);
+        sys.println("<SEMANTICA 1 comprobarAsignacion> variable: " + operandos.get(0).getLexema());
+        operandos.remove(0);
+        operadores.remove(0);
+        String claseVariable;
+        if (variable.getClase() != "variant" && variable.getLexema() != "Temporal") {
+            sys.println("<SEMANTICA 1 comprobarAsignacion if variable.getClase()> Token: " + variable.getToken());
+            sys.println("<SEMANTICA 1 comprobarAsignacion if variable.getClase()> Lexema: " + variable.getLexema());
+            sys.println("<SEMANTICA 1 comprobarAsignacion if variable.getClase()> Clase: " + variable.getClase());
+            claseVariable = obtenerClaseVariable(variable.getLexema(), variable.getAmbito());
+        } else {
+            claseVariable = variable.getClase();
+        }
+        sys.println("<SEMANTICA 1 comprobarAsignacion> Token Variable: " + variable.getToken());
+        sys.println("<SEMANTICA 1 Comprobar Asignacion> Nombre Variable: " + variable.getLexema());
+        sys.println("<SEMANTICA 1 Comprobar Asignacion> Clase Variable: " + variable.getClase());
+        String asign = auxiliar.getAsignacion(claseVariable, valorTemporal);
+        if (!asign.equals("Error")) {
+            sys.println("<SEMANTICA 1 Comprobar Asignacion> La operacion de la variable " + variable.getLexema() + " es aceptable");
+//            controladorTokenError.agregarToken(1100, "La operacion de la variable " + variable.getLexema() + " es aceptable", variable.getLinea());
+        } else {
+            contadores[contadores.length-1].setErrores(contadores[contadores.length-1].getErrores() + 1);
+            controladorTokenError.agregarError(951, "No se puede asignar un "
+                    + valorTemporal + " en la variable " + variable.getLexema() + " (" + variable.getClase() + ")", "",
+                    variable.getLinea(), "Semantica 1");
+            sys.println("<SEMANTICA 1 Comprobar Asignacion> La operacion de la variable " + variable.getLexema() + " no es aceptable");
+        }
+        contadores[contadores.length-1].setAsignacion(variable.getLexema() + " -> T" + asign );
+        sys.println("--------------------------------------<SEMANTICA 1> Fin Comprobar Asignacion--------------------------------------\n");
     }
 
     private String obtenerClaseVariable(String variable, int ambito) {
-        String query = "SELECT clase FROM tablasimbolos WHERE (id = BINARY '" + variable + "' AND ambito = '" + ambito + "')";
+        String query = "SELECT clase FROM tablasimbolos WHERE (id = BINARY '" + variable + "' AND (ambito = '" + ambito + "' OR ambito = '0'))";
         String claseVariable = "";
         try {
             ResultSet rs = controladorSQL.obtenerResultSet(query);
@@ -133,50 +211,9 @@ public class Semantica1 {
         } catch (SQLException ex) {
             Logger.getLogger(Semantica1.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.err.println("<SEMANTICA 1 obtenerClaseVariable> query: " + query);
-        System.err.println("<SEMANTICA 1 obtenerClaseVariable> clase: " + claseVariable);
+        sys.println("   <SEMANTICA 1 obtenerClaseVariable> query: " + query);
+        sys.println("   <SEMANTICA 1 obtenerClaseVariable> clase: " + claseVariable);
         return claseVariable;
-    }
-
-    public void comprobarAsignacion() {
-        System.err.println("\n---------------<SEMANTICA 1> Comprobar Asignacion---------------");
-        String valorTemporal = auxiliar.getTipoConstante(operandos.peek().getToken());
-        operandos.pop();
-        Operando variable = operandos.peek();
-        operandos.pop();
-        String claseVariable = obtenerClaseVariable(variable.getLexema(), variable.getAmbito());
-        System.err.println("<SEMANTICA 1> Comprobar Asignacion");
-        System.err.println("<SEMANTICA 1> Nombre Variable: " + variable.getLexema());
-        System.err.println("<SEMANTICA 1> Clase Variable: " + variable.getClase());
-        if (!auxiliar.getAsignacion(claseVariable, valorTemporal).equals("Error")) {
-            System.err.println("<SEMANTICA 1> La operacion de la variable " + variable.getLexema() + " es aceptable");
-        } else {
-            controladorTokenError.agregarError(951, "No se puede asignar un " + valorTemporal + " en la variable " + variable.getLexema(), "",
-                    variable.getLinea(), "Semantica 1");
-            System.err.println("<SEMANTICA 1> La operacion de la variable " + variable.getLexema() + " no es aceptable");
-        }
-        System.err.println("---------------<SEMANTICA 1> Fin Comprobar Asignacion---------------\n");
-        imprimirArreglo();
-    }
-
-    private String asignarValorOperador() {
-        if (!operadores.empty()) {
-            String valor = auxiliar.getTipoOperador(operadores.peek().getToken());
-            operadores.pop();
-            return valor;
-        }
-        return "";
-    }
-
-    private Operando asignarValorOperando() {
-        if (!operandos.empty()) {
-            Operando oper = operandos.peek();
-            System.out.println("<SEMANTICA 1> asignarValorOperando, "
-                    + "operandos.peek.getToken:" + operandos.peek().getToken() + ", valor: " + auxiliar.getTipoConstante(oper.getToken()));
-            operandos.pop();
-            return oper;
-        }
-        return null;
     }
 
     public void agregarOperando(int operando, int linea, String lexema, int ambito) {
@@ -194,13 +231,13 @@ public class Semantica1 {
                 Logger.getLogger(Semantica1.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (auxiliar.verificarExistencia(operando, listaOperandos)) {
-                System.err.println("<SEMANTICA 1> Se ha agregado el operando " + operando);
-                operandos.push(new Operando(linea, operando, ambito, idAuxiliar, clase));
+                sys.println("<SEMANTICA 1> Se ha agregado el operando " + operando + ", " + lexema);
+                pilaOperandos.push(new Operando(linea, operando, ambito, idAuxiliar, clase));
             }
         } else {
             if (auxiliar.verificarExistencia(operando, listaOperandos)) {
-                System.err.println("<SEMANTICA 1> Se ha agregado el operando " + operando);
-                operandos.push(new Operando(linea, operando, ambito, idAuxiliar, auxiliar.getTipoConstante(operando)));
+                sys.println("<SEMANTICA 1> Se ha agregado el operando " + operando + ", " + lexema);
+                pilaOperandos.push(new Operando(linea, operando, ambito, idAuxiliar, auxiliar.getTipoConstante(operando)));
             }
         }
     }
@@ -210,30 +247,19 @@ public class Semantica1 {
             if (operador == -15 || operador == -18) {
                 agregarOperando(-7, linea, "1", -1);
             }
-            System.err.println("<SEMANTICA 1> Se ha agregado el operador " + operador);
-            operadores.push(new Operadores(linea, operador, lexema));
+            sys.println("<SEMANTICA 1> Se ha agregado el operador " + operador + ", " + lexema);
+            pilaOperadores.push(new Operadores(linea, operador, lexema));
         }
     }
 
-    private void imprimirArreglo() {
-        System.err.println("Imprimir arreglo");
-        for (int i = 0; i < contadores.length; i++) {
-            System.err.println(contadores[i].getLinea());
-            System.err.println(contadores[i].getTD());
-            System.err.println(contadores[i].getTDO());
-            System.err.println(contadores[i].getTDB());
-            System.err.println(contadores[i].getTDH());
-            System.err.println(contadores[i].getTF());
-            System.err.println(contadores[i].getTC());
-            System.err.println(contadores[i].getTCH());
-            System.err.println(contadores[i].getTCM());
-            System.err.println(contadores[i].getTB());
-            System.err.println(contadores[i].getTT());
-            System.err.println(contadores[i].getTL());
-            System.err.println(contadores[i].getTA());
-            System.err.println(contadores[i].getTDic());
-            System.err.println(contadores[i].getTV());
-            System.err.println("");
+
+    private void aumentarArregloContadores() {
+        sys.println("------------aumentar arreglo---------");
+        ContadorSemantica1[] aux = contadores;
+        contadores = new ContadorSemantica1[aux.length + 1];
+        for (int i = 0; i < aux.length; i++) {
+            contadores[i] = aux[i];
         }
+        contadores[contadores.length - 1] = new ContadorSemantica1();
     }
 }

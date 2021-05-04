@@ -17,15 +17,14 @@ public class ControladorSQL {
 
     private void establecerConexion() {
         try {
-            System.out.println("<SQL> Prueba de conexion SQL");
             Class.forName("com.mysql.jdbc.Driver");
             conexionSQL = DriverManager.getConnection("jdbc:mysql://localhost/a16130329?verifyServerCertificate=false&useSSL=true", "root", "root");
             st = conexionSQL.createStatement();
-            System.out.println("<SQL> Conexion exitosa SQL");
         } catch (SQLException e) {
             System.err.println("<SQL> Error SQL al intentar establecer conexion con la base de datos");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            System.err.println("<SQL> Error SQL al intentar establecer conexion con la base de datos");
         } catch (Exception e) {
             System.err.println("<SQL> Error detectado: " + e.getMessage());
             System.err.println("<SQL> Excepcion simple al intentar establecer conexion con la base de datos");

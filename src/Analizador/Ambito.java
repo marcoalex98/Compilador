@@ -19,6 +19,7 @@ import SQL.ControladorSQL;
 import SQL.TablaSimbolos;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -138,24 +139,26 @@ public class Ambito {
         System.out.println("<AMBITO> Ambito: " + ambito);
         System.out.println("<AMBITO> Ambito Creado: " + ambitoCreado);
         System.out.println("<AMBITO> tarrVariable: " + tarrVariable);
-        System.out.println("<AMBITO> Cima de pila: @" + pilaSintaxis.peek());
+        System.out.println("<AMBITO> Cima de pila: " + pilaSintaxis.peek());
         this.oper = oper;
-        if (pilaSintaxis.peek() == 1101 && !areaDeclaracion) {
+
+//        if (pilaSintaxis.peek() == 1101) {
+//            System.err.println("1101 detectado");
+//            pilaSintaxis.pop();
+//            try {
+//                analizadorSemantica1.ejecutarOperacion();
+//            } catch (Exception e) {
+//                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al ejecutar una operacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
+//            }
+//        } else 
+        if (pilaSintaxis.peek() == 1100) {
+            System.err.println("1100 detectado");
             pilaSintaxis.pop();
-            try{
-                analizadorSemantica1.ejecutarOperacion();
-            }catch(Exception e){
-                
-            }
-           
-        } else if (pilaSintaxis.peek() == 1100 && !areaDeclaracion) {
-            System.err.println("-------------------------------------------1100 detectado-------------------------------------------");
-            try{
+            try {
                 analizadorSemantica1.comprobarAsignacion();
-            }catch(Exception e){
-                
+            } catch (Exception e) {
+                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al comprobar asignacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
             }
-            pilaSintaxis.pop();
         }
 
         if (pilaSintaxis.peek() == 8152) {
@@ -175,8 +178,9 @@ public class Ambito {
         }
         if (pilaSintaxis.peek() == 8162) {
             pilaSintaxis.pop();
-            if(areaDeclaracion)
+            if (areaDeclaracion) {
                 agregarTupla = true;
+            }
             //reducirAmbito();
         }
         if (pilaSintaxis.peek() == 8202) {
@@ -517,10 +521,10 @@ public class Ambito {
                     controladorSQL.ejecutarQuery(query);
                     variableArreglo[contadorVariablesArreglo] = new Variable(nombreVariable, ambitoVariable);
                 } else if (!areaDeclaracion) {
-                    //@@@
+
                     if (variableDeclarada) {
                     } else {
-                        controladorTokenError.agregarError(1001, "@Variable " + nombreVariable + " no declarada, area de declaracion: " + areaDeclaracion,
+                        controladorTokenError.agregarError(1001, "Variable " + nombreVariable + " no declarada, area de declaracion: " + areaDeclaracion,
                                 "Ambito: " + ambito + "", oper.mostrarLineaPrimero(), "Ambito");
 //                            errores[nR] = new Estructuras.Error(1001, "Variable " + nombreVariable + " no declarada",
 //                                    "Ambito: " + ambito + "", 0, "Ambito");

@@ -54,6 +54,7 @@ public class ControladorTokenError {
     public void actualizarTablas(){
         DefaultTableModel modeloTabla = new DefaultTableModel(0,0);
         tablaTokens.setModel(modeloTabla);
+        tablaTokens.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         modeloTabla.addColumn("Estado");
         modeloTabla.addColumn("Lexema");
         modeloTabla.addColumn("Linea");
@@ -65,6 +66,7 @@ public class ControladorTokenError {
         }
         modeloTabla = new DefaultTableModel(0,0);
         tablaErrores.setModel(modeloTabla);
+        tablaErrores.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         modeloTabla.addColumn("Estado");
         modeloTabla.addColumn("Descripcion");
         modeloTabla.addColumn("Lexema");

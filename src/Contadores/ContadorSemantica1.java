@@ -10,7 +10,24 @@ package Contadores;
  * @author marco
  */
 public class ContadorSemantica1 {
-    int linea, TD, TDO, TDB, TDH, TF, TC, TCH, TCM, TB, TT, TL, TA, TDic, TV;
+    int linea, TD, TDO, TDB, TDH, TF, TC, TCH, TCM, TB, TT, TL, TA, TDic, TV, errores;
+    String asignacion;
+
+    public String getAsignacion() {
+        return asignacion;
+    }
+
+    public void setAsignacion(String asignacion) {
+        this.asignacion = asignacion;
+    }
+
+    public int getErrores() {
+        return errores;
+    }
+
+    public void setErrores(int errores) {
+        this.errores = errores;
+    }
 
     public ContadorSemantica1() {
         linea = 0;
@@ -28,6 +45,8 @@ public class ContadorSemantica1 {
         TA = 0;
         TDic = 0;
         TV = 0;
+        errores = 0;
+        asignacion = "";
     }
     
     public void init(){

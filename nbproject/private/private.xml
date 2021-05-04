@@ -5,15 +5,11 @@
         <group>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Auxiliar/AuxiliarSintaxis.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Controladores/ControladorTokenError.java</file>
-            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Excel/GenerarExcel.java</file>
-            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Contadores/ContadorSemantica1.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Lexico.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Sintaxis.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Semantica1.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Interfaz.java</file>
-            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Auxiliar/AuxiliarSemantica1.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Ambito.java</file>
-            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/SQL/ControladorSQL.java</file>
         </group>
     </open-files>
 </project-private>

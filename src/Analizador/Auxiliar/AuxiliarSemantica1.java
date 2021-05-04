@@ -5,11 +5,16 @@
  */
 package Analizador.Auxiliar;
 
+import Modelos.Operadores;
+import Modelos.Operando;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -22,7 +27,9 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  *
  * @author marco
  */
-public class AuxiliarSemantica1 {Workbook excel;
+public class AuxiliarSemantica1 {
+
+    Workbook excel;
     String[][] matrizSuma, matrizResta, matrizMultiplicacion, matrizDivisionNormal,
             matrizDivisionResiduo, matrizAsignacion, matrizOperadores,
             matrizOperadoresAst, matrizDesplazamiento, matrizRelacionales,
@@ -31,22 +38,80 @@ public class AuxiliarSemantica1 {Workbook excel;
     String[] nombresMatrices = {"Suma", "Resta", "Multiplicacion", "DivisionNormal",
         "DivisionResiduo", "Asignacion", "Operadores", "OperadoresAst", "Desplazamiento",
         "Relacionales", "Logicos"};
+    public PrintStream sys;
+    int listaPrioridades[][] = {
+        {-42},
+        {-35},// ||
+        {-33, -117},// && ##
+        {-30},// !
+        {-36, -38, -43, -31, -41, -39},//
+        {-34},
+        {-44},
+        {-32},
+        {-37, -40},
+        {-14, -17},
+        {-20, -24, -26, -28},
+        {-22}
+    };
 
-    public AuxiliarSemantica1() {
+    public AuxiliarSemantica1(PrintStream sys) {
+        this.sys = sys;
         inicializarVariables();
     }
 
+    private int obtenerPrioridadOperador(int token) {
+        for (int i = 0; i < listaPrioridades.length; i++) {
+            for (int j = 0; j < listaPrioridades[i].length; j++) {
+                if (token == listaPrioridades[i][j]) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public int obtenerPosicionMayorOperador(ArrayList<Operadores> operadores) {
+        int indexMayorPrioridad = 0;
+        for (int i = 0, mayorPrioridadOperador = -1; i < operadores.size(); i++) {
+            sys.println("Operador: "+operadores.get(i).getLexema());
+            int prioridadOperador = obtenerPrioridadOperador(operadores.get(i).getToken());
+            if (prioridadOperador > mayorPrioridadOperador) {
+                indexMayorPrioridad = i;
+                mayorPrioridadOperador = prioridadOperador;
+            }
+        }
+        sys.println("Index: "+indexMayorPrioridad);
+        return indexMayorPrioridad;
+    }
+    
+    public Operadores obtenerOperadorPorIndex(ArrayList<Operadores> operadores, int index){
+        for (int i = 0; i < operadores.size(); i++) {
+            if(i == index)
+                return operadores.get(i);
+        }
+        return null;
+    }
+    
+    public Operando obtenerOperandoPorIndex(ArrayList<Operando> operandos, int index){
+        for (int i = 0; i < operandos.size(); i++) {
+            if(i == index)
+                return operandos.get(i);
+        }
+        return null;
+    }
+
     public String getRelacion(String tipo, String fila, String columna) {
-        System.err.println("<AUXILIAR SEMANTICA1 getRelacion> Tipo: " + tipo + ", " + getTipoMatriz(tipo));
-        System.err.println("<AUXILIAR SEMANTICA1 getRelacion> Fila: " + fila + ", " + getIndiceTipoVariable(fila));
-        System.err.println("<AUXILIAR SEMANTICA1 getRelacion> Columna: " + columna + ", " + getIndiceTipoVariable(columna));
-        System.err.println("<AUXILIAR SEMANTICA1 getRelacion> Relacion: " + matrices[getTipoMatriz(tipo)][getIndiceTipoVariable(fila)][getIndiceTipoVariable(columna)]);
+        sys.println("        <AUXILIAR SEMANTICA1 getRelacion> Tipo: " + tipo + ", " + getTipoMatriz(tipo));
+        sys.println("        <AUXILIAR SEMANTICA1 getRelacion> Fila: " + fila + ", " + getIndiceTipoVariable(fila));
+        sys.println("        <AUXILIAR SEMANTICA1 getRelacion> Columna: " + columna + ", " + getIndiceTipoVariable(columna));
+        sys.println("        <AUXILIAR SEMANTICA1 getRelacion> Relacion: " + matrices[getTipoMatriz(tipo)][getIndiceTipoVariable(fila)][getIndiceTipoVariable(columna)]);
         return matrices[getTipoMatriz(tipo)][getIndiceTipoVariable(fila)][getIndiceTipoVariable(columna)];
     }
 
     public String getAsignacion(String fila, String columna) {
-        System.err.println("<AUXILIAR SEMANTICA1 getAsignacion> Fila: " + fila + ", " + getIndiceTipoVariable(fila));
-        System.err.println("<AUXILIAR SEMANTICA1 getAsignacion> Columna: " + columna + ", " + getIndiceTipoVariable(columna));
+        sys.println("<AUXILIAR SEMANTICA1 getAsignacion> Fila: " + fila + ", " + getIndiceTipoVariable(fila));
+        sys.println("<AUXILIAR SEMANTICA1 getAsignacion> Columna: " + columna + ", " + getIndiceTipoVariable(columna));
+        sys.println("<AUXILIAR SEMANTICA1 getAsignacion> asignacion:" + matrices[getTipoMatriz("Asignacion")][getIndiceTipoVariable(fila)][getIndiceTipoVariable(columna)]);
         return matrices[getTipoMatriz("Asignacion")][getIndiceTipoVariable(fila)][getIndiceTipoVariable(columna)];
     }
 
@@ -179,6 +244,7 @@ public class AuxiliarSemantica1 {Workbook excel;
                 return 13;
             case "TV":
             case "variant":
+            case "Variant":
                 return 14;
             default:
                 return -1;
@@ -189,65 +255,69 @@ public class AuxiliarSemantica1 {Workbook excel;
         switch (tipo) {
             case "decimal":
             case "Decimal":
-                contadores[contadores.length-1].setTD(contadores[contadores.length-1].getTD()+1);
+            case "TD":
+                contadores[contadores.length - 1].setTD(contadores[contadores.length - 1].getTD() + 1);
                 return listaTemporales[0];
             case "Octal":
             case "octal":
-                contadores[contadores.length-1].setTDO(contadores[contadores.length-1].getTDO()+1);
+                contadores[contadores.length - 1].setTDO(contadores[contadores.length - 1].getTDO() + 1);
                 return listaTemporales[1];
             case "Binario":
             case "binario":
-                contadores[contadores.length-1].setTDB(contadores[contadores.length-1].getTDB()+1);
+                contadores[contadores.length - 1].setTDB(contadores[contadores.length - 1].getTDB() + 1);
                 return listaTemporales[2];
             case "Hexadecimal":
             case "hexadecimal":
-                contadores[contadores.length-1].setTDH(contadores[contadores.length-1].getTDH()+1);
+                contadores[contadores.length - 1].setTDH(contadores[contadores.length - 1].getTDH() + 1);
                 return listaTemporales[3];
             case "flotante":
             case "Flotante":
-                contadores[contadores.length-1].setTF(contadores[contadores.length-1].getTF()+1);
+                contadores[contadores.length - 1].setTF(contadores[contadores.length - 1].getTF() + 1);
                 return listaTemporales[4];
             case "Cadena":
             case "cadena":
-                contadores[contadores.length-1].setTC(contadores[contadores.length-1].getTC()+1);
+                contadores[contadores.length - 1].setTC(contadores[contadores.length - 1].getTC() + 1);
                 return listaTemporales[5];
             case "Caracter":
             case "caracter":
-                contadores[contadores.length-1].setTCH(contadores[contadores.length-1].getTCH()+1);
+                contadores[contadores.length - 1].setTCH(contadores[contadores.length - 1].getTCH() + 1);
                 return listaTemporales[6];
             case "Compleja":
             case "complejo":
             case "Complejo":
             case "compleja":
-                contadores[contadores.length-1].setTCM(contadores[contadores.length-1].getTCM()+1);
+                contadores[contadores.length - 1].setTCM(contadores[contadores.length - 1].getTCM() + 1);
                 return listaTemporales[7];
             case "Booleana":
             case "Boolean":
             case "booleano":
-                contadores[contadores.length-1].setTB(contadores[contadores.length-1].getTB()+1);
+                contadores[contadores.length - 1].setTB(contadores[contadores.length - 1].getTB() + 1);
                 return listaTemporales[8];
             case "None":
             case "none":
                 return listaTemporales[9];
             case "Tupla":
             case "tupla":
-                contadores[contadores.length-1].setTT(contadores[contadores.length-1].getTT()+1);
+                contadores[contadores.length - 1].setTT(contadores[contadores.length - 1].getTT() + 1);
                 return listaTemporales[10];
             case "Lista":
             case "lista":
                 return listaTemporales[11];
             case "Arreglo":
             case "arreglo":
-                contadores[contadores.length-1].setTA(contadores[contadores.length-1].getTA()+1);
+                contadores[contadores.length - 1].setTA(contadores[contadores.length - 1].getTA() + 1);
                 return listaTemporales[12];
             case "Diccionario":
             case "diccionario":
-                contadores[contadores.length-1].setTDic(contadores[contadores.length-1].getTDic()+1);
+                contadores[contadores.length - 1].setTDic(contadores[contadores.length - 1].getTDic() + 1);
                 return listaTemporales[13];
+            case "TV":
             case "variant":
-                contadores[contadores.length-1].setTV(contadores[contadores.length-1].getTV()+1);
+            case "Variant":
+                contadores[contadores.length - 1].setTV(contadores[contadores.length - 1].getTV() + 1);
                 return listaTemporales[14];
             default:
+                contadores[contadores.length - 1].setErrores(contadores[contadores.length - 1].getErrores() + 1);
                 return 950;
         }
     }
