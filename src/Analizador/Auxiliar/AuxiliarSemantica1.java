@@ -5,8 +5,8 @@
  */
 package Analizador.Auxiliar;
 
-import Modelos.Operadores;
-import Modelos.Operando;
+import Modelos.Semantica1.Operadores;
+import Modelos.Semantica1.Operandos;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -92,7 +92,7 @@ public class AuxiliarSemantica1 {
         return null;
     }
     
-    public Operando obtenerOperandoPorIndex(ArrayList<Operando> operandos, int index){
+    public Operandos obtenerOperandoPorIndex(ArrayList<Operandos> operandos, int index){
         for (int i = 0; i < operandos.size(); i++) {
             if(i == index)
                 return operandos.get(i);

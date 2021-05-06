@@ -3,20 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Modelos;
+package Modelos.Semantica1;
 
 /**
  *
  * @author marco
  */
-public class Operadores {
-    int linea, token;
-    String lexema;
+public class Operandos {
+    int linea, token, ambito;
+    String lexema, clase;
 
-    public Operadores(int linea, int token, String lexema) {
+    public Operandos(int linea, int token, int ambito, String lexema, String clase) {
         this.linea = linea;
         this.token = token;
+        this.ambito = ambito;
         this.lexema = lexema;
+        this.clase = clase;
     }
 
     public int getLinea() {
@@ -35,11 +37,27 @@ public class Operadores {
         this.token = token;
     }
 
+    public int getAmbito() {
+        return ambito;
+    }
+
+    public void setAmbito(int ambito) {
+        this.ambito = ambito;
+    }
+
     public String getLexema() {
         return lexema;
     }
 
     public void setLexema(String lexema) {
         this.lexema = lexema;
+    }
+
+    public String getClase() {
+        return clase;
+    }
+
+    public void setClase(String clase) {
+        this.clase = clase;
     }
 }

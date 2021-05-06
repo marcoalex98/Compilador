@@ -34,8 +34,12 @@ public class OperToken {
         return prim.getNumlinea();
     }
     
-    public int mostrarPosicionPrimero(){
+    public int mostrarTokenPrimero(){
         return prim.getPosicion();
+    }
+    
+    public NodoToken obtenerPrimero(){
+        return prim;
     }
 
     public boolean InsertarInicio(int posicion, String minilexem, int numlinea) {

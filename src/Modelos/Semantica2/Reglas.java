@@ -3,19 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Modelos;
+package Modelos.Semantica2;
 
 /**
  *
  * @author marco
  */
-public class ReglaSemantica2 {
+public class Reglas {
     int regla;
     int linea;
     int ambito;
     boolean aceptada;
 
-    public ReglaSemantica2(int regla, int linea, int ambito, boolean aceptada) {
+    public Reglas(int regla, int linea, int ambito, boolean aceptada) {
         this.regla = regla;
         this.linea = linea;
         this.ambito = ambito;
@@ -53,7 +53,4 @@ public class ReglaSemantica2 {
     public void setAceptada(boolean aceptada) {
         this.aceptada = aceptada;
     }
-    
-    
-    
 }

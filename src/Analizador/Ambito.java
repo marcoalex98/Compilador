@@ -12,7 +12,10 @@ import Estructuras.Controladores.ControladorDatoDiccionario;
 import Estructuras.Controladores.ControladorDatoLista;
 import Modelos.Diccionario;
 import Modelos.Lista;
+import Modelos.NodoToken;
 import Modelos.OperToken;
+import Modelos.Semantica1.Arreglo;
+import Modelos.Semantica1.Dimension;
 import Modelos.Tupla;
 import Modelos.Variable;
 import SQL.ControladorSQL;
@@ -20,6 +23,7 @@ import SQL.TablaSimbolos;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,12 +44,14 @@ public class Ambito {
     boolean estadoError, banderaParametro, banderaArreglo, banderaTupla, banderaListaMultiple,
             banderaRango, banderaListaNormal, agregarLista, banderaFor, agregarTupla,
             agregarDiccionario, banderaConstante, banderaFuncion,
-            banderaDiccionario, asignarValor,
+            banderaDiccionario, asignarValor, banderaArregloNormal,
             bandera814, areaDeclaracion, primeraVezTipoLista, llaveDiccionario;
     Stack<Integer> pilaSintaxis;
     Stack<Integer> pilaAmbito;
+    ArrayList<NodoToken> elementosArreglo;
     ControladorSQL controladorSQL;
     TablaSimbolos tablaSimbolos[];
+    HashMap<String, Arreglo> arreglos;
     Diccionario diccionario[];
     Lista[] listaArreglo;
     Tupla[] tuplaArreglo;
@@ -60,11 +66,13 @@ public class Ambito {
 
     public Ambito(ControladorSQL controladorSQL,
             ControladorTokenError controladorTokenError,
+            HashMap<String, Arreglo> arreglos,
             Semantica1 analizadorSemantica1,
             Semantica2 analizadorSemantica2) {
         this.controladorSQL = controladorSQL;
         this.controladorTokenError = controladorTokenError;
         this.controladorDatoLista = new ControladorDatoLista();
+        this.arreglos = arreglos;
         this.controladorDatoDiccionario = new ControladorDatoDiccionario();
         this.analizadorSemantica1 = analizadorSemantica1;
         this.analizadorSemantica2 = analizadorSemantica2;
@@ -98,6 +106,7 @@ public class Ambito {
         llaveDiccionario = false;
         areaDeclaracion = true;
         primeraVezTipoLista = true;
+        banderaArregloNormal = true;
         ambito = 0;
         ambitoMayor = 0;
         contadorElementosLista = 0;
@@ -107,6 +116,7 @@ public class Ambito {
         contadorDiccionario = 0;
         contadorVariablesArreglo = 0;
         auxiliarTipoVariable = 0;
+        elementosArreglo = new ArrayList<>();
         listaArreglo = new Lista[400]; // este tenia [3]
         tuplaArreglo = new Tupla[400];
         diccionario = new Diccionario[400];
@@ -144,22 +154,25 @@ public class Ambito {
         System.out.println("<AMBITO> tarrVariable: " + tarrVariable);
         System.out.println("<AMBITO> Cima de pila: " + pilaSintaxis.peek());
         this.oper = oper;
-        if (pilaSintaxis.peek() == 1010 || pilaSintaxis.peek() == 1011 || pilaSintaxis.peek() == 1012) {
-            if (analizadorSemantica1.ejecutarOperacionSemantica2().equals("booleano")) {
-                analizadorSemantica2.agregarRegla(pilaSintaxis.peek(), oper.mostrarLineaPrimero(), ambito, true);
-            }else{
-                analizadorSemantica2.agregarRegla(pilaSintaxis.peek(), oper.mostrarLineaPrimero(), ambito, false);
+        if (analizadorSemantica2.analizarCimaPila(pilaSintaxis.peek(), oper.mostrarLineaPrimero(), ambito)) {
+            pilaSintaxis.pop();
+        }
+
+        if (pilaSintaxis.peek() == 10301 || pilaSintaxis.peek() == 10302) {
+            if (pilaSintaxis.peek() == 10302) {
+                banderaArregloNormal = false;
             }
             pilaSintaxis.pop();
+            elementosArreglo.add(oper.obtenerPrimero());
         }
 
         if (pilaSintaxis.peek() == 920) {
             pilaSintaxis.pop();
-            try {
-                analizadorSemantica1.comprobarAsignacion();
-            } catch (Exception e) {
-                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al comprobar asignacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
-            }
+//            try {
+            analizadorSemantica1.comprobarAsignacion();
+//            } catch (Exception e) {
+//                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al comprobar asignacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
+//            }
         }
 
         if (pilaSintaxis.peek() == 8152) {
@@ -267,7 +280,7 @@ public class Ambito {
         if (pilaSintaxis.peek() == 8403) {
             pilaSintaxis.pop();
             aumentarAmbito();
-            if (oper.mostrarPosicionPrimero() == -6) {
+            if (oper.mostrarTokenPrimero() == -6) {
                 System.out.println("<AMBITO> Se ha agregado la variable " + oper.mostrarLexemaPrimero() + " perteneciente a un for");
                 controladorSQL.ejecutarQuery("INSERT INTO tablasimbolos (id,clase,tipo,listaPertenece,ambito) VALUES("
                         + "'" + oper.mostrarLexemaPrimero() + "',"
@@ -282,6 +295,8 @@ public class Ambito {
             case 801:
                 System.out.println("<AMBITO> AREA DE DECLARACION HA SIDO DESACTIVADA");
                 areaDeclaracion = false;
+                banderaArregloNormal = true;
+                elementosArreglo.clear();
                 bandera814 = false;
                 tamVariablesGuardadasArr = 0;
                 claseVariable = "";
@@ -636,9 +651,23 @@ public class Ambito {
                 break;
             case "Lista":
                 if (banderaListaNormal) {
+                    ArrayList<Dimension> dimension = new ArrayList<>();
+                    if (banderaArregloNormal) {
+                        for (int i = 0; i < elementosArreglo.size(); i++) {
+                            dimension.add(new Dimension(i, 0, Integer.parseInt(elementosArreglo.get(i).getLexema()) - 1));
+                        }
+                        arreglos.put(nombreVariable + ambitoVariable, new Arreglo(nombreVariable, ambitoVariable, dimension, 1));
+                    } else {
+                        dimension.add(new Dimension(0,
+                                Integer.parseInt(elementosArreglo.get(0).getLexema()),
+                                Integer.parseInt(elementosArreglo.get(1).getLexema()) - 1));
+                        arreglos.put(nombreVariable + ambitoVariable, new Arreglo(nombreVariable, ambitoVariable, dimension, Integer.parseInt(elementosArreglo.get(2).getLexema())));
+                    }
+                    elementosArreglo.clear();
+                    banderaArregloNormal = true;
                     query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,listaPertenece,tamanoArreglo) VALUES("
                             + "'" + nombreVariable + "',"
-                            + "'" + claseVariable + "',"
+                            + "'" + "Arreglo" + "',"
                             + "'" + tipoVariable + "',"
                             + "'" + ambitoVariable + "',"
                             + "'" + listaPerteneceVariable + "',"
@@ -920,56 +949,11 @@ public class Ambito {
     }
 
     private boolean variableDuplicada(String id) {
-        System.out.println("----------VARIABLE DUPLICADA----------");
-        String idAuxiliar = id.replaceAll("\\s", "");
-        String query = "SELECT * FROM tablasimbolos WHERE (id = BINARY " + "'"
-                + idAuxiliar + "' AND (ambito='" + ambito + "'))";
-        try {
-            ResultSet rs = controladorSQL.obtenerResultSet(query);
-            boolean existencia = rs.next();
-            if (existencia) {
-                System.out.println("VARIABLE DUPLICADA");
-                return true;
-
-            } else {
-                System.out.println("VARIABLE NO DUPLICADA");
-                return false;
-
-            }
-        } catch (SQLException ex) {
-            //Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println("----------FIN VARIABLE DUPLICADA----------");
-        return false;
+        return controladorSQL.comprobarVariableDuplicada(id, ambitoVariable);
     }
 
     private boolean variableDeclarada(String id) {
-        String idAuxiliar = id.replaceAll("\\s", "");
-        int estadoInt = 0;
-        System.out.println("----------VARIABLE DECLARADA----------");
-        System.out.println("Valor ID: " + id);
-        System.out.println("Valor ambito: " + ambitoVariable);
-        String query = "SELECT * FROM tablasimbolos WHERE (id = BINARY "
-                + "'" + idAuxiliar + "' AND (ambito='" + ambito + "' OR ambito='0'))";
-        try {
-            ResultSet rs = controladorSQL.obtenerResultSet(query);
-            boolean existencia = rs.next();
-            if (existencia) {
-                System.out.println("<AMBITO> VARIABLE " + idAuxiliar + " EXISTENTE, area de declaracion: " + areaDeclaracion);
-                return true;
-
-            } else {
-                System.out.println("<AMBITO> VARIABLE " + idAuxiliar + " NO EXISTENTE, area de declaracion: " + areaDeclaracion);
-                return false;
-
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Ambito.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        System.out.println("VALOR DE ESTADO INT: " + estadoInt);
-        System.out.println("----------FIN VARIABLE DECLARADA----------");
-        return false;
+        return controladorSQL.comprobarVariableDeclarada(id, ambitoVariable);
     }
 
     private void aumentarContadorAmbito() {

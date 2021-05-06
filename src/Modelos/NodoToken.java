@@ -2,13 +2,13 @@ package Modelos;
 
 
 public class NodoToken {
-    private int posicion;
+    private int token;
     private String lexema;
     private int numLinea;
     NodoToken sig;
     
     public NodoToken(int posicion, String minilexem, int numlinea){
-        this.posicion=posicion;
+        this.token=posicion;
         this.lexema=minilexem;
         this.numLinea=numlinea;
         this.sig=null;
@@ -16,12 +16,12 @@ public class NodoToken {
 
     
     public int getPosicion() {
-        return posicion;
+        return token;
     }
 
    
     public void setPosicion(int posicion) {
-        this.posicion = posicion;
+        this.token = posicion;
     }
 
   

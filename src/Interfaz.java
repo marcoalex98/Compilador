@@ -9,6 +9,7 @@ import Analizador.Semantica1;
 import Analizador.Semantica2;
 import Analizador.Sintaxis;
 import Controladores.ControladorTokenError;
+import Modelos.Semantica1.Arreglo;
 import java.awt.Desktop;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -20,8 +21,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -45,6 +51,7 @@ public class Interfaz extends javax.swing.JFrame {
     Lexico analizadorLexico;
     Sintaxis analizadorSintaxis;
     Ambito analizadorAmbito;
+    HashMap<String,Arreglo> arreglos;
     Semantica1 analizadorSemantica1;
     Semantica2 analizadorSemantica2;
     ControladorTokenError controladorTokenError;
@@ -515,13 +522,14 @@ public class Interfaz extends javax.swing.JFrame {
         controladorSQL = new ControladorSQL();
         controladorSQL.limpiarTablaSimbolos();
         urlLog = crearDirectorioLog();
+        arreglos = new HashMap<>();
         establecerUltimaPrueba();
         controladorTokenError = new ControladorTokenError(tablaTokens, tablaErrores);
         analizadorLexico = new Lexico(urlLog, controladorTokenError);
         analizadorLexico.iniciarLexico(jTextArea1);
         analizadorSemantica2 = new Semantica2();
         analizadorSemantica1 = new Semantica1(controladorSQL, controladorTokenError, analizadorSemantica2);
-        analizadorAmbito = new Ambito(controladorSQL, controladorTokenError, analizadorSemantica1, analizadorSemantica2);
+        analizadorAmbito = new Ambito(controladorSQL, controladorTokenError, arreglos, analizadorSemantica1, analizadorSemantica2);
         analizadorAmbito.iniciarAmbito();
         analizadorSintaxis = new Sintaxis(
                 urlLog,
@@ -536,8 +544,30 @@ public class Interfaz extends javax.swing.JFrame {
         reproducir();
         nombreExcel = "Semantica2";
         analizadorSemantica2.imprimirReglas();
+        imprimirArreglos();
     }//GEN-LAST:event_btnCompilarActionPerformed
 
+    
+    private void imprimirArreglos(){
+        ArrayList<String> listOfKeys = arreglos.keySet().stream().collect(
+                Collectors.toCollection(ArrayList::new));
+        ArrayList<Arreglo> listOfValues = arreglos.values().stream().collect(
+                Collectors.toCollection(ArrayList::new));
+        System.err.println("LLAVE\tID\tAMBITO\tINC\tINICIO\tFIN");
+        for (int i = 0; i < listOfValues.size(); i++) {
+            System.err.print(listOfKeys.get(i)+"\t");
+            System.err.print(listOfValues.get(i).getId()+"\t");
+            System.err.print(listOfValues.get(i).getAmbito()+"\t");
+            System.err.print(listOfValues.get(i).getIncremento()+"");
+            for (int j = 0; j < listOfValues.get(i).getDimensiones().size(); j++) {
+                System.err.print("\t["+listOfValues.get(i).getDimensiones().get(j).getPosicion()+"]");
+                System.err.print(listOfValues.get(i).getDimensiones().get(j).getInicio()+"\t");
+                System.err.print(listOfValues.get(i).getDimensiones().get(j).getFin()+"\n\t\t\t");
+            }
+            System.err.println();
+        }           
+    }
+    
     private void establecerUltimaPrueba() {
         if (jTextArea1.getText() != "") {
             String pruebaActual = jTextArea1.getText();

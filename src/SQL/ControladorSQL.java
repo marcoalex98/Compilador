@@ -61,4 +61,61 @@ public class ControladorSQL {
     public ResultSet obtenerResultSet(String query) throws SQLException{
         return st.executeQuery(query);
     }
+    
+    public String obtenerClaseVariable(String variable, int ambito) {
+        String query = "SELECT clase FROM tablasimbolos WHERE (id = BINARY '" + variable + "' AND (ambito = '" + ambito + "' OR ambito = '0'))";
+        String claseVariable = "";
+        try {
+            ResultSet rs = obtenerResultSet(query);
+            while (rs.next()) {
+                claseVariable = rs.getString(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ControladorSQL.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return claseVariable;
+    }
+    
+    public String obtenerTipoArreglo(String variable, int ambito) {
+        String query = "SELECT listaPertenece FROM tablasimbolos WHERE (id = BINARY '" + variable + "' AND (ambito = '" + ambito + "' OR ambito = '0'))";
+        String tipoVariable = "";
+        try {
+            ResultSet rs = obtenerResultSet(query);
+            while (rs.next()) {
+                tipoVariable = rs.getString(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ControladorSQL.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return tipoVariable;
+    }
+    
+    public boolean comprobarVariableDeclarada(String id, String ambito){
+        String idAuxiliar = id.replaceAll("\\s", "");
+        String query = "SELECT * FROM tablasimbolos WHERE (id = BINARY "
+                + "'" + idAuxiliar + "' AND (ambito='" + ambito + "' OR ambito='0'))";
+        try {
+            ResultSet rs = obtenerResultSet(query);
+            return rs.next();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(ControladorSQL.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+    public boolean comprobarVariableDuplicada(String id, String ambito){
+        String idAuxiliar = id.replaceAll("\\s", "");
+        String query = "SELECT * FROM tablasimbolos WHERE (id = BINARY " + "'"
+                + idAuxiliar + "' AND (ambito='" + ambito + "'))";
+        try {
+            ResultSet rs = obtenerResultSet(query);
+            return rs.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(ControladorSQL.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+    
 }
