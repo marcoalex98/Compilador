@@ -527,7 +527,7 @@ public class Interfaz extends javax.swing.JFrame {
         controladorTokenError = new ControladorTokenError(tablaTokens, tablaErrores);
         analizadorLexico = new Lexico(urlLog, controladorTokenError);
         analizadorLexico.iniciarLexico(jTextArea1);
-        analizadorSemantica2 = new Semantica2();
+        analizadorSemantica2 = new Semantica2(arreglos);
         analizadorSemantica1 = new Semantica1(controladorSQL, controladorTokenError, analizadorSemantica2);
         analizadorAmbito = new Ambito(controladorSQL, controladorTokenError, arreglos, analizadorSemantica1, analizadorSemantica2);
         analizadorAmbito.iniciarAmbito();

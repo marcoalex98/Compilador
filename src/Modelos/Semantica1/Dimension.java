@@ -19,6 +19,10 @@ public class Dimension {
         this.inicio = inicio;
         this.fin = fin;
     }
+    
+    public boolean perteneceAlRango(int numero){
+        return numero >= inicio && numero <= fin;
+    }
 
     public int getPosicion() {
         return posicion;

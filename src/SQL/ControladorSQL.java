@@ -76,6 +76,28 @@ public class ControladorSQL {
         return claseVariable;
     }
     
+    public void actualizarTipoArreglo(String id, String ambito, String clase){
+        String idAuxiliar = id.replaceAll("\\s", "");
+        String query = "UPDATE tablasimbolos "
+                + "SET listaPertenece = '" + clase +"' "
+                + "WHERE (id = BINARY '" + idAuxiliar + "' AND (ambito='" + ambito + "' OR ambito='0'))";
+        ejecutarQuery(query);
+    }
+    
+    public boolean isArregloVirgen(String id, String ambito){
+        String idAuxiliar = id.replaceAll("\\s", "");
+        String query = "SELECT listaPertenece FROM tablasimbolos WHERE (id = BINARY "
+                + "'" + idAuxiliar + "' AND (ambito='" + ambito + "' OR ambito='0'))";
+        try {
+            ResultSet rs = obtenerResultSet(query);
+            return rs.next();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(ControladorSQL.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
     public String obtenerTipoArreglo(String variable, int ambito) {
         String query = "SELECT listaPertenece FROM tablasimbolos WHERE (id = BINARY '" + variable + "' AND (ambito = '" + ambito + "' OR ambito = '0'))";
         String tipoVariable = "";

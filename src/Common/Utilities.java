@@ -27,6 +27,7 @@ public class Utilities {
         tokensVariables.add(-1);
         tokensVariables.add(-81);
         tokensVariables.add(-82);
+        System.err.println(token);
         return tokensVariables.contains(token);
     }
 

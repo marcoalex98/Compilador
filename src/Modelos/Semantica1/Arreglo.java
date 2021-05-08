@@ -55,8 +55,4 @@ public class Arreglo {
     public void setIncremento(int incremento) {
         this.incremento = incremento;
     }   
-    
-    public void imprimirArreglos(){
-        
-    }
 }

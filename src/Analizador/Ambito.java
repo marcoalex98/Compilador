@@ -7,26 +7,20 @@ package Analizador;
 
 import Contadores.ContadorAmbito;
 import Controladores.ControladorTokenError;
-import Modelos.Conjunto;
 import Estructuras.Controladores.ControladorDatoDiccionario;
 import Estructuras.Controladores.ControladorDatoLista;
 import Modelos.Diccionario;
 import Modelos.Lista;
-import Modelos.NodoToken;
 import Modelos.OperToken;
 import Modelos.Semantica1.Arreglo;
-import Modelos.Semantica1.Dimension;
 import Modelos.Tupla;
 import Modelos.Variable;
 import SQL.ControladorSQL;
 import SQL.TablaSimbolos;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -44,11 +38,10 @@ public class Ambito {
     boolean estadoError, banderaParametro, banderaArreglo, banderaTupla, banderaListaMultiple,
             banderaRango, banderaListaNormal, agregarLista, banderaFor, agregarTupla,
             agregarDiccionario, banderaConstante, banderaFuncion,
-            banderaDiccionario, asignarValor, banderaArregloNormal,
+            banderaDiccionario, asignarValor,
             bandera814, areaDeclaracion, primeraVezTipoLista, llaveDiccionario;
     Stack<Integer> pilaSintaxis;
     Stack<Integer> pilaAmbito;
-    ArrayList<NodoToken> elementosArreglo;
     ControladorSQL controladorSQL;
     TablaSimbolos tablaSimbolos[];
     HashMap<String, Arreglo> arreglos;
@@ -106,7 +99,6 @@ public class Ambito {
         llaveDiccionario = false;
         areaDeclaracion = true;
         primeraVezTipoLista = true;
-        banderaArregloNormal = true;
         ambito = 0;
         ambitoMayor = 0;
         contadorElementosLista = 0;
@@ -116,7 +108,6 @@ public class Ambito {
         contadorDiccionario = 0;
         contadorVariablesArreglo = 0;
         auxiliarTipoVariable = 0;
-        elementosArreglo = new ArrayList<>();
         listaArreglo = new Lista[400]; // este tenia [3]
         tuplaArreglo = new Tupla[400];
         diccionario = new Diccionario[400];
@@ -133,12 +124,20 @@ public class Ambito {
     public void agregarOperadorOperando(int token, OperToken oper) {
         if (!areaDeclaracion) {
             if (token == -6) {
-                analizadorSemantica1.agregarOperando(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero(), pilaAmbito.peek());
+                analizadorSemantica1.agregarOperando(
+                        token,
+                        oper.mostrarLineaPrimero(),
+                        oper.mostrarLexemaPrimero(),
+                        pilaAmbito.peek());
             } else {
-                analizadorSemantica1.agregarOperando(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero(), -1);
-
+                analizadorSemantica1.agregarOperando(
+                        token, oper.mostrarLineaPrimero(),
+                        oper.mostrarLexemaPrimero(),
+                        -1);
             }
-            analizadorSemantica1.agregarOperador(token, oper.mostrarLineaPrimero(), oper.mostrarLexemaPrimero());
+            analizadorSemantica1.agregarOperador(token,
+                    oper.mostrarLineaPrimero(),
+                    oper.mostrarLexemaPrimero());
         }
     }
 
@@ -154,25 +153,25 @@ public class Ambito {
         System.out.println("<AMBITO> tarrVariable: " + tarrVariable);
         System.out.println("<AMBITO> Cima de pila: " + pilaSintaxis.peek());
         this.oper = oper;
-        if (analizadorSemantica2.analizarCimaPila(pilaSintaxis.peek(), oper.mostrarLineaPrimero(), ambito)) {
-            pilaSintaxis.pop();
-        }
 
-        if (pilaSintaxis.peek() == 10301 || pilaSintaxis.peek() == 10302) {
-            if (pilaSintaxis.peek() == 10302) {
-                banderaArregloNormal = false;
+        try {
+            if (analizadorSemantica2.analizarReglas(pilaSintaxis.peek(), oper.mostrarLineaPrimero(), ambito)) {
+                pilaSintaxis.pop();
             }
-            pilaSintaxis.pop();
-            elementosArreglo.add(oper.obtenerPrimero());
+            if (analizadorSemantica2.analizarArreglo(pilaSintaxis.peek(), areaDeclaracion, oper.obtenerPrimero(), ambito)) {
+                pilaSintaxis.pop();
+            }
+        } catch (Exception e) {
+            controladorTokenError.agregarError(999, "Ha ocurrido una excepcion", "", oper.mostrarLineaPrimero(), "Semantica 2");
         }
 
         if (pilaSintaxis.peek() == 920) {
             pilaSintaxis.pop();
-//            try {
-            analizadorSemantica1.comprobarAsignacion();
-//            } catch (Exception e) {
-//                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al comprobar asignacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
-//            }
+            try {
+                analizadorSemantica1.comprobarAsignacion();
+            } catch (Exception e) {
+                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al comprobar asignacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
+            }
         }
 
         if (pilaSintaxis.peek() == 8152) {
@@ -295,8 +294,15 @@ public class Ambito {
             case 801:
                 System.out.println("<AMBITO> AREA DE DECLARACION HA SIDO DESACTIVADA");
                 areaDeclaracion = false;
-                banderaArregloNormal = true;
-                elementosArreglo.clear();
+                banderaListaNormal = false;
+                analizadorSemantica2.elementosArreglo.clear();
+                banderaConstante = false;
+                banderaFuncion = false;
+                banderaDiccionario = false;
+                asignarValor = false;
+                bandera814 = false;
+                llaveDiccionario = false;
+                primeraVezTipoLista = true;
                 bandera814 = false;
                 tamVariablesGuardadasArr = 0;
                 claseVariable = "";
@@ -306,20 +312,31 @@ public class Ambito {
                 valorVariable = "";
                 ambitoCreado = "";
                 tarrVariable = "";
+                ambitoVariable = "";
                 pilaSintaxis.pop();
                 break;
             case 802:
                 System.out.println("<AMBITO> AREA DE DECLARACION HA SIDO ACTIVADA");
                 areaDeclaracion = true;
                 bandera814 = false;
+                banderaListaNormal = false;
                 tamVariablesGuardadasArr = 0;
+                banderaConstante = false;
+                banderaFuncion = false;
+                banderaDiccionario = false;
+                asignarValor = false;
+                bandera814 = false;
+                llaveDiccionario = false;
+                primeraVezTipoLista = true;
                 claseVariable = "";
                 auxiliarID = "";
                 nombreVariable = "";
+                analizadorSemantica2.elementosArreglo.clear();
                 tipoVariable = "";
                 valorVariable = "";
                 ambitoCreado = "";
                 tarrVariable = "";
+                ambitoVariable = "";
                 pilaSintaxis.pop();
                 break;
             case 803:
@@ -651,26 +668,13 @@ public class Ambito {
                 break;
             case "Lista":
                 if (banderaListaNormal) {
-                    ArrayList<Dimension> dimension = new ArrayList<>();
-                    if (banderaArregloNormal) {
-                        for (int i = 0; i < elementosArreglo.size(); i++) {
-                            dimension.add(new Dimension(i, 0, Integer.parseInt(elementosArreglo.get(i).getLexema()) - 1));
-                        }
-                        arreglos.put(nombreVariable + ambitoVariable, new Arreglo(nombreVariable, ambitoVariable, dimension, 1));
-                    } else {
-                        dimension.add(new Dimension(0,
-                                Integer.parseInt(elementosArreglo.get(0).getLexema()),
-                                Integer.parseInt(elementosArreglo.get(1).getLexema()) - 1));
-                        arreglos.put(nombreVariable + ambitoVariable, new Arreglo(nombreVariable, ambitoVariable, dimension, Integer.parseInt(elementosArreglo.get(2).getLexema())));
-                    }
-                    elementosArreglo.clear();
-                    banderaArregloNormal = true;
-                    query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,listaPertenece,tamanoArreglo) VALUES("
+                    analizadorSemantica2.asignarArreglo(nombreVariable, ambitoVariable, Integer.parseInt(ambitoVariable),
+                            oper.mostrarLineaPrimero());
+                    query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,tamanoArreglo) VALUES("
                             + "'" + nombreVariable + "',"
                             + "'" + "Arreglo" + "',"
                             + "'" + tipoVariable + "',"
                             + "'" + ambitoVariable + "',"
-                            + "'" + listaPerteneceVariable + "',"
                             + "'" + (controladorDatoLista.obtenerCantidadDatosLista()) + "');";
                     aumentarContadorAmbito();
                     controladorSQL.ejecutarQuery(query);
@@ -711,6 +715,10 @@ public class Ambito {
                 bandera814 = false;
                 banderaListaMultiple = false;
                 banderaListaNormal = true;
+                ambitoVariable = "";
+                claseVariable = "";
+                ambitoCreado = "";
+                tipoVariable = "";
                 break;
             case "Rango":
                 tipoVariable = "struct";

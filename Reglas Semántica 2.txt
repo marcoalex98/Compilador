@@ -1,0 +1,17 @@
+1010    If       La expresión debe ser booleana    IF true:
+1011    WHILE    La expresión debe ser booleana    WHILE true:
+1012    ELIF     La expresión debe ser booleana    ELIF true:
+-----------------------------------------------------------------------------------------------------------
+Asignacion
+1020    Asignacion básica        La variable debe ser del mismo tipo que la expresión    ID = EXP;
+1021    Asignacion compuestas    La variable debe ser del mismo tipo que la expresión    ID += EXP
+-----------------------------------------------------------------------------------------------------------
+Arreglos
+1030    Dimensiones     Al asignar un valor a una posición del arreglo, las dimensiones deben coincidir 
+                        A = [1]; A[0] = 1;
+1031    Dim-Com         Al declarar un arreglo con rango, el inicio debe ser menor al final, y el avance 
+                        positivo    A = [0:3:1]
+1040    Enteros         Al asignar un valor en una posición del arreglo, las posiciones deben ser enteros
+1050    Rango Dim       Al Al asignar un valor a una posición del arreglo, la posición debe 
+                        estar dentro del rango de declaracion 
+-----------------------------------------------------------------------------------------------------------

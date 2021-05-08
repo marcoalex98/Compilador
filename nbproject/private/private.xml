@@ -3,15 +3,21 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Sintaxis.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Auxiliar/AuxiliarSintaxis.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Lexico.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Semantica1.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Interfaz.java</file>
-            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Modelos/OperToken.java</file>
-            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Auxiliar/AuxiliarSemantica1.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Common/Utilities.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Ambito.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Sintaxis.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Modelos/Semantica1/Dimension.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Modelos/OperToken.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Modelos/Semantica1/Arreglo.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Modelos/Semantica1/Operandos.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Analizador/Semantica2.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Modelos/NodoToken.java</file>
             <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/SQL/ControladorSQL.java</file>
+            <file>file:/C:/Users/marco/Documents/NetBeansProjects/CompiladorMarcoMarcial/src/Modelos/Semantica2/Reglas.java</file>
         </group>
     </open-files>
 </project-private>
