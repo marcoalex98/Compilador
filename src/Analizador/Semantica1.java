@@ -35,7 +35,7 @@ public class Semantica1 {
     ArrayList<Operandos> operandos;
     ControladorSQL controladorSQL;
     public ContadorSemantica1[] contadores;
-    boolean banderaArreglo;
+    boolean banderaArreglo, banderaEnterosArreglo;
     ControladorTokenError controladorTokenError;
     PrintStream sys = System.out;
     ArrayList<Integer> elementosArreglo;
@@ -45,8 +45,9 @@ public class Semantica1 {
     //                         >    +    -    *    /    %    =    ^   
     int listaOperadores[] = {-39, -14, -17, -20, -24, -28, -42, -44, -33, -32, -34, -30, -37, -117,
         //    +=   -=   *=   /=   <<   >>   ++   --    <   <=    !=  >=   IS  ISNOT IN INNOT
-        -16, -19, -23, -27, -37, -40, -15, -18, -36, -38, -43, -31, -41, -71, -72, -70, -98, -35};
+        -16, -19, -23, -27, -37, -40, -15, -18, -36, -38, -43, -31, -41, -71, -72, -70, -98, -35, -46, -52, -47};
     String listaAsignadores[] = {"=", "+=", "-=", "*=", "/="};
+    ArrayList<String> listaComprobacionClase;
     String operadorAsignador;
 
     public Semantica1(ControladorSQL controladorSQL, ControladorTokenError controladorTokenError,
@@ -70,6 +71,10 @@ public class Semantica1 {
         analizadorSemantica2.setAnalizadorSemantica1(this);
         elementosArreglo = new ArrayList<>();
         dimensionesArregloEjecucion = new ArrayList<>();
+        listaComprobacionClase = new ArrayList<>();
+        listaComprobacionClase.add("arreglo");
+        listaComprobacionClase.add("diccionario");
+        listaComprobacionClase.add("tupla");
     }
 
     public void ejecutarOperacion(Operandos valorA, Operandos valorB, String operacion, int index) {
@@ -127,12 +132,207 @@ public class Semantica1 {
         operandos.add(index, new Operandos(linea, temporal, ambito, lexema, clase));
 //        pilaOperandos.push(new Operando(linea, temporal, ambito, lexema, clase));
     }
-    
-    private void analizarArreglo(){
+
+    private void analizarDimensiones() {
+        ArrayList<Operandos> operandosResultantes = new ArrayList<>();
+        ArrayList<Operandos> operandosAuxiliar = new ArrayList<>();
+        ArrayList<Operadores> operadoresAuxiliar = new ArrayList<>();
+        boolean agregarOperando = false, agregarOperador = false;
+        banderaEnterosArreglo = true;
+        for (int i = 0; i < operandos.size(); i++) {
+            if (operandos.get(i).getToken() == -52) {
+                agregarOperando = true;
+                operandos.remove(i);
+                i--;
+                continue;
+            } else if (operandos.get(i).getToken() == -47) {
+                operandos.remove(i);
+                break;
+            }
+            if (agregarOperando) {
+                operandosAuxiliar.add(operandos.get(i));
+                operandos.remove(i);
+                i--;
+            }
+        }
+        for (int i = 0; i < operadores.size(); i++) {
+            if (operadores.get(i).getToken() == -52) {
+                agregarOperador = true;
+                operadores.remove(i);
+                i--;
+                continue;
+            } else if (operadores.get(i).getToken() == -47) {
+                operadores.remove(i);
+                break;
+            }
+            if (agregarOperador) {
+                operadoresAuxiliar.add(operadores.get(i));
+                operadores.remove(i);
+                i--;
+            }
+        }
+        for (int i = 0; i < operandosAuxiliar.size(); i++) {
+            System.err.println(operandosAuxiliar.get(i).getLexema());
+        }
+        for (int i = 0; i < operadoresAuxiliar.size(); i++) {
+            System.err.println(operadoresAuxiliar.get(i).getLexema());
+        }
+
+        ArrayList<Operandos> operandosAuxiliar2 = new ArrayList<>();
+        ArrayList<Operadores> operadoresAuxiliar2 = new ArrayList<>();
+        OUTER:
+        while (true) {
+            for (int i = 0; i < operandosAuxiliar.size(); i++) {
+                if (operandosAuxiliar.get(i).getToken() == -46) {
+                    operandosAuxiliar.remove(i);
+                    i--;
+                    break;
+                } else {
+                    operandosAuxiliar2.add(operandosAuxiliar.get(i));
+                    operandosAuxiliar.remove(i);
+                    i--;
+                }
+            }
+            for (int i = 0; i < operadoresAuxiliar.size(); i++) {
+                if (operadoresAuxiliar.get(i).getToken() == -46) {
+                    operadoresAuxiliar.remove(i);
+                    i--;
+                    break;
+                } else {
+                    operadoresAuxiliar2.add(operadoresAuxiliar.get(i));
+                    operadoresAuxiliar.remove(i);
+                    i--;
+                }
+            }
+            operandosResultantes.add(comprobarOperacionMatematica(operandosAuxiliar2, operadoresAuxiliar2));
+            operadoresAuxiliar2 = new ArrayList<>();
+            operandosAuxiliar2 = new ArrayList<>();
+            if (operadoresAuxiliar.isEmpty() && operandosAuxiliar.isEmpty()) {
+                break;
+            }
+            
+            if (!banderaEnterosArreglo) {
+                break;
+            }
+        }
+        if (banderaEnterosArreglo) {
+            operandos.add(1, new Operandos(operandos.get(0).getLinea(), -52, operandos.get(0).getAmbito(), "[", ""));
+            operandos.add(2, operandosResultantes.get(0));
+            operandosResultantes.remove(0);
+            int contadorElementos = 0;
+            for (int i = 0; i < operandosResultantes.size(); i++) {
+                operandos.add(i + 3, operandosResultantes.get(0));
+                operandosResultantes.remove(0);
+                if (!operandosResultantes.isEmpty()) {
+                    operandos.add(1 + 4, new Operandos(operandos.get(0).getLinea(), -46, operandos.get(0).getAmbito(), ",", ""));
+                }
+                contadorElementos = i;
+            }
+            operandos.add(contadorElementos + 4, new Operandos(operandos.get(0).getLinea(), -47, operandos.get(0).getAmbito(), "]", ""));
+            for (int i = 0; i < operandos.size(); i++) {
+                System.err.println("* " + operandos.get(i).getLexema());
+            }
+            analizadorSemantica2.agregarRegla(1040, operandos.get(0).getLinea(), operandos.get(0).getAmbito(), true);
+        } else {
+            analizadorSemantica2.agregarRegla(1040, operandos.get(0).getLinea(), operandos.get(0).getAmbito(), false);
+        }
+
+    }
+
+    private Operandos comprobarOperacionMatematica(ArrayList<Operandos> operandosAuxiliar,
+            ArrayList<Operadores> operadoresAuxiliar) {
+        boolean operacionValida = true;
+        if (operandosAuxiliar.size() > 1) {
+            OUTER:
+            OUTER_1:
+            while (operadoresAuxiliar.size() > 0) {
+                int index = auxiliar.obtenerPosicionMayorOperador(operadoresAuxiliar);
+                Operandos valorA = operandosAuxiliar.get(index);
+                Operandos valorB = operandosAuxiliar.get(index + 1);
+                int linea = operadoresAuxiliar.get(index).getLinea();
+                int ambito = operadoresAuxiliar.get(index).getLinea();
+                int enteroValorA, enteroValorB, resultadoOperacion;
+                switch (valorA.getToken()) {
+                    case -7:
+                        enteroValorA = Integer.parseInt(valorA.getLexema());
+                        break;
+                    case -6:
+                        if (controladorSQL.obtenerClaseVariable(valorA.getLexema(), valorA.getAmbito()).equals("Decimal")) {
+                            enteroValorA = controladorSQL.obtenerValorVariable(valorA.getLexema(), valorA.getAmbito());
+                        } else {
+                            operacionValida = false;
+                            break OUTER;
+                        }
+                        break;
+                    default:
+                        enteroValorA = 0;
+                        operacionValida = false;
+                        break OUTER;
+                }
+                switch (valorB.getToken()) {
+                    case -7:
+                        enteroValorB = Integer.parseInt(valorB.getLexema());
+                        break;
+                    case -6:
+                        if (controladorSQL.obtenerClaseVariable(valorB.getLexema(), valorB.getAmbito()).equals("Decimal")) {
+                            enteroValorB = controladorSQL.obtenerValorVariable(valorB.getLexema(), valorB.getAmbito());
+                        } else {
+                            operacionValida = false;
+                            break OUTER;
+                        }
+                        break;
+                    default:
+                        enteroValorB = 0;
+                        operacionValida = false;
+                        break OUTER_1;
+                }
+                System.err.println("Operacion: " + enteroValorA + operadoresAuxiliar.get(index).getLexema() + enteroValorB);
+                switch (operadoresAuxiliar.get(index).getLexema()) {
+                    case "+":
+                        resultadoOperacion = enteroValorA + enteroValorB;
+                        operadoresAuxiliar.remove(index);
+                        break;
+                    case "-":
+                        resultadoOperacion = enteroValorA - enteroValorB;
+                        operadoresAuxiliar.remove(index);
+                        break;
+                    case "*":
+                        resultadoOperacion = enteroValorA * enteroValorB;
+                        operadoresAuxiliar.remove(index);
+                        break;
+                    case "/":
+                        resultadoOperacion = 0;
+                        operacionValida = false;
+                        break;
+                    default:
+                        resultadoOperacion = 0;
+                        operacionValida = false;
+                }
+                if (operacionValida) {
+                    operandosAuxiliar.remove(index);
+                    operandosAuxiliar.remove(index);
+                    operandosAuxiliar.add(index, new Operandos(linea, -7, ambito, resultadoOperacion + "", ""));
+                }
+            }
+        } else {
+            System.err.println("Es solo un elemento");
+        }
+        if (!operacionValida) {
+            banderaEnterosArreglo = false;
+        }
+        System.err.println("---RESULTADO: " + operandosAuxiliar.get(0).getLexema());
+        return operandosAuxiliar.get(0);
+    }
+
+    private void analizarArreglo() {
         boolean bandera1040 = true, bandera1050 = true;
         int linea1040 = 0, ambito1040 = 0, contadorDimensiones = 0;
+        analizarDimensiones();
+        
+        String nombreArreglo = operandos.get(0).getLexema();
+        int ambito = operandos.get(0).getAmbito();
         for (int i = 0; i < operandos.size(); i++) {
-            if(ambito1040 == 0 && operandos.get(i).getAmbito() > 0){
+            if (ambito1040 == 0 && operandos.get(i).getAmbito() > 0) {
                 ambito1040 = operandos.get(i).getAmbito();
             }
             if (operandos.get(i).getToken() == -52) {
@@ -143,7 +343,7 @@ public class Semantica1 {
                 continue;
             }
             if (banderaArreglo) {
-                if (operandos.get(i).getToken() == -46){
+                if (operandos.get(i).getToken() == -46) {
                     contadorDimensiones++;
                     operandos.remove(operandos.get(i));
                     continue;
@@ -154,20 +354,26 @@ public class Semantica1 {
                     if (Utilities.getTipoVariable(operandos.get(i).getToken()).equals("Decimal")) {
 //                        elementosArreglo.add(Integer.parseInt(operandos.get(i).getLexema()));
                         dimensionesArregloEjecucion.add(Integer.parseInt(operandos.get(i).getLexema()));
+                        int inicioDimension = analizadorSemantica2.arreglos.get((nombreArreglo+ambito)).getDimensiones().get(contadorDimensiones).getInicio();
+                        int finDimension = analizadorSemantica2.arreglos.get((nombreArreglo+ambito)).getDimensiones().get(contadorDimensiones).getFin();
+                        int valorDimension = Integer.parseInt(operandos.get(i).getLexema());
+                        if (!(inicioDimension <= valorDimension && finDimension >= valorDimension)) {
+                            bandera1050 = false;
+                        }
                         operandos.remove(operandos.get(i));
                         i--;
-                    //Cuando no lo es, se actuva la bandera 1040 como false    
-                    }else{
+                        contadorDimensiones++;
+                        //Cuando no lo es, se actuva la bandera 1040 como false    
+                    } else {
                         operandos.remove(operandos.get(i));
-                        bandera1040 = false;    
+                        bandera1040 = false;
                     }
-                }else if(operandos.get(i).getToken() == -6){//Si llega una variable
+                } else if (operandos.get(i).getToken() == -6) {//Si llega una variable
                     if (!controladorSQL.obtenerClaseVariable(operandos.get(i).getLexema(), operandos.get(i).getAmbito()).equals("Decimal")) {
                         bandera1040 = false;
                         operandos.remove(operandos.get(i));
                     }
-                }
-                else{//Otra cosa
+                } else {//Otra cosa
                     operandos.remove(operandos.get(i));
                 }
                 if (operandos.get(i).getToken() == -47) {//Fin del arreglo
@@ -176,8 +382,15 @@ public class Semantica1 {
                 }
             }
         }
-        analizadorSemantica2.agregarRegla(1040, linea1040, ambito1040, bandera1040);
-        
+        analizadorSemantica2.agregarRegla(1050, operandos.get(0).getLinea(), operandos.get(0).getAmbito(), bandera1050);
+    }
+
+    private void analizarEstructuras(String tipo) {
+        switch (tipo.toLowerCase()) {
+            case "arreglo":
+                analizarArreglo();
+                break;
+        }
     }
 
     private void analizador() {
@@ -191,11 +404,11 @@ public class Semantica1 {
             operadoresArr[i - 1] = pilaOperadores.peek();
             pilaOperadores.pop();
         }
-        analizarArreglo();
         operadores = new ArrayList<>();
         operandos = new ArrayList<>();
         operandos.addAll(Arrays.asList(operandosArr));
         operadores.addAll(Arrays.asList(operadoresArr));
+        analizarEstructuras(controladorSQL.obtenerClaseVariable(operandos.get(0).getLexema(), operandos.get(0).getAmbito()));
         while (true) {
             int index = auxiliar.obtenerPosicionMayorOperador(operadores);
             if (index == 0) {
@@ -232,28 +445,29 @@ public class Semantica1 {
         sys.println("<SEMANTICA 1 comprobarAsignacion> valorTemporal: " + valorTemporal);
         operandos.remove(1);
         Operandos variable = operandos.get(0);
-        analizadorSemantica2.comprobarDimencionesArreglo(variable.getLexema(), variable.getAmbito(), 
-                dimensionesArregloEjecucion.size(), variable.getLinea());
+
         sys.println("<SEMANTICA 1 comprobarAsignacion> variable: " + operandos.get(0).getLexema());
         operandos.remove(0);
         operadores.remove(0);
-        String claseVariable;
+        String claseVariable = "";
         if (!banderaArreglo) {
             if (!"variant".equals(variable.getClase()) && !"Temporal".equals(variable.getLexema())) {
                 claseVariable = controladorSQL.obtenerClaseVariable(variable.getLexema(), variable.getAmbito());
             } else {
                 claseVariable = variable.getClase();
             }
-        }else{
-            if (controladorSQL.isArregloVirgen(variable.getLexema(), variable.getAmbito()+"")) {
+        } else if(banderaArreglo || !banderaEnterosArreglo){
+            if (controladorSQL.isArregloVirgen(variable.getLexema(), variable.getAmbito() + "")) {
                 claseVariable = valorTemporal;
-                controladorSQL.actualizarTipoArreglo(variable.getLexema(), variable.getAmbito()+"", claseVariable);
-            }
-            else{
+                controladorSQL.actualizarTipoArreglo(variable.getLexema(), variable.getAmbito() + "", claseVariable);
+            } else {
                 claseVariable = controladorSQL.obtenerTipoArreglo(variable.getLexema(), variable.getAmbito());
             }
         }
-
+        if (listaComprobacionClase.contains(claseVariable)) {
+            analizadorSemantica2.comprobarNumeroDimencionesArreglo(variable.getLexema(), variable.getAmbito(),
+                    dimensionesArregloEjecucion.size(), variable.getLinea());
+        }
         sys.println("<SEMANTICA 1 comprobarAsignacion> Token Variable: " + variable.getToken());
         sys.println("<SEMANTICA 1 Comprobar Asignacion> Nombre Variable: " + variable.getLexema());
         sys.println("<SEMANTICA 1 Comprobar Asignacion> Clase Variable: " + variable.getClase());

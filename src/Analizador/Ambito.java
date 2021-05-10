@@ -167,11 +167,11 @@ public class Ambito {
 
         if (pilaSintaxis.peek() == 920) {
             pilaSintaxis.pop();
-            try {
+//            try {
                 analizadorSemantica1.comprobarAsignacion();
-            } catch (Exception e) {
-                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al comprobar asignacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
-            }
+//            } catch (Exception e) {
+//                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al comprobar asignacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
+//            }
         }
 
         if (pilaSintaxis.peek() == 8152) {

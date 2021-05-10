@@ -12,6 +12,6 @@ Arreglos
 1031    Dim-Com         Al declarar un arreglo con rango, el inicio debe ser menor al final, y el avance 
                         positivo    A = [0:3:1]
 1040    Enteros         Al asignar un valor en una posición del arreglo, las posiciones deben ser enteros
-1050    Rango Dim       Al Al asignar un valor a una posición del arreglo, la posición debe 
-                        estar dentro del rango de declaracion 
+1050    Rango Dim       Al asignar un valor a una posición del arreglo, la posición debe estar dentro 
+                        del rango declarado en el area de declaracion 
 -----------------------------------------------------------------------------------------------------------

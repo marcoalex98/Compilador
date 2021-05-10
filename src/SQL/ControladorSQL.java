@@ -1,4 +1,5 @@
 package SQL;
+import Modelos.Semantica1.Variable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -60,6 +61,20 @@ public class ControladorSQL {
     
     public ResultSet obtenerResultSet(String query) throws SQLException{
         return st.executeQuery(query);
+    }
+    
+    public int obtenerValorVariable(String variable, int ambito){
+        String query = "SELECT valor FROM tablasimbolos WHERE (id = BINARY '" + variable + "' AND (ambito = '" + ambito + "' OR ambito = '0'))";
+        String valorVariable = "";
+        try {
+            ResultSet rs = obtenerResultSet(query);
+            while (rs.next()) {
+                valorVariable = rs.getString(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ControladorSQL.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Integer.parseInt(valorVariable);
     }
     
     public String obtenerClaseVariable(String variable, int ambito) {

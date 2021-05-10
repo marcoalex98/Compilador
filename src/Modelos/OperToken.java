@@ -1,21 +1,17 @@
 package Modelos;
 
 
-import Modelos.NodoToken;
-
-
 public class OperToken {
     int tam=0;
     NodoToken prim = null;
     NodoToken ult = null;
     boolean r = false;
     
-    public boolean insertarUltimo(int posicion, String minilexem, int numlinea){
-        NodoToken nuevo=new NodoToken(posicion, minilexem, numlinea);
+    public boolean insertarUltimo(int token, String lexema, int linea){
+        NodoToken nuevo=new NodoToken(token, lexema, linea);
         if(prim==null){
             prim=nuevo;
             ult=nuevo;
-            System.out.println("Estaba vacia, se inserto 🙂");
             r=true;
         }
           else{
@@ -42,13 +38,12 @@ public class OperToken {
         return prim;
     }
 
-    public boolean InsertarInicio(int posicion, String minilexem, int numlinea) {
+    public boolean insertarInicio(int posicion, String minilexem, int numlinea) {
         tam++;
         NodoToken nuevo = new NodoToken(posicion, minilexem, numlinea);
         if (prim == null) {
             prim = nuevo;
             ult = nuevo;
-            System.out.println("Estaba vacia, se inserto :)");
             r = true;
         } else {
             nuevo.sig = prim;
@@ -61,13 +56,10 @@ public class OperToken {
     public void mostrarDatos() {
         NodoToken aux = prim;
         if (prim == null) {
-            System.out.println("No hay ningun elemento en la lista :(");
         } else {
-            System.out.println("Elementos de la lista");
             while (aux != null) {
                 System.out.println(aux.getPosicion() + "   " + aux.getLexema() + "    " + aux.getNumlinea());
                 aux = aux.sig;
-
             }
         }
     }

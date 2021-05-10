@@ -7,10 +7,10 @@ public class NodoToken {
     private int numLinea;
     NodoToken sig;
     
-    public NodoToken(int posicion, String minilexem, int numlinea){
-        this.token=posicion;
-        this.lexema=minilexem;
-        this.numLinea=numlinea;
+    public NodoToken(int token, String lexema, int linea){
+        this.token=token;
+        this.lexema=lexema;
+        this.numLinea=linea;
         this.sig=null;
     }
 

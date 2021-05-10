@@ -14,7 +14,6 @@ public class LeerExcelSintactico {
     public String [][] matrizGeneral;
     public LeerExcelSintactico(File fileName){
         List cellData=new ArrayList();
-        
         try {
             FileInputStream fis=new FileInputStream(fileName);
             XSSFWorkbook workbook=new XSSFWorkbook(fis);
@@ -55,6 +54,7 @@ public class LeerExcelSintactico {
         }
         return matriz; 
     }
+    
     public static void main(String[] args) {
         File f=new File("matriz-sintaxis.xlsx");
         if(f.exists()){

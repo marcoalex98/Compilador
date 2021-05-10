@@ -30,7 +30,7 @@ public class Semantica2 {
         inicializarVariables();
     }
 
-    public void comprobarDimencionesArreglo(String variableArreglo, int ambitoArreglo,
+    public void comprobarNumeroDimencionesArreglo(String variableArreglo, int ambitoArreglo,
             int numeroDimensiones, int linea) {//Regla Arreglos 1 - 1030
         System.err.println(numeroDimensiones);
         System.err.println(arreglos.get((variableArreglo + ambitoArreglo)).getDimensiones().size());
@@ -120,7 +120,7 @@ public class Semantica2 {
                     new Arreglo(nombreVariable, ambitoVariable,
                             dimension,
                             Integer.parseInt(elementosArreglo.get(2).getLexema())));
-            if (inicio > fin) {
+            if (inicio < fin && (fin % avance == 0) && (inicio % avance == 0) && avance < fin) {
                 agregarRegla(1031, linea, ambito, true);
             } else {
                 agregarRegla(1031, linea, ambito, false);
