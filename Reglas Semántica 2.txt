@@ -15,3 +15,6 @@ Arreglos
 1050    Rango Dim       Al asignar un valor a una posición del arreglo, la posición debe estar dentro 
                         del rango declarado en el area de declaracion 
 -----------------------------------------------------------------------------------------------------------
+Diccionarios
+1060    Tipo Llaves     Todas las llaves del diccionario deben de ser del mismo tipo
+-----------------------------------------------------------------------------------------------------------

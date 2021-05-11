@@ -803,9 +803,9 @@ public class Ambito {
                             + "'" + auxiliar[i].getClase() + "',"
                             + "'" + auxiliar[i].getTipo() + "',"
                             + "'" + auxiliar[i].getAmb() + "',"
-                            + "'" + auxiliar[i].getValor() + "',"
-                            + "'" + auxiliar[i].getNoPosicion() + "',"
                             + "'" + auxiliar[i].getLlave() + "',"
+                            + "'" + auxiliar[i].getNoPosicion() + "',"
+                            + "'" + auxiliar[i].getValor() + "',"
                             + "'" + auxiliar[i].getListaPertenece() + "');";
                     controladorSQL.ejecutarQuery(query);
                     query = "UPDATE tablasimbolos SET tamanoArreglo = '" + contadorDiccionario + "' where id='" + auxiliarNombreVariable + "';";

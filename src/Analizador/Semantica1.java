@@ -137,11 +137,11 @@ public class Semantica1 {
         ArrayList<Operandos> operandosResultantes = new ArrayList<>();
         ArrayList<Operandos> operandosAuxiliar = new ArrayList<>();
         ArrayList<Operadores> operadoresAuxiliar = new ArrayList<>();
-        boolean agregarOperando = false, agregarOperador = false;
+        boolean banderaAgregarOperando = false, agregarOperador = false;
         banderaEnterosArreglo = true;
         for (int i = 0; i < operandos.size(); i++) {
             if (operandos.get(i).getToken() == -52) {
-                agregarOperando = true;
+                banderaAgregarOperando = true;
                 operandos.remove(i);
                 i--;
                 continue;
@@ -149,7 +149,7 @@ public class Semantica1 {
                 operandos.remove(i);
                 break;
             }
-            if (agregarOperando) {
+            if (banderaAgregarOperando) {
                 operandosAuxiliar.add(operandos.get(i));
                 operandos.remove(i);
                 i--;
@@ -172,7 +172,7 @@ public class Semantica1 {
             }
         }
         for (int i = 0; i < operandosAuxiliar.size(); i++) {
-            System.err.println(operandosAuxiliar.get(i).getLexema());
+            System.err.print(operandosAuxiliar.get(i).getLexema() + " ");
         }
         for (int i = 0; i < operadoresAuxiliar.size(); i++) {
             System.err.println(operadoresAuxiliar.get(i).getLexema());
@@ -189,6 +189,7 @@ public class Semantica1 {
                     break;
                 } else {
                     operandosAuxiliar2.add(operandosAuxiliar.get(i));
+                    System.err.print("Se ha agregado: " + operandosAuxiliar.get(i).getLexema() + " ");
                     operandosAuxiliar.remove(i);
                     i--;
                 }
@@ -210,25 +211,29 @@ public class Semantica1 {
             if (operadoresAuxiliar.isEmpty() && operandosAuxiliar.isEmpty()) {
                 break;
             }
-            
+
             if (!banderaEnterosArreglo) {
                 break;
             }
         }
+        for (int i = 0; i < operandosResultantes.size(); i++) {
+            System.err.println("Operandos resultantes: " + operandosResultantes.get(i).getLexema() + " ");
+        }
+
         if (banderaEnterosArreglo) {
             operandos.add(1, new Operandos(operandos.get(0).getLinea(), -52, operandos.get(0).getAmbito(), "[", ""));
-            operandos.add(2, operandosResultantes.get(0));
-            operandosResultantes.remove(0);
             int contadorElementos = 0;
-            for (int i = 0; i < operandosResultantes.size(); i++) {
-                operandos.add(i + 3, operandosResultantes.get(0));
+            int operandosResultantesSize = operandosResultantes.size();
+            for (int i = 0; i < operandosResultantesSize; i++) {
+                System.err.println("Se va a agregar: " + operandosResultantes.get(0).getLexema() + " ");
+                operandos.add(i + 2, operandosResultantes.get(0));
                 operandosResultantes.remove(0);
                 if (!operandosResultantes.isEmpty()) {
-                    operandos.add(1 + 4, new Operandos(operandos.get(0).getLinea(), -46, operandos.get(0).getAmbito(), ",", ""));
+                    operandos.add(i + 4, new Operandos(operandos.get(0).getLinea(), -46, operandos.get(0).getAmbito(), ",", ""));
                 }
                 contadorElementos = i;
             }
-            operandos.add(contadorElementos + 4, new Operandos(operandos.get(0).getLinea(), -47, operandos.get(0).getAmbito(), "]", ""));
+            operandos.add(contadorElementos + 3, new Operandos(operandos.get(0).getLinea(), -47, operandos.get(0).getAmbito(), "]", ""));
             for (int i = 0; i < operandos.size(); i++) {
                 System.err.println("* " + operandos.get(i).getLexema());
             }
@@ -286,7 +291,6 @@ public class Semantica1 {
                         operacionValida = false;
                         break OUTER_1;
                 }
-                System.err.println("Operacion: " + enteroValorA + operadoresAuxiliar.get(index).getLexema() + enteroValorB);
                 switch (operadoresAuxiliar.get(index).getLexema()) {
                     case "+":
                         resultadoOperacion = enteroValorA + enteroValorB;
@@ -315,7 +319,6 @@ public class Semantica1 {
                 }
             }
         } else {
-            System.err.println("Es solo un elemento");
         }
         if (!operacionValida) {
             banderaEnterosArreglo = false;
@@ -325,12 +328,16 @@ public class Semantica1 {
     }
 
     private void analizarArreglo() {
-        boolean bandera1040 = true, bandera1050 = true;
+        boolean bandera1040 = true, bandera1050 = true, banderaTodoSalioBien = true;
         int linea1040 = 0, ambito1040 = 0, contadorDimensiones = 0;
         analizarDimensiones();
-        
         String nombreArreglo = operandos.get(0).getLexema();
         int ambito = operandos.get(0).getAmbito();
+
+        for (int i = 0; i < operandos.size(); i++) {
+            System.err.print("--" + operandos.get(i).getLexema() + " ");
+        }
+
         for (int i = 0; i < operandos.size(); i++) {
             if (ambito1040 == 0 && operandos.get(i).getAmbito() > 0) {
                 ambito1040 = operandos.get(i).getAmbito();
@@ -344,9 +351,14 @@ public class Semantica1 {
             }
             if (banderaArreglo) {
                 if (operandos.get(i).getToken() == -46) {
-                    contadorDimensiones++;
+                    //contadorDimensiones++;
                     operandos.remove(operandos.get(i));
+                    i--;
                     continue;
+                }
+                if (operandos.get(i).getToken() == -47) {//Fin del arreglo
+                    operandos.remove(operandos.get(i));
+                    break;
                 }
                 //Si se encuentra una constante, procede
                 if (Utilities.isConstante(operandos.get(i).getToken())) {
@@ -354,35 +366,54 @@ public class Semantica1 {
                     if (Utilities.getTipoVariable(operandos.get(i).getToken()).equals("Decimal")) {
 //                        elementosArreglo.add(Integer.parseInt(operandos.get(i).getLexema()));
                         dimensionesArregloEjecucion.add(Integer.parseInt(operandos.get(i).getLexema()));
-                        int inicioDimension = analizadorSemantica2.arreglos.get((nombreArreglo+ambito)).getDimensiones().get(contadorDimensiones).getInicio();
-                        int finDimension = analizadorSemantica2.arreglos.get((nombreArreglo+ambito)).getDimensiones().get(contadorDimensiones).getFin();
-                        int valorDimension = Integer.parseInt(operandos.get(i).getLexema());
+                        int inicioDimension, finDimension, valorDimension;
+                        if(contadorDimensiones >= analizadorSemantica2.arreglos.get((nombreArreglo+ambito)).getDimensiones().size()){
+                            analizadorSemantica2.agregarRegla(1030, operandos.get(0).getLinea(), operandos.get(0).getAmbito(), false);
+                            banderaTodoSalioBien = false;
+                            break;
+                        }
+                        inicioDimension = analizadorSemantica2.arreglos.get((nombreArreglo + ambito)).getDimensiones().get(contadorDimensiones).getInicio();
+                        finDimension = analizadorSemantica2.arreglos.get((nombreArreglo + ambito)).getDimensiones().get(contadorDimensiones).getFin();
+                        valorDimension = Integer.parseInt(operandos.get(i).getLexema());
+                        contadorDimensiones++;
+//                        if(analizadorSemantica2.arreglos.get((nombreArreglo+ambito)).getDimensiones().size()>1 &&
+//                                contadorDimensiones < analizadorSemantica2.arreglos.get((nombreArreglo+ambito)).getDimensiones().size()){
+//                            
+//                        }else{
+//                            inicioDimension = analizadorSemantica2.arreglos.get((nombreArreglo+ambito)).getDimensiones().get(contadorDimensiones-1).getInicio();
+//                            finDimension = analizadorSemantica2.arreglos.get((nombreArreglo+ambito)).getDimensiones().get(contadorDimensiones-1).getFin();
+//                            valorDimension = Integer.parseInt(operandos.get(i).getLexema())-1;
+//                        }
+
                         if (!(inicioDimension <= valorDimension && finDimension >= valorDimension)) {
                             bandera1050 = false;
                         }
-                        operandos.remove(operandos.get(i));
-                        i--;
-                        contadorDimensiones++;
-                        //Cuando no lo es, se actuva la bandera 1040 como false    
+//                        operandos.remove(operandos.get(i));
+//                        i--;
+
+                        //Cuando no lo es, se activa la bandera 1040 como false    
                     } else {
                         operandos.remove(operandos.get(i));
+                        i--;
                         bandera1040 = false;
                     }
                 } else if (operandos.get(i).getToken() == -6) {//Si llega una variable
                     if (!controladorSQL.obtenerClaseVariable(operandos.get(i).getLexema(), operandos.get(i).getAmbito()).equals("Decimal")) {
                         bandera1040 = false;
                         operandos.remove(operandos.get(i));
+                        i--;
                     }
                 } else {//Otra cosa
                     operandos.remove(operandos.get(i));
-                }
-                if (operandos.get(i).getToken() == -47) {//Fin del arreglo
-                    operandos.remove(operandos.get(i));
-                    break;
+                    i--;
                 }
             }
         }
-        analizadorSemantica2.agregarRegla(1050, operandos.get(0).getLinea(), operandos.get(0).getAmbito(), bandera1050);
+        if (banderaTodoSalioBien) {
+            analizadorSemantica2.agregarRegla(1030, operandos.get(0).getLinea(), operandos.get(0).getAmbito(), true);
+            analizadorSemantica2.agregarRegla(1050, operandos.get(0).getLinea(), operandos.get(0).getAmbito(), bandera1050);
+        }
+        
     }
 
     private void analizarEstructuras(String tipo) {
@@ -409,6 +440,7 @@ public class Semantica1 {
         operandos.addAll(Arrays.asList(operandosArr));
         operadores.addAll(Arrays.asList(operadoresArr));
         analizarEstructuras(controladorSQL.obtenerClaseVariable(operandos.get(0).getLexema(), operandos.get(0).getAmbito()));
+        System.err.println("");
         while (true) {
             int index = auxiliar.obtenerPosicionMayorOperador(operadores);
             if (index == 0) {
@@ -456,7 +488,7 @@ public class Semantica1 {
             } else {
                 claseVariable = variable.getClase();
             }
-        } else if(banderaArreglo || !banderaEnterosArreglo){
+        } else if (banderaArreglo || !banderaEnterosArreglo) {
             if (controladorSQL.isArregloVirgen(variable.getLexema(), variable.getAmbito() + "")) {
                 claseVariable = valorTemporal;
                 controladorSQL.actualizarTipoArreglo(variable.getLexema(), variable.getAmbito() + "", claseVariable);
@@ -492,6 +524,8 @@ public class Semantica1 {
             comprobarAsignador(valorTemporal, variable);
         }
         sys.println("--------------------------------------<SEMANTICA 1> Fin Comprobar Asignacion--------------------------------------\n");
+        operandos = new ArrayList<>();
+        operadores = new ArrayList<>();
         banderaArreglo = false;
         dimensionesArregloEjecucion.clear();
     }
