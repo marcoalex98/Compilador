@@ -37,6 +37,10 @@ public class OperToken {
     public NodoToken obtenerPrimero(){
         return prim;
     }
+    
+    public NodoToken obtenerUltimo(){
+        return ult;
+    }
 
     public boolean insertarInicio(int posicion, String minilexem, int numlinea) {
         tam++;

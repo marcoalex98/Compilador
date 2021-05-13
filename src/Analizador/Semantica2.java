@@ -8,6 +8,7 @@ package Analizador;
 import Modelos.NodoToken;
 import Modelos.Semantica1.Arreglo;
 import Modelos.Semantica1.Dimension;
+import Modelos.Semantica2.Diccionario;
 import Modelos.Semantica2.Reglas;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,10 +24,14 @@ public class Semantica2 {
     ArrayList<Dimension> dimensionesArreglo;
     ArrayList<Reglas> reglas;
     HashMap<String, Arreglo> arreglos;
+    HashMap<String, Diccionario> diccionarios;
     boolean banderaArregloNormal, establecerTamanoDimension;
+    Controladores.ControladorTokenError controladorTokenError;
 
-    public Semantica2(HashMap<String, Arreglo> arreglos) {
+    public Semantica2(Controladores.ControladorTokenError controladorTokenError, HashMap<String, Arreglo> arreglos, HashMap<String, Diccionario> diccionarios) {
         this.arreglos = arreglos;
+        this.diccionarios = diccionarios;
+        this.controladorTokenError = controladorTokenError;
         inicializarVariables();
     }
 
@@ -142,9 +147,13 @@ public class Semantica2 {
 
     public void agregarRegla(int regla, int linea, int ambito, boolean aceptada) {
         reglas.add(new Reglas(regla, linea, ambito, aceptada));
+        if (!aceptada) {
+            controladorTokenError.agregarError(regla, "La regla "+regla+" no ha sido aceptada", "", linea, "Semantica 2");
+        }
     }
 
     public void imprimirReglas() {
+        System.err.println("Regla\tLinea\tAmbito\tAceptada");
         reglas.forEach((n) -> System.err.println(n.getRegla() + "\t" + n.getLinea() + "\t" + n.getAmbito() + "\t" + n.isAceptada()));
     }
 

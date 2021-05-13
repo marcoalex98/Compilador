@@ -5,20 +5,22 @@
  */
 package Modelos.Semantica2;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author marco
  */
 public class ElementoDiccionario {
-    private String valorLlave; //El contenido de la llave
+    private String llave; //El contenido de la llave
     private int tokenLlave;    //El token del tipo de llave (id, cadena, entero...)
     private int ambito;        //El ambito que creo el diccionario
     private String valor;      //El contenido del valor, si es un diccionario, el valor se pone como diccionario
     private int tokenValor;    //El token del tipo del valor (id, cadena, entero...)
-    private ElementoDiccionario elementosHijos; //En caso de tener un diccionario dentro, se agregan los elementos hijos como valor
+    private ArrayList<ElementoDiccionario> elementosHijos; //En caso de tener un diccionario dentro, se agregan los elementos hijos como valor
 
-    public ElementoDiccionario(String valorLlave, int tokenLlave, int ambito, String valor, int tokenValor, ElementoDiccionario elementosHijos) {
-        this.valorLlave = valorLlave;
+    public ElementoDiccionario(String valorLlave, int tokenLlave, int ambito, String valor, int tokenValor, ArrayList<ElementoDiccionario> elementosHijos) {
+        this.llave = valorLlave;
         this.tokenLlave = tokenLlave;
         this.ambito = ambito;
         this.valor = valor;
@@ -26,12 +28,12 @@ public class ElementoDiccionario {
         this.elementosHijos = elementosHijos;
     }
     
-    public String getValorLlave() {
-        return valorLlave;
+    public String getLlave() {
+        return llave;
     }
 
-    public void setValorLlave(String valorLlave) {
-        this.valorLlave = valorLlave;
+    public void setLlave(String valorLlave) {
+        this.llave = valorLlave;
     }
 
     public int getTokenLlave() {
@@ -66,12 +68,16 @@ public class ElementoDiccionario {
         this.tokenValor = tokenValor;
     }
 
-    public ElementoDiccionario getElementosHijos() {
+    public ArrayList<ElementoDiccionario> getElementosHijos() {
         return elementosHijos;
+    }
+    
+    public void setArrayList(){
+        this.elementosHijos = new ArrayList<>();
     }
 
     public void setElementosHijos(ElementoDiccionario elementosHijos) {
-        this.elementosHijos = elementosHijos;
+        this.elementosHijos.add(elementosHijos);
     }
     
 }

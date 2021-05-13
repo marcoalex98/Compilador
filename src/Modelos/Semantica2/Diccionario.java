@@ -39,6 +39,17 @@ public class Diccionario {
     public void setElementos(ArrayList<ElementoDiccionario> elementos) {
         this.elementos = elementos;
     }
+    
+    public ElementoDiccionario getUltimoElemento(){
+        return elementos.get(elementos.size()-1);
+    }
+    
+    public void addElemento(ElementoDiccionario elemento){
+        if (this.elementos == null) {
+            this.elementos = new ArrayList<>();
+        }
+        this.elementos.add(elemento);
+    }
 
     public int getAmbito() {
         return ambito;

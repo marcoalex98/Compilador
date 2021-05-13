@@ -10,6 +10,7 @@ import Analizador.Semantica2;
 import Analizador.Sintaxis;
 import Controladores.ControladorTokenError;
 import Modelos.Semantica1.Arreglo;
+import Modelos.Semantica2.Diccionario;
 import java.awt.Desktop;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -51,7 +52,8 @@ public class Interfaz extends javax.swing.JFrame {
     Lexico analizadorLexico;
     Sintaxis analizadorSintaxis;
     Ambito analizadorAmbito;
-    HashMap<String,Arreglo> arreglos;
+    HashMap<String, Arreglo> arreglosSemantica2;
+    HashMap<String, Diccionario> diccionariosSemantica2;
     Semantica1 analizadorSemantica1;
     Semantica2 analizadorSemantica2;
     ControladorTokenError controladorTokenError;
@@ -522,14 +524,15 @@ public class Interfaz extends javax.swing.JFrame {
         controladorSQL = new ControladorSQL();
         controladorSQL.limpiarTablaSimbolos();
         urlLog = crearDirectorioLog();
-        arreglos = new HashMap<>();
+        arreglosSemantica2 = new HashMap<>();
+        diccionariosSemantica2 = new HashMap<>();
         establecerUltimaPrueba();
         controladorTokenError = new ControladorTokenError(tablaTokens, tablaErrores);
         analizadorLexico = new Lexico(urlLog, controladorTokenError);
         analizadorLexico.iniciarLexico(jTextArea1);
-        analizadorSemantica2 = new Semantica2(arreglos);
+        analizadorSemantica2 = new Semantica2(controladorTokenError, arreglosSemantica2, diccionariosSemantica2);
         analizadorSemantica1 = new Semantica1(controladorSQL, controladorTokenError, analizadorSemantica2);
-        analizadorAmbito = new Ambito(controladorSQL, controladorTokenError, arreglos, analizadorSemantica1, analizadorSemantica2);
+        analizadorAmbito = new Ambito(controladorSQL, controladorTokenError, arreglosSemantica2, diccionariosSemantica2, analizadorSemantica1, analizadorSemantica2);
         analizadorAmbito.iniciarAmbito();
         analizadorSintaxis = new Sintaxis(
                 urlLog,
@@ -545,29 +548,55 @@ public class Interfaz extends javax.swing.JFrame {
         nombreExcel = "Semantica2";
         analizadorSemantica2.imprimirReglas();
         imprimirArreglos();
+        imprimirDiccionarios();
     }//GEN-LAST:event_btnCompilarActionPerformed
 
-    
-    private void imprimirArreglos(){
-        ArrayList<String> listOfKeys = arreglos.keySet().stream().collect(
+    private void imprimirDiccionarios() {
+        ArrayList<String> listOfKeys = diccionariosSemantica2.keySet().stream().collect(
                 Collectors.toCollection(ArrayList::new));
-        ArrayList<Arreglo> listOfValues = arreglos.values().stream().collect(
+        ArrayList<Diccionario> listOfValues = diccionariosSemantica2.values().stream().collect(
+                Collectors.toCollection(ArrayList::new));
+        System.err.println("\nID\t\t\tLlave\t\t\tValor\t\t\tTiene Hijos\t\t\tLlave Hijo\t\t\tValor Hijo");
+        for (int i = 0; i < listOfValues.size(); i++) {
+            System.err.print(listOfKeys.get(i) + "\t\t\t");
+            for (int j = 0; j < listOfValues.get(i).getElementos().size(); j++) {
+                System.err.print(listOfValues.get(i).getElementos().get(j).getLlave() + "\t\t\t");
+                System.err.print(listOfValues.get(i).getElementos().get(j).getValor() + "\t\t\t");
+                if (listOfValues.get(i).getElementos().get(i).getElementosHijos() != null) {
+                    System.err.print("true\t\t\t");
+                    for (int k = 0; k < listOfValues.get(i).getElementos().get(j).getElementosHijos().size(); k++) {
+                        System.err.print(listOfValues.get(i).getElementos().get(j).getElementosHijos().get(k).getLlave() + "\t\t\t\t");
+                        System.err.print(listOfValues.get(i).getElementos().get(j).getElementosHijos().get(k).getValor() + "\n\t\t\t\t\t\t\t\t\t\t\t");
+                    }
+                } else {
+                    System.err.print("false");
+                }
+                System.err.print("\n\t\t\t");
+            }
+            System.err.println();
+        }
+    }
+
+    private void imprimirArreglos() {
+        ArrayList<String> listOfKeys = arreglosSemantica2.keySet().stream().collect(
+                Collectors.toCollection(ArrayList::new));
+        ArrayList<Arreglo> listOfValues = arreglosSemantica2.values().stream().collect(
                 Collectors.toCollection(ArrayList::new));
         System.err.println("LLAVE\tID\tAMBITO\tINC\tINICIO\tFIN");
         for (int i = 0; i < listOfValues.size(); i++) {
-            System.err.print(listOfKeys.get(i)+"\t");
-            System.err.print(listOfValues.get(i).getId()+"\t");
-            System.err.print(listOfValues.get(i).getAmbito()+"\t");
-            System.err.print(listOfValues.get(i).getIncremento()+"");
+            System.err.print(listOfKeys.get(i) + "\t");
+            System.err.print(listOfValues.get(i).getId() + "\t");
+            System.err.print(listOfValues.get(i).getAmbito() + "\t");
+            System.err.print(listOfValues.get(i).getIncremento() + "");
             for (int j = 0; j < listOfValues.get(i).getDimensiones().size(); j++) {
-                System.err.print("\t["+listOfValues.get(i).getDimensiones().get(j).getPosicion()+"]");
-                System.err.print(listOfValues.get(i).getDimensiones().get(j).getInicio()+"\t");
-                System.err.print(listOfValues.get(i).getDimensiones().get(j).getFin()+"\n\t\t\t");
+                System.err.print("\t[" + listOfValues.get(i).getDimensiones().get(j).getPosicion() + "]");
+                System.err.print(listOfValues.get(i).getDimensiones().get(j).getInicio() + "\t");
+                System.err.print(listOfValues.get(i).getDimensiones().get(j).getFin() + "\n\t\t\t");
             }
             System.err.println();
-        }           
+        }
     }
-    
+
     private void establecerUltimaPrueba() {
         if (jTextArea1.getText() != "") {
             String pruebaActual = jTextArea1.getText();
@@ -598,7 +627,7 @@ public class Interfaz extends javax.swing.JFrame {
                 analizadorSemantica1, analizadorSemantica2, nombreExcel);
         if (jRBExcel.isSelected()) {
             try {
-                Desktop.getDesktop().open(new File("MarcoAlejandroMarcialCoronado-"+nombreExcel+".xls"));
+                Desktop.getDesktop().open(new File("MarcoAlejandroMarcialCoronado-" + nombreExcel + ".xls"));
             } catch (IOException ex) {
 
             }

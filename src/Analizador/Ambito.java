@@ -11,16 +11,20 @@ import Estructuras.Controladores.ControladorDatoDiccionario;
 import Estructuras.Controladores.ControladorDatoLista;
 import Modelos.Diccionario;
 import Modelos.Lista;
+import Modelos.NodoToken;
 import Modelos.OperToken;
 import Modelos.Semantica1.Arreglo;
+import Modelos.Semantica2.ElementoDiccionario;
 import Modelos.Tupla;
 import Modelos.Variable;
 import SQL.ControladorSQL;
 import SQL.TablaSimbolos;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -31,20 +35,26 @@ public class Ambito {
     int contadorIdentificadores, ambito, tamArr, tamVariablesGuardadasArr,
             contadorDiccionario, contadorElementosLista,
             ambitoActualDisponible, contadorTupla, contadorVariablesArreglo,
-            ambitoMayor, auxiliarTipoVariable, contadorParametros;
+            ambitoMayor, auxiliarTipoVariable, contadorParametros, contadorDiccionariosMortales;
     String claseVariable, nombreVariable, auxiliarNombreVariable, tipoVariable, valorVariable,
             ambitoCreado, ambitoVariable, tarrVariable, listaPerteneceVariable, rango1,
-            rango2, avance, auxiliarID, auxiliarDato, nombreFuncion;
+            rango2, avance, auxiliarID, nombreFuncion, ultimoDiccionarioCreado;
     boolean estadoError, banderaParametro, banderaArreglo, banderaTupla, banderaListaMultiple,
             banderaRango, banderaListaNormal, agregarLista, banderaFor, agregarTupla,
-            agregarDiccionario, banderaConstante, banderaFuncion,
-            banderaDiccionario, asignarValor,
-            bandera814, areaDeclaracion, primeraVezTipoLista, llaveDiccionario;
+            agregarDiccionario, banderaConstante, banderaFuncion, agregarConstante,
+            banderaDiccionario, asignarValor, agregarDiccionarioLopez, bandera1060, agregarLlaveDiccionario,
+            bandera814, areaDeclaracion, primeraVezTipoLista, llaveDiccionario, agregarDatoDiccionario, switchLlaveValor;
+    //agregarDiccionarioPerez se encarga de avisar que se va a agregar un diccionario dentro de otro diccionario :$
+    NodoToken llaveAuxiliar;
+    NodoToken llaveAuxiliarDiccionario;
+    NodoToken nodoDiccionarioCreado;
+    NodoToken auxiliarDiccionario; //Este se usa para guardar la informacion de la variable tipo diccionario, en caso de que contenga otro diccionario
     Stack<Integer> pilaSintaxis;
     Stack<Integer> pilaAmbito;
     ControladorSQL controladorSQL;
     TablaSimbolos tablaSimbolos[];
     HashMap<String, Arreglo> arreglos;
+    HashMap<String, Modelos.Semantica2.Diccionario> diccionarios;
     Diccionario diccionario[];
     Lista[] listaArreglo;
     Tupla[] tuplaArreglo;
@@ -60,12 +70,14 @@ public class Ambito {
     public Ambito(ControladorSQL controladorSQL,
             ControladorTokenError controladorTokenError,
             HashMap<String, Arreglo> arreglos,
+            HashMap<String, Modelos.Semantica2.Diccionario> diccionarios,
             Semantica1 analizadorSemantica1,
             Semantica2 analizadorSemantica2) {
         this.controladorSQL = controladorSQL;
         this.controladorTokenError = controladorTokenError;
         this.controladorDatoLista = new ControladorDatoLista();
         this.arreglos = arreglos;
+        this.diccionarios = diccionarios;
         this.controladorDatoDiccionario = new ControladorDatoDiccionario();
         this.analizadorSemantica1 = analizadorSemantica1;
         this.analizadorSemantica2 = analizadorSemantica2;
@@ -89,16 +101,22 @@ public class Ambito {
         rango2 = "";
         avance = "";
         auxiliarID = "";
-        auxiliarDato = "";
         nombreFuncion = "";
         banderaConstante = false;
         banderaFuncion = false;
         banderaDiccionario = false;
+        agregarDatoDiccionario = false;
+        agregarDiccionarioLopez = false;
+        switchLlaveValor = false;
+        agregarConstante = false;
+        bandera1060 = true;
         asignarValor = false;
         bandera814 = false;
         llaveDiccionario = false;
         areaDeclaracion = true;
+        agregarLlaveDiccionario = true;
         primeraVezTipoLista = true;
+        contadorDiccionariosMortales = 0;
         ambito = 0;
         ambitoMayor = 0;
         contadorElementosLista = 0;
@@ -154,6 +172,17 @@ public class Ambito {
         System.out.println("<AMBITO> Cima de pila: " + pilaSintaxis.peek());
         this.oper = oper;
 
+        if (pilaSintaxis.peek() == 10601) {
+            pilaSintaxis.pop();
+            agregarDiccionarioLopez = false;
+            agregarDiccionario = true;
+        }
+
+        if (pilaSintaxis.peek() == 800) {
+            agregarConstante = true;
+            pilaSintaxis.pop();
+        }
+
         try {
             if (analizadorSemantica2.analizarReglas(pilaSintaxis.peek(), oper.mostrarLineaPrimero(), ambito)) {
                 pilaSintaxis.pop();
@@ -167,11 +196,11 @@ public class Ambito {
 
         if (pilaSintaxis.peek() == 920) {
             pilaSintaxis.pop();
-//            try {
+            try {
                 analizadorSemantica1.comprobarAsignacion();
-//            } catch (Exception e) {
-//                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al comprobar asignacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
-//            }
+            } catch (Exception e) {
+                controladorTokenError.agregarError(999, "Ha ocurrido una excepcion al comprobar asignacion", "", oper.mostrarLineaPrimero(), "Semantica 1");
+            }
         }
 
         if (pilaSintaxis.peek() == 8152) {
@@ -199,6 +228,8 @@ public class Ambito {
         if (pilaSintaxis.peek() == 8202) {
             pilaSintaxis.pop();
             agregarDiccionario = true;
+            agregarLlaveDiccionario = true;
+
         }
         if (pilaSintaxis.peek() == 840) {//For
             pilaSintaxis.pop();
@@ -206,42 +237,57 @@ public class Ambito {
         }
 
         if (pilaSintaxis.peek() == 820) {
-            pilaSintaxis.pop();
+            if (!banderaDiccionario) {
+                ultimoDiccionarioCreado = (nombreVariable + ambito);
+                nodoDiccionarioCreado = oper.obtenerPrimero();
+                diccionarios.put((nombreVariable + ambito), new Modelos.Semantica2.Diccionario(0, null, ambito, oper.mostrarLineaPrimero()));
+                auxiliarDiccionario = new NodoToken(oper.mostrarTokenPrimero(), nombreVariable, oper.mostrarLineaPrimero());
+            } else if (banderaDiccionario && pilaSintaxis.peek() == 820) {
+                if (diccionarios.get((nombreVariable + ambito)).getElementos() == null) {
+                    diccionarios.get((nombreVariable + ambito)).setElementos(new ArrayList<>());
+                }
+                agregarDiccionarioLopez = true;
+                contadorDiccionariosMortales++;
+                agregarDatoDiccionario = true;
+//                diccionarios.get(ultimoDiccionarioCreado).getElementos().get(contadorDiccionariosMortales-1).setArrayList();
+            }
             banderaDiccionario = true;
+            pilaSintaxis.pop();
         }
 
         if (areaDeclaracion) {
             if (nombreVariable != "" && claseVariable != "" && valorVariable != ""
-                    && banderaConstante && !banderaDiccionario) {
+                    && banderaConstante && !banderaDiccionario && !agregarDiccionarioLopez && !agregarLista && agregarConstante) {
                 System.out.println("<AMBITO:sintaxis> Agregar Variable Constante");
-                agregarVariableBaseDatos();
+                agregarVariableBaseDatos("Constante");
+                agregarConstante = false;
             } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && banderaFuncion) {
                 System.out.println("<AMBITO:sintaxis> Agregar Variable Funcion");
-                agregarVariableBaseDatos();
+                agregarVariableBaseDatos("Funcion");
             } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && banderaParametro) {
                 System.out.println("<AMBITO:sintaxis> Agregar Variable Parametro");
-                agregarVariableBaseDatos();
+                agregarVariableBaseDatos("Parametro");
             } else if (nombreVariable != "" && claseVariable != "" && rango1 != "" && rango2 != ""
                     && avance != "" && banderaRango) {
                 System.out.println("<AMBITO:sintaxis> Agregar Variable Rango");
-                agregarVariableBaseDatos();
+                agregarVariableBaseDatos("Rango");
             } else if (agregarLista) {
                 System.out.println("<AMBITO:sintaxis> Agregar Variable Lista");
-                agregarVariableBaseDatos();
+                agregarVariableBaseDatos("Lista");
                 primeraVezTipoLista = true;
                 auxiliarTipoVariable = 0;
                 contadorElementosLista = 0;
                 banderaListaMultiple = false;
                 banderaListaNormal = false;
                 agregarLista = false;
-            } else if (agregarDiccionario) {
+            } else if (agregarDiccionario && !agregarDiccionarioLopez) {
                 System.out.println("<AMBITO:sintaxis> Agregar Variable Diccionario");
-                agregarVariableBaseDatos();
+                agregarVariableBaseDatos("!diccionarioLopez");
                 agregarDiccionario = false;
             } else if (nombreVariable != "" && claseVariable != "" && tipoVariable != "" && ambitoVariable != ""
                     && tarrVariable != "" && banderaTupla && agregarTupla) {
                 System.out.println("<AMBITO:sintaxis> Agregar Variable Tupla");
-                agregarVariableBaseDatos();
+                agregarVariableBaseDatos("Tupla");
             }
         } else {
             if (pilaSintaxis.peek() == -6) {
@@ -300,15 +346,19 @@ public class Ambito {
                 banderaFuncion = false;
                 banderaDiccionario = false;
                 asignarValor = false;
+                agregarDiccionarioLopez = false;
                 bandera814 = false;
                 llaveDiccionario = false;
                 primeraVezTipoLista = true;
                 bandera814 = false;
+                bandera1060 = true;
                 tamVariablesGuardadasArr = 0;
+                contadorDiccionariosMortales = 0;
                 claseVariable = "";
                 nombreVariable = "";
                 auxiliarID = "";
                 tipoVariable = "";
+                ultimoDiccionarioCreado = "";
                 valorVariable = "";
                 ambitoCreado = "";
                 tarrVariable = "";
@@ -320,10 +370,13 @@ public class Ambito {
                 areaDeclaracion = true;
                 bandera814 = false;
                 banderaListaNormal = false;
+                agregarDiccionarioLopez = false;
                 tamVariablesGuardadasArr = 0;
+                contadorDiccionariosMortales = 0;
                 banderaConstante = false;
                 banderaFuncion = false;
                 banderaDiccionario = false;
+                bandera1060 = true;
                 asignarValor = false;
                 bandera814 = false;
                 llaveDiccionario = false;
@@ -334,6 +387,7 @@ public class Ambito {
                 analizadorSemantica2.elementosArreglo.clear();
                 tipoVariable = "";
                 valorVariable = "";
+                ultimoDiccionarioCreado = "";
                 ambitoCreado = "";
                 tarrVariable = "";
                 ambitoVariable = "";
@@ -407,15 +461,80 @@ public class Ambito {
                 ambitoVariable = ambito + "";
             }
             claseVariable = "Diccionario";
-            if (pilaSintaxis.peek() == 8203) {
-                auxiliarDato = oper.mostrarLexemaPrimero();
+            if (pilaSintaxis.peek() == 8203 && agregarLlaveDiccionario && agregarDiccionarioLopez) {
+                llaveAuxiliarDiccionario = oper.obtenerPrimero();
+                agregarLlaveDiccionario = false;
                 pilaSintaxis.pop();
-            }
-            if (pilaSintaxis.peek() == 8204) {
+            } else if ((pilaSintaxis.peek() == 8203 && !switchLlaveValor)
+                    || (!agregarDiccionarioLopez && pilaSintaxis.peek() == 8203 && !switchLlaveValor)) {
+                llaveAuxiliar = oper.obtenerPrimero();
+                switchLlaveValor = true;
                 pilaSintaxis.pop();
+            } else if ((pilaSintaxis.peek() == 8203 && switchLlaveValor)
+                    || (!agregarDiccionarioLopez && pilaSintaxis.peek() == 8203 && switchLlaveValor)) {
+                switchLlaveValor = false;
+                pilaSintaxis.pop();
+                NodoToken valorAuxiliar = oper.obtenerPrimero();
                 controladorDatoDiccionario.push(tipoConstante(pilaSintaxis.peek()),
-                        ambito + "", auxiliarDato, (controladorDatoDiccionario.obtenerCantidadDatosDiccionario() + 1) + "",
+                        ambito + "", llaveAuxiliar.getLexema(), (controladorDatoDiccionario.obtenerCantidadDatosDiccionario() + 1) + "",
                         oper.mostrarLexemaPrimero(), nombreVariable);
+                if (diccionarios.get(ultimoDiccionarioCreado).getElementos() == null && !agregarDiccionarioLopez) {
+                    diccionarios.get(ultimoDiccionarioCreado).addElemento(new ElementoDiccionario(
+                            llaveAuxiliar.getLexema(),
+                            llaveAuxiliar.getPosicion(),
+                            ambito,
+                            oper.mostrarLexemaPrimero(),
+                            oper.mostrarTokenPrimero(),
+                            null));
+                    diccionarios.get(ultimoDiccionarioCreado).setTipoLlave(llaveAuxiliar.getPosicion());
+
+                } else {
+                    if (!agregarDiccionarioLopez) { // Agregar elementos normales a diccionario normal
+                        diccionarios.get(ultimoDiccionarioCreado).addElemento(new ElementoDiccionario(llaveAuxiliar.getLexema(),
+                                llaveAuxiliar.getPosicion(),
+                                ambito,
+                                oper.mostrarLexemaPrimero(),
+                                oper.mostrarTokenPrimero(),
+                                null));
+                        if (!(diccionarios.get(ultimoDiccionarioCreado).getTipoLlave() == llaveAuxiliar.getPosicion())) {
+                            bandera1060 = false;
+                        }
+                    } else { // Agregar diccionario a diccionario mortal
+                        int tamano = diccionarios.get(ultimoDiccionarioCreado).getElementos().size();
+                        if (agregarDatoDiccionario) {
+                            diccionarios.get(ultimoDiccionarioCreado).getElementos().add(
+                                    new ElementoDiccionario(
+                                            llaveAuxiliarDiccionario.getLexema(),
+                                            llaveAuxiliarDiccionario.getPosicion(),
+                                            ambito,
+                                            "Diccionario" + (contadorDiccionariosMortales - 1),
+                                            -4,
+                                            null));
+                            diccionarios.get(ultimoDiccionarioCreado).getElementos().get(contadorDiccionariosMortales - 1).setArrayList();
+                            agregarDatoDiccionario = false;
+                        }
+//                        else{
+//                            diccionarios.get(ultimoDiccionarioCreado).getElementos().get(contadorDiccionariosMortales-1).getElementosHijos().add(
+//                                    new ElementoDiccionario(
+//                                            llaveAuxiliar.getLexema(), 
+//                                            llaveAuxiliar.getPosicion(), 
+//                                            ambito, 
+//                                            valorAuxiliar.getLexema(), 
+//                                            valorAuxiliar.getPosicion(), 
+//                                            null));
+//                        }                      
+                    }
+                }
+                if (agregarDiccionarioLopez) {
+                    diccionarios.get(ultimoDiccionarioCreado).getElementos().get(contadorDiccionariosMortales - 1).getElementosHijos().add(
+                            new ElementoDiccionario(
+                                    llaveAuxiliar.getLexema(),
+                                    llaveAuxiliar.getPosicion(),
+                                    ambito,
+                                    valorAuxiliar.getLexema(),
+                                    valorAuxiliar.getPosicion(),
+                                    null));
+                }
             }
         }
         /////////////////////FIN DICCIONARIOS///////////////////////////////
@@ -519,7 +638,7 @@ public class Ambito {
         return pilaSintaxis;
     }
 
-    private void agregarVariableBaseDatos() {
+    private void agregarVariableBaseDatos(String produce) {
         valorVariable = valorVariable.replace("'", "\"");
         System.out.println("----Agregar Variable----");
         System.out.println("<AMBITO:agregarVariable> " + "Variable: " + nombreVariable
@@ -707,18 +826,30 @@ public class Ambito {
                     }
 
                     reducirAmbito();
+                    controladorDatoLista.vaciarDatosLista();
+                    listaPerteneceVariable = "";
+                    contadorElementosLista = 0;
+                    agregarLista = false;
+                    bandera814 = false;
+                    banderaListaMultiple = false;
+                    banderaListaNormal = true;
+                    ambitoVariable = "";
+                    claseVariable = "";
+                    ambitoCreado = "";
+                    tipoVariable = "";
                 }
-                controladorDatoLista.vaciarDatosLista();
-                listaPerteneceVariable = "";
-                contadorElementosLista = 0;
-                agregarLista = false;
+
+                controladorDatoDiccionario.vaciarDatosDiccionario();
+                agregarDiccionario = false;
+                contadorDiccionario = 0;
+                contadorDiccionariosMortales = 0;
+                agregarDiccionarioLopez = false;
+                agregarDatoDiccionario = false;
+                agregarLlaveDiccionario = true;
+                switchLlaveValor = false;
+                banderaDiccionario = false;
+                bandera1060 = true;
                 bandera814 = false;
-                banderaListaMultiple = false;
-                banderaListaNormal = true;
-                ambitoVariable = "";
-                claseVariable = "";
-                ambitoCreado = "";
-                tipoVariable = "";
                 break;
             case "Rango":
                 tipoVariable = "struct";
@@ -782,9 +913,16 @@ public class Ambito {
 //                bandera814 = false;
 //                break;
             case "Diccionario":
+                if (bandera1060) {
+                    analizadorSemantica2.agregarRegla(1060, nodoDiccionarioCreado.getNumlinea(), ambito, true);
+                } else {
+                    analizadorSemantica2.agregarRegla(1060, nodoDiccionarioCreado.getNumlinea(), ambito, false);
+                }
+                analizadorSemantica2.agregarRegla(1061, nodoDiccionarioCreado.getNumlinea(), ambito, true);
                 System.out.println("InsertarDiccionario");
                 aumentarAmbito();
                 ambitoCreado = ambito + "";
+                verificarLlavesDiccionariosHijos();
                 aumentarContadorAmbito();
                 query = "INSERT INTO tablasimbolos (id,clase,tipo,ambito,ambitoCreado,tamanoArreglo) VALUES("
                         + "'" + nombreVariable + "',"
@@ -814,12 +952,33 @@ public class Ambito {
                 controladorDatoDiccionario.vaciarDatosDiccionario();
                 agregarDiccionario = false;
                 contadorDiccionario = 0;
+                contadorDiccionariosMortales = 0;
+                agregarDiccionarioLopez = false;
+                agregarDatoDiccionario = false;
+                agregarLlaveDiccionario = true;
+                switchLlaveValor = false;
                 reducirAmbito();
                 banderaDiccionario = false;
+                bandera1060 = true;
                 bandera814 = false;
+
+//                controladorDatoLista.vaciarDatosLista();
+//                listaPerteneceVariable = "";
+//                contadorElementosLista = 0;
+//                agregarLista = false;
+//                bandera814 = false;
+//                banderaListaMultiple = false;
+//                banderaListaNormal = true;
+//                ambitoVariable = "";
+//                claseVariable = "";
+//                ambitoCreado = "";
+//                tipoVariable = "";
                 break;
         }
         tamVariablesGuardadasArr = 0;
+        ultimoDiccionarioCreado = "";
+        agregarDiccionarioLopez = false;
+        banderaListaNormal = true;
         claseVariable = "";
         nombreVariable = "";
         tipoVariable = "";
@@ -831,6 +990,29 @@ public class Ambito {
             tipoVariable = "par";
         }
         System.out.println("---- Fin Agregar Variable----");
+    }
+
+    private void verificarLlavesDiccionariosHijos() {
+//        int tokenLlaves = 0;
+//        
+//        ArrayList<String> listOfKeys = diccionarios.keySet().stream().collect(
+//                Collectors.toCollection(ArrayList::new));
+//        ArrayList<Modelos.Semantica2.Diccionario> listOfValues = diccionarios.values().stream().collect(
+//                Collectors.toCollection(ArrayList::new));
+//        for (int j = 0; j < listOfValues.get(listOfValues.size() - 1).getElementos().size(); j++) {
+//            boolean banderaDiccionaritos1060 = true;
+//            if (listOfValues.get(listOfValues.size() - 1).getElementos().get(listOfValues.size() - 1).getElementosHijos() != null) {
+//                for (int k = 0; k < listOfValues.get(listOfValues.size() - 1).getElementos().get(j).getElementosHijos().size(); k++) {
+//                    if (tokenLlaves == 0){
+//                        tokenLlaves = listOfValues.get(listOfValues.size() - 1).getElementos().get(j).getElementosHijos().get(k).getTokenLlave();
+//                    }else if (listOfValues.get(listOfValues.size() - 1).getElementos().get(j).getElementosHijos().get(k).getTokenLlave() != tokenLlaves){
+//                        banderaDiccionaritos1060 = false;
+//                    }
+//                }
+//            }
+//            analizadorSemantica2.agregarRegla(1060, nodoDiccionarioCreado.getNumlinea(), ambito, banderaDiccionaritos1060);
+//        }
+
     }
 
     private void aumentarAmbito() {

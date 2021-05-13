@@ -91,7 +91,7 @@ public class Sintaxis {
         boolean tamArrPrimeraVez = false;
         pilaSintaxis.push(-1000);
         pilaSintaxis.push(200);
-        oper.insertarUltimo(-1000, "$", 999999);
+        oper.insertarUltimo(-1000, "$", oper.obtenerUltimo().getNumlinea());
         int fila = 0, columna = 0, cont = 1, lineaAvance = 0;
         String avanceLinea = "", ultimoAgregado = "";
         while (pilaSintaxis.empty() == false && oper.listaVacia() == false) {
@@ -153,8 +153,7 @@ public class Sintaxis {
                 for (int i = 0; i < producciones[lugar].length; i++) {
                     System.out.println("<SINTAXIS> Se agrego " + producciones[lugar][i] + " a la pila");
                     pilaSintaxis.push(producciones[lugar][i]);
-                    
-                    
+
                 }
             } else if (produccion == 369) {
                 System.out.println("<SINTAXIS> EPSILON DETECTADO");
